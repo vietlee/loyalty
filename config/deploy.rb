@@ -53,4 +53,10 @@ namespace :deploy do
   end
 
   after :publishing, :restart
+
+  after :finishing, :restart_sidekiq do
+    on roles(:app) do
+      execute :sudo, "systemctl restart sidekiq-loyalty"
+    end
+  end
 end
