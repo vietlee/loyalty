@@ -10,6 +10,10 @@ module Merchant
 
     def update
       domain = params.dig(:workspace, :custom_domain).to_s.downcase.strip.presence
+      if domain.present? && !current_workspace.plan_allows?(:custom_domain)
+        return redirect_to merchant_domain_path,
+          alert: "Tên miền riêng chỉ có ở gói Scale. Vui lòng nâng cấp gói."
+      end
       if current_workspace.update(custom_domain: domain, domain_verified_at: nil)
         redirect_to merchant_domain_path, notice: domain ? "Đã lưu tên miền. Vui lòng xác minh DNS." : "Đã gỡ tên miền riêng."
       else

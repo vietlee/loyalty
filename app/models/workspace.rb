@@ -50,7 +50,37 @@ class Workspace < ApplicationRecord
   def pending? = status == "pending"
   def onboarded? = settings["onboarded"] == true
   def status_label = STATUS_LABELS[status]
-  def monthly_price = active? ? PLAN_PRICES[plan].to_i : 0
+
+  # ---- Plan (limits & feature gates) ------------------------------------
+  def plan_record
+    @plan_record ||= Plan.for(plan)
+  end
+
+  def monthly_price = active? ? plan_record.price.to_i : 0
+
+  def plan_allows?(feature)
+    case feature.to_sym
+    when :stamps        then plan_record.allow_stamps
+    when :gamification  then plan_record.allow_gamification
+    when :campaigns     then plan_record.allow_campaigns
+    when :custom_domain then plan_record.allow_custom_domain
+    when :ab_testing    then plan_record.allow_ab_testing
+    else true
+    end
+  end
+
+  def outlet_limit = plan_record.max_outlets
+  def member_limit = plan_record.max_members
+
+  def can_add_outlet?(current = outlets.count)
+    outlet_limit.nil? || current < outlet_limit
+  end
+
+  def can_add_member?(current = nil)
+    return true if member_limit.nil?
+    current ||= ActsAsTenant.with_tenant(self) { members.count }
+    current < member_limit
+  end
 
   # -- Theming (per-workspace white-label) ---------------------------------
   # Neutral defaults = the "Cozy Cafe" preset from the product mockup. Each

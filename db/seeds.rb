@@ -8,6 +8,9 @@ Faker::Config.locale = "vi"
 
 puts "Seeding Dynamic Loyalty demo data…"
 
+Plan.seed_defaults!
+puts "  ✓ Plans: #{Plan.ordered.map(&:key).join(', ')}"
+
 PRESETS = Merchant::AppearancesController::PRESETS
 
 TIER_TEMPLATE = [

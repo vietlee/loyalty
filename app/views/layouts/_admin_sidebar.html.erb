@@ -19,7 +19,10 @@
     <span>◎</span><span>Giám sát<span class="en">Monitoring</span></span>
   <% end %>
   <%= link_to admin_billing_path, class: "l-nav-item #{'active' if nav == :billing}" do %>
-    <span>◈</span><span>Gói &amp; Billing<span class="en">Billing</span></span>
+    <span>◈</span><span>Doanh thu<span class="en">Billing</span></span>
+  <% end %>
+  <%= link_to admin_plans_path, class: "l-nav-item #{'active' if nav == :plans}" do %>
+    <span>◫</span><span>Quản lý gói<span class="en">Plans</span></span>
   <% end %>
 
   <div class="foot">

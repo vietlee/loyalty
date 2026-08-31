@@ -32,6 +32,7 @@ Rails.application.routes.draw do
     end
     get "monitoring", to: "monitoring#show"
     get "billing",    to: "billing#show"
+    resources :plans, only: [:index, :update]
   end
 
   # ---- Merchant self-serve signup (public) -------------------------------

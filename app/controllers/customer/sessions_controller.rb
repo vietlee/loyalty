@@ -44,7 +44,12 @@ module Customer
       result = challenge&.verify(params[:code])
 
       if result == :ok
-        member = Member.find_or_create_by!(workspace: current_workspace, phone: @phone)
+        member = Member.find_by(workspace: current_workspace, phone: @phone)
+        if member.nil? && !current_workspace.can_add_member?
+          flash.now[:alert] = "Chương trình đang tạm đầy. Vui lòng quay lại sau."
+          return render :verify_form, status: :unprocessable_entity
+        end
+        member ||= Member.create!(workspace: current_workspace, phone: @phone)
         if session[:ref_code].present?
           Referrals.attach(referred: member, referrer_code: session.delete(:ref_code))
         end

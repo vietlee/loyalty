@@ -9,6 +9,10 @@ module Merchant
     end
 
     def create
+      unless current_workspace.can_add_outlet?
+        return redirect_to merchant_outlets_path,
+          alert: "Gói #{current_workspace.plan_record.name} chỉ cho phép #{current_workspace.outlet_limit} chi nhánh. Nâng cấp gói để thêm."
+      end
       @outlet = current_workspace.outlets.new(outlet_params)
       if @outlet.save
         redirect_to merchant_outlets_path, notice: "Đã thêm chi nhánh “#{@outlet.name}”."

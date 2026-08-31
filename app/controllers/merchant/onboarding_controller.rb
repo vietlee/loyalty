@@ -47,7 +47,10 @@ module Merchant
     end
 
     def save_mechanics
-      current_program.update(program_params)
+      attrs = program_params
+      attrs[:stamps_enabled] = false unless current_workspace.plan_allows?(:stamps)
+      attrs[:gamification_enabled] = false unless current_workspace.plan_allows?(:gamification)
+      current_program.update(attrs)
     end
 
     def invite_staff

@@ -14,6 +14,9 @@ module Merchant
     end
 
     def create
+      unless current_workspace.plan_allows?(:campaigns)
+        return redirect_to merchant_campaigns_path, alert: "Chiến dịch có ở gói Growth trở lên. Vui lòng nâng cấp gói."
+      end
       @campaign = current_workspace.campaigns.new(campaign_params)
       if @campaign.save
         maybe_generate_promo!
