@@ -53,6 +53,9 @@ gem "image_processing", "~> 1.2"
 # Env management
 gem "dotenv-rails"
 
+# Demo/seed data (used by db/seeds.rb in all environments)
+gem "faker"
+
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem
 gem "tzinfo-data", platforms: %i[ windows jruby ]
 
@@ -71,7 +74,6 @@ group :development, :test do
 
   # Test data
   gem "factory_bot_rails"
-  gem "faker"
 
   # Deployment (Capistrano, mirrors VOX)
   gem "capistrano",         "~> 3.18", require: false
