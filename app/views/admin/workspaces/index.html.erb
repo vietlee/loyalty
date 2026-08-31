@@ -1,5 +1,9 @@
 <% content_for :title, "Workspaces" %>
 
+<div style="display:flex; justify-content:flex-end; margin-bottom:12px;">
+  <%= link_to "＋ Tạo workspace", new_admin_workspace_path, class: "l-btn l-btn-primary" %>
+</div>
+
 <div style="display:flex; gap:8px; flex-wrap:wrap; margin-bottom:16px;">
   <%= link_to "Tất cả · #{@counts.values.sum}", admin_workspaces_path,
         class: "l-chip #{'l-chip-brand' if @status.nil?}" %>

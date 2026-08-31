@@ -23,7 +23,7 @@ Rails.application.routes.draw do
   # ---- Super Admin (platform ops) : /admin -------------------------------
   namespace :admin do
     root "dashboard#show"
-    resources :workspaces, only: [:index, :show, :update] do
+    resources :workspaces, only: [:index, :new, :create, :show, :update] do
       member do
         patch :approve
         patch :suspend
