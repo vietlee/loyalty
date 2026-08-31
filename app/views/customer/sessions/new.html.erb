@@ -1,0 +1,21 @@
+<% content_for :title, "Đăng nhập · #{current_workspace.name}" %>
+<div class="l-screen" style="display:flex; flex-direction:column; justify-content:center; min-height:100dvh;">
+  <div style="text-align:center; margin-bottom:26px;">
+    <div style="width:72px; height:72px; border-radius:22px; margin:0 auto 16px; background:var(--primary); color:var(--on-primary); display:grid; place-items:center; font-family:var(--font-display); font-weight:700; font-size:30px;">
+      <%= current_workspace.logo_initials %>
+    </div>
+    <h1 class="l-display" style="font-size:26px;"><%= current_workspace.name %></h1>
+    <p style="color:var(--ink-2); font-size:14px;"><%= current_workspace.branding_value("tagline") %></p>
+  </div>
+
+  <%= form_with url: member_login_path, method: :post do %>
+    <label class="l-label">Số điện thoại</label>
+    <input type="tel" name="phone" value="<%= @phone %>" inputmode="numeric" autofocus
+           class="l-field" placeholder="09xx xxx xxx" style="margin-bottom:16px;">
+    <%= submit_tag "Nhận mã OTP", class: "l-btn l-btn-primary l-btn-block" %>
+  <% end %>
+
+  <p style="text-align:center; color:var(--ink-2); font-size:12px; margin-top:18px;">
+    Đăng nhập bằng SĐT · OTP dev sẽ hiển thị ở bước sau
+  </p>
+</div>

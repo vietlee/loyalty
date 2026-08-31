@@ -1,0 +1,16 @@
+<% state = v.expired? ? "expired" : v.state %>
+<%= link_to member_voucher_path(v), class: "l-ticket #{state}", style: "margin-bottom:12px;" do %>
+  <div class="stub"><div class="v"><%= v.reward.value_label %></div><div class="u"><%= v.reward.kind %></div></div>
+  <div class="perf"></div>
+  <div class="body">
+    <div style="display:flex; align-items:center; justify-content:space-between; gap:8px;">
+      <div style="font-weight:700;"><%= v.reward.display_icon %> <%= v.reward.title %></div>
+      <span class="state <%= state %>"><%= { "active" => "Khả dụng", "used" => "Đã dùng", "expired" => "Hết hạn" }[state] %></span>
+    </div>
+    <div style="font-size:12px; color:var(--ink-2); margin-top:6px;">
+      Mã <span class="l-mono"><%= v.code %></span>
+      <% if state == "active" && v.expires_at %> · HSD <%= l(v.expires_at.to_date, format: :short) %><% end %>
+      <% if state == "used" && v.used_at %> · <%= v.used_at.strftime("%H:%M %d/%m") %><% end %>
+    </div>
+  </div>
+<% end %>

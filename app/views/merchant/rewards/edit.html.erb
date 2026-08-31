@@ -1,0 +1,6 @@
+<% content_for :title, "Sửa ưu đãi" %>
+<% content_for :title_en, "EDIT REWARD" %>
+<div class="l-panel" style="max-width:520px;">
+  <%= render "form", reward: @reward, url: merchant_reward_path(@reward), method: :patch, submit_label: "Lưu thay đổi" %>
+  <%= link_to "← Về danh sách", merchant_rewards_path, style: "display:inline-block; margin-top:12px; color:var(--ink-2); font-size:13px;" %>
+</div>

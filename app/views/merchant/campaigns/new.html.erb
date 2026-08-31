@@ -1,0 +1,78 @@
+<% content_for :title, "Tạo chiến dịch" %>
+<% content_for :title_en, "NEW CAMPAIGN" %>
+
+<div data-controller="campaign-preview" style="display:grid; grid-template-columns:1fr 360px; gap:20px; align-items:start;">
+  <%= form_with model: @campaign, url: merchant_campaigns_path, method: :post do |f| %>
+    <div class="l-panel" style="margin-bottom:16px;">
+      <h3 class="l-display" style="font-size:18px; margin-bottom:12px;">1 · Loại &amp; đối tượng</h3>
+      <label class="l-label">Tên chiến dịch</label>
+      <%= f.text_field :name, class: "l-field", placeholder: "VD: Tết 2026 — tặng voucher" %>
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-top:12px;">
+        <div>
+          <label class="l-label">Loại</label>
+          <%= f.select :campaign_type, Campaign::TYPE_LABELS.map { |k, v| [v, k] }, {}, class: "l-field" %>
+        </div>
+        <div>
+          <label class="l-label">Đối tượng</label>
+          <%= f.select :audience, Campaign::AUDIENCE_LABELS.map { |k, v| [v, k] }, {}, class: "l-field" %>
+        </div>
+      </div>
+    </div>
+
+    <div class="l-panel" style="margin-bottom:16px;">
+      <h3 class="l-display" style="font-size:18px; margin-bottom:12px;">2 · Nội dung khách nhận</h3>
+      <label class="l-label">Tiêu đề</label>
+      <%= text_field_tag "campaign[content][title]", @campaign.content_value("title"), class: "l-field",
+            placeholder: "Lì xì đầu năm 🧧",
+            data: { campaign_preview_target: "title", action: "input->campaign-preview#update" } %>
+      <label class="l-label" style="margin-top:12px;">Mô tả ngắn</label>
+      <%= text_area_tag "campaign[content][body]", @campaign.content_value("body"), class: "l-field", rows: 2,
+            placeholder: "Nhận ngay voucher khi ghé cửa hàng dịp Tết.",
+            data: { campaign_preview_target: "body", action: "input->campaign-preview#update" } %>
+    </div>
+
+    <div class="l-panel" style="margin-bottom:16px;">
+      <h3 class="l-display" style="font-size:18px; margin-bottom:12px;">3 · Ưu đãi &amp; thời gian</h3>
+      <label class="l-label">Ưu đãi tặng kèm (voucher)</label>
+      <%= f.select :reward_id, @rewards.map { |r| ["#{r.display_icon} #{r.title}", r.id] },
+            { include_blank: "— Không —" }, class: "l-field",
+            data: { campaign_preview_target: "reward", action: "change->campaign-preview#update" } %>
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-top:12px;">
+        <div><label class="l-label">Bắt đầu</label><%= f.datetime_local_field :starts_at, class: "l-field" %></div>
+        <div><label class="l-label">Kết thúc</label><%= f.datetime_local_field :ends_at, class: "l-field" %></div>
+      </div>
+    </div>
+
+    <div class="l-panel" style="margin-bottom:16px;">
+      <h3 class="l-display" style="font-size:18px; margin-bottom:8px;">4 · Sinh mã QR phát hành</h3>
+      <label style="display:flex; align-items:center; gap:8px; font-size:14px;">
+        <%= check_box_tag "generate_qr", "1", true %> Tạo một mã QR dùng chung để in / đăng — khách quét là nhận voucher (không tốn điểm).
+      </label>
+      <label class="l-label" style="margin-top:12px;">Giới hạn tổng lượt phát (trống = không giới hạn)</label>
+      <%= number_field_tag "max_claims", 200, class: "l-field", style: "max-width:180px;" %>
+    </div>
+
+    <%= f.hidden_field :status, value: "running" %>
+    <%= f.submit "Tạo chiến dịch", class: "l-btn l-btn-primary" %>
+  <% end %>
+
+  <%# ---- Live customer preview ---- %>
+  <div style="position:sticky; top:90px;">
+    <div class="l-eyebrow" style="margin-bottom:8px;">Xem trước · Thông báo khách</div>
+    <div class="l-tile" style="border-radius:20px;">
+      <div style="display:flex; align-items:center; gap:10px; margin-bottom:12px;">
+        <div style="width:34px; height:34px; border-radius:10px; background:var(--primary); color:#fff; display:grid; place-items:center; font-weight:700; font-family:var(--font-display);"><%= current_workspace.logo_initials %></div>
+        <strong style="font-size:14px;"><%= current_workspace.name %></strong>
+      </div>
+      <div style="border-radius:16px; overflow:hidden; border:1px solid var(--line);">
+        <div style="height:96px; background:linear-gradient(135deg, var(--primary), var(--primary-2)); display:grid; place-items:center; color:#fff; font-size:36px;">🎁</div>
+        <div style="padding:14px;">
+          <div data-campaign-preview-target="pvTitle" style="font-weight:700;">Tiêu đề ưu đãi</div>
+          <div data-campaign-preview-target="pvBody" style="font-size:13px; color:var(--ink-2); margin-top:4px;">Mô tả ngắn hiển thị ở đây…</div>
+          <div data-campaign-preview-target="pvReward" style="margin-top:10px;"></div>
+          <button style="margin-top:12px; width:100%; padding:10px; border:none; border-radius:12px; background:var(--primary); color:#fff; font-weight:600;">Nhận ưu đãi</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

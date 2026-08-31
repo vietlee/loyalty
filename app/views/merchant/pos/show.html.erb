@@ -1,0 +1,11 @@
+<%= turbo_frame_tag "scan_tool" do %>
+  <div style="text-align:center;">
+    <p style="font-weight:700; font-size:16px;">Khách quét mã này để tích điểm</p>
+    <p style="color:var(--ink-2); font-size:13px; margin-bottom:14px;">Hoá đơn <strong><%= number_with_delimiter(@charge.amount) %><%= current_program.currency == "VND" ? "đ" : " " + current_program.currency %></strong> · mã hiệu lực 30 phút</p>
+    <div style="display:inline-block; padding:16px; background:#fff; border:1px solid var(--line); border-radius:18px;">
+      <%= qr_svg(@charge_url, color: current_workspace.theme_value(:ink).to_s.delete('#'), size: 220) %>
+    </div>
+    <%= link_to "Tạo mã mới", merchant_scanner_path(tab: "pos"), class: "l-btn l-btn-ghost l-btn-block",
+          style: "margin-top:18px;", data: { turbo_frame: "scan_tool" } %>
+  </div>
+<% end %>

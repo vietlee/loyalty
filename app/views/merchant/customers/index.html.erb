@@ -1,0 +1,43 @@
+<% content_for :title, "Khách hàng" %>
+<% content_for :title_en, "CUSTOMERS" %>
+
+<div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap; margin-bottom:16px;">
+  <% MemberSegments::PRESETS.each do |key, meta| %>
+    <%= link_to merchant_customers_path(segment: key),
+          class: "l-chip #{'l-chip-brand' if @segment == key}" do %>
+      <%= meta[:icon] %> <%= meta[:label] %> · <%= @counts[key] %>
+    <% end %>
+  <% end %>
+  <% if @segment != "all" %>
+    <%= link_to "✉ Gửi thông báo cho nhóm này", new_merchant_broadcast_path(segment: @segment),
+          class: "l-btn l-btn-primary", style: "margin-left:auto; padding:8px 14px; font-size:13px;" %>
+  <% else %>
+    <%= link_to "✉ Soạn thông báo", new_merchant_broadcast_path,
+          class: "l-btn l-btn-soft", style: "margin-left:auto; padding:8px 14px; font-size:13px;" %>
+  <% end %>
+</div>
+
+<div class="l-panel">
+  <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:8px;">
+    <strong><%= MemberSegments.icon(@segment) %> <%= MemberSegments.label(@segment) %></strong>
+    <span style="color:var(--ink-2); font-size:13px;"><%= @members.size %> khách</span>
+  </div>
+  <table style="width:100%; border-collapse:collapse;">
+    <thead><tr style="text-align:left; color:var(--ink-2); font-size:12px; text-transform:uppercase; letter-spacing:.08em;">
+      <th style="padding:10px 8px;">Tên</th><th>SĐT</th><th>Điểm</th><th>Hạng</th><th>Sinh nhật</th><th>Tham gia</th>
+    </tr></thead>
+    <tbody>
+      <% @members.each do |m| %>
+        <tr style="border-top:1px solid var(--line);">
+          <td style="padding:12px 8px; font-weight:600;"><%= m.display_name %></td>
+          <td class="l-mono"><%= m.phone %></td>
+          <td><%= number_with_delimiter(m.points_balance) %></td>
+          <td><%= m.tier_key&.capitalize || "—" %></td>
+          <td style="color:var(--ink-2);"><%= m.birthday ? l(m.birthday, format: :short) : "—" %></td>
+          <td style="color:var(--ink-2);"><%= l(m.created_at.to_date, format: :short) %></td>
+        </tr>
+      <% end %>
+      <% if @members.empty? %><tr><td colspan="6" style="padding:20px; text-align:center; color:var(--ink-2);">Không có khách trong nhóm này.</td></tr><% end %>
+    </tbody>
+  </table>
+</div>

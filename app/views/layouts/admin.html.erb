@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="<%= I18n.locale %>">
+  <head>
+    <%= render "layouts/head" %>
+  </head>
+  <body>
+    <%# Fixed platform theme (indigo) — admin is not per-workspace themed. %>
+    <style>
+      :root {
+        --primary:#4B4DED; --primary-2:#7C7EF5; --on-primary:#F5F6FF;
+        --surface:#F5F6FA; --surface-2:#ECEEF5; --ink:#1C1E33; --ink-2:#5A5D77;
+        --line:#E1E4EF; --radius:16px;
+        --font-display:"Fraunces",Georgia,serif; --font-body:"Inter",ui-sans-serif,system-ui,sans-serif;
+      }
+    </style>
+    <% if flash[:notice] || flash[:alert] %>
+      <div class="l-flash"><%= flash[:notice] || flash[:alert] %></div>
+    <% end %>
+
+    <div class="l-shell">
+      <%= render "layouts/admin_sidebar" %>
+      <main class="l-main">
+        <header class="l-topbar">
+          <div class="title">
+            <%= content_for?(:title) ? yield(:title) : "Super Admin" %>
+            <span class="en">PLATFORM OPS</span>
+          </div>
+        </header>
+        <div class="l-content"><%= yield %></div>
+      </main>
+    </div>
+  </body>
+</html>

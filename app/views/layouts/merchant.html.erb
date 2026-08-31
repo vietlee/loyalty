@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="<%= I18n.locale %>">
+  <head>
+    <%= render "layouts/head" %>
+  </head>
+  <body>
+    <%= render "layouts/theme_vars", ws: current_workspace %>
+    <% if flash[:notice] || flash[:alert] %>
+      <div class="l-flash" data-controller="flash"><%= flash[:notice] || flash[:alert] %></div>
+    <% end %>
+
+    <div class="l-shell">
+      <%= render "layouts/merchant_sidebar" %>
+      <main class="l-main">
+        <header class="l-topbar">
+          <div class="title">
+            <%= content_for?(:title) ? yield(:title) : "Tổng quan" %>
+            <span class="en"><%= content_for?(:title_en) ? yield(:title_en) : "OVERVIEW" %></span>
+          </div>
+          <div style="margin-left:auto; display:flex; gap:8px; align-items:center;">
+            <%= link_to "VI", set_locale_path(:vi), class: "l-chip #{'l-chip-brand' if I18n.locale == :vi}" %>
+            <%= link_to "EN", set_locale_path(:en), class: "l-chip #{'l-chip-brand' if I18n.locale == :en}" %>
+          </div>
+        </header>
+        <div class="l-content"><%= yield %></div>
+      </main>
+    </div>
+  </body>
+</html>

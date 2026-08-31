@@ -1,0 +1,9 @@
+<% content_for :title, "Tích điểm" %>
+<% content_for :tab, "" %>
+<div class="l-screen" data-controller="pointburst" style="display:flex; flex-direction:column; align-items:center; justify-content:center; min-height:80vh; text-align:center;">
+  <div style="width:84px; height:84px; border-radius:50%; background:var(--good); color:#fff; display:grid; place-items:center; font-size:42px;">✓</div>
+  <h2 class="l-display" style="font-size:24px; margin-top:14px;">Tích điểm thành công</h2>
+  <div class="l-num" style="font-size:56px; color:var(--primary-ink);">+<%= number_with_delimiter(@result.points) %></div>
+  <p style="color:var(--ink-2);">Hoá đơn <%= number_with_delimiter(@charge.amount) %>đ · Số dư <strong><%= number_with_delimiter(current_member.points_balance) %></strong> điểm</p>
+  <%= link_to "Về trang chủ", member_root_path, class: "l-btn l-btn-primary l-btn-block", style: "margin-top:20px; max-width:360px;" %>
+</div>

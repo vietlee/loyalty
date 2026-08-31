@@ -1,0 +1,23 @@
+<% content_for :title, "Xác thực OTP" %>
+<div class="l-screen" style="display:flex; flex-direction:column; justify-content:center; min-height:100dvh;">
+  <div style="text-align:center; margin-bottom:24px;">
+    <div style="font-size:40px;">📩</div>
+    <h1 class="l-display" style="font-size:24px; margin-top:8px;">Nhập mã xác thực</h1>
+    <p style="color:var(--ink-2); font-size:14px;">Đã gửi tới <strong><%= @phone %></strong></p>
+  </div>
+
+  <% if @dev_code.present? %>
+    <div class="l-chip l-chip-brand" style="justify-content:center; margin-bottom:16px;">
+      DEV · mã của bạn là <strong style="margin-left:6px; letter-spacing:.2em;"><%= @dev_code %></strong>
+    </div>
+  <% end %>
+
+  <%= form_with url: member_verify_submit_path, method: :post do %>
+    <input type="text" name="code" inputmode="numeric" maxlength="6" autofocus
+           class="l-field" placeholder="000000"
+           style="text-align:center; font-size:28px; letter-spacing:.35em; margin-bottom:16px;">
+    <%= submit_tag "Xác nhận", class: "l-btn l-btn-primary l-btn-block" %>
+  <% end %>
+
+  <%= link_to "← Đổi số điện thoại", member_login_path, style: "display:block; text-align:center; color:var(--ink-2); font-size:13px; margin-top:16px; text-decoration:none;" %>
+</div>

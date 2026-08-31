@@ -1,0 +1,19 @@
+<% content_for :title, "Tổng quan nền tảng" %>
+<div class="l-kpis">
+  <div class="l-kpi"><div class="k">Workspaces</div><div class="v"><%= @workspaces_count %></div><div class="d"><%= @active_count %> active · <%= @trial_count %> trial</div></div>
+  <div class="l-kpi"><div class="k">Tổng thành viên</div><div class="v"><%= number_with_delimiter(@members_count) %></div><div class="d">toàn nền tảng</div></div>
+  <div class="l-kpi"><div class="k">Điểm phát hành</div><div class="v">0</div><div class="d">Phase 1+</div></div>
+  <div class="l-kpi"><div class="k">Cảnh báo</div><div class="v">0</div><div class="d">Monitoring</div></div>
+</div>
+
+<div class="l-panel" style="margin-top:20px;">
+  <h3 class="l-display" style="font-size:18px; margin-bottom:12px;">Workspace mới nhất</h3>
+  <% @recent.each do |ws| %>
+    <div style="display:flex; align-items:center; gap:12px; padding:10px 0; border-top:1px solid var(--line);">
+      <span style="width:30px; height:30px; border-radius:9px; background:<%= ws.theme_value(:primary) %>;"></span>
+      <div><strong><%= ws.name %></strong><div style="font-size:12px; color:var(--ink-2);"><%= ws.subdomain %> · <%= ws.industry %></div></div>
+      <span class="l-chip <%= 'l-chip-brand' if ws.active? %>" style="margin-left:auto;"><%= ws.status %></span>
+      <%= link_to "Xem", admin_workspace_path(ws), class: "l-btn l-btn-ghost", style: "padding:6px 12px;" %>
+    </div>
+  <% end %>
+</div>

@@ -1,0 +1,59 @@
+<% content_for :title, @campaign.name %>
+<% content_for :title_en, "CAMPAIGN" %>
+
+<div style="display:flex; align-items:center; gap:10px; margin-bottom:16px;">
+  <%= link_to "← Chiến dịch", merchant_campaigns_path, style: "color:var(--ink-2); font-size:13px; text-decoration:none;" %>
+  <span class="l-chip"><%= @campaign.type_label %></span>
+  <span class="l-chip <%= 'l-chip-brand' if @campaign.status == 'running' %>"><%= @campaign.status_label %></span>
+  <span class="l-chip"><%= @campaign.audience_label %></span>
+</div>
+
+<div style="display:grid; grid-template-columns:<%= @promo ? '1fr 360px' : '1fr' %>; gap:20px; align-items:start;">
+  <div class="l-panel">
+    <h2 class="l-display" style="font-size:22px;"><%= @campaign.name %></h2>
+    <% if @campaign.content_value("title").present? %>
+      <p style="font-weight:600; margin-top:10px;"><%= @campaign.content_value("title") %></p>
+      <p style="color:var(--ink-2); font-size:14px;"><%= @campaign.content_value("body") %></p>
+    <% end %>
+    <% if @campaign.reward %>
+      <div class="l-ticket" style="margin-top:16px; max-width:420px;">
+        <div class="stub"><div class="v"><%= @campaign.reward.value_label %></div><div class="u"><%= @campaign.reward.kind %></div></div>
+        <div class="perf"></div>
+        <div class="body"><div style="font-weight:700;"><%= @campaign.reward.display_icon %> <%= @campaign.reward.title %></div></div>
+      </div>
+    <% end %>
+    <div style="margin-top:16px; color:var(--ink-2); font-size:13px;">
+      Thời gian: <%= @campaign.starts_at ? l(@campaign.starts_at, format: :short) : "—" %> → <%= @campaign.ends_at ? l(@campaign.ends_at, format: :short) : "không giới hạn" %>
+    </div>
+  </div>
+
+  <% if @promo %>
+    <div>
+      <div class="l-panel" style="text-align:center;">
+        <div class="l-eyebrow">Mã QR phát hành</div>
+        <div style="display:inline-block; padding:14px; background:#fff; border:1px solid var(--line); border-radius:16px; margin-top:8px;">
+          <%= qr_svg(@promo_url, color: "1A1A1A", size: 190) %>
+        </div>
+        <div class="l-mono" style="margin-top:8px; font-size:13px;"><%= @promo.token %></div>
+        <%= link_to "⬇ Tải ảnh mã (SVG) để in", qr_merchant_campaign_path(@campaign), class: "l-btn l-btn-soft l-btn-block", style: "margin-top:12px;" %>
+        <p style="font-size:12px; color:var(--ink-2); margin-top:8px;">In trên poster / hoá đơn / đăng Zalo OA — khách quét là nhận voucher.</p>
+      </div>
+
+      <div class="l-panel" style="margin-top:16px;">
+        <div class="l-eyebrow" style="margin-bottom:10px;">Hiệu quả</div>
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+          <div><div class="l-num" style="font-size:26px;"><%= @promo.scan_count %></div><div style="font-size:12px; color:var(--ink-2);">Lượt quét</div></div>
+          <div><div class="l-num" style="font-size:26px;"><%= @promo.claims_count %></div><div style="font-size:12px; color:var(--ink-2);">Đã nhận<%= " / #{@promo.max_claims}" if @promo.max_claims %></div></div>
+          <div><div class="l-num" style="font-size:26px;"><%= @promo.used_count %></div><div style="font-size:12px; color:var(--ink-2);">Đã dùng</div></div>
+          <div><div class="l-num" style="font-size:26px;"><%= @promo.use_rate %>%</div><div style="font-size:12px; color:var(--ink-2);">Tỷ lệ dùng</div></div>
+        </div>
+        <% if @promo.remaining %>
+          <div style="margin-top:12px; height:8px; border-radius:999px; background:var(--surface-2); overflow:hidden;">
+            <div style="height:100%; width:<%= @promo.max_claims.zero? ? 0 : (@promo.claims_count.to_f / @promo.max_claims * 100).round %>%; background:var(--primary);"></div>
+          </div>
+          <div style="font-size:12px; color:var(--ink-2); margin-top:6px;">Còn <%= @promo.remaining %>/<%= @promo.max_claims %> lượt</div>
+        <% end %>
+      </div>
+    </div>
+  <% end %>
+</div>

@@ -1,0 +1,36 @@
+<% content_for :title, "Chiến dịch" %>
+<% content_for :title_en, "CAMPAIGNS" %>
+
+<div style="display:flex; justify-content:flex-end; margin-bottom:16px;">
+  <%= link_to "＋ Tạo chiến dịch", new_merchant_campaign_path, class: "l-btn l-btn-primary" %>
+</div>
+
+<% if @campaigns.empty? %>
+  <div class="l-panel" style="text-align:center; padding:48px;">
+    <div style="font-size:40px;">◈</div>
+    <h3 class="l-display" style="font-size:20px; margin-top:8px;">Chưa có chiến dịch</h3>
+    <p style="color:var(--ink-2);">Tạo chiến dịch đầu tiên — phát voucher qua mã QR, giờ vàng, nhân đôi điểm…</p>
+  </div>
+<% else %>
+  <div style="display:grid; grid-template-columns:repeat(auto-fill,minmax(280px,1fr)); gap:16px;">
+    <% @campaigns.each do |c| %>
+      <%= link_to merchant_campaign_path(c), class: "l-panel", style: "text-decoration:none; color:var(--ink);" do %>
+        <div style="display:flex; align-items:center; justify-content:space-between;">
+          <span class="l-chip"><%= c.type_label %></span>
+          <span class="l-chip <%= 'l-chip-brand' if c.status == 'running' %>"><%= c.status_label %></span>
+        </div>
+        <div class="l-display" style="font-size:18px; margin-top:10px;"><%= c.name %></div>
+        <div style="font-size:13px; color:var(--ink-2); margin-top:4px;">
+          <%= c.audience_label %><%= " · #{c.reward.title}" if c.reward %>
+        </div>
+        <% if (pc = c.promo_codes.first) %>
+          <div style="display:flex; gap:8px; margin-top:12px;">
+            <span class="l-chip">👁 <%= pc.scan_count %> quét</span>
+            <span class="l-chip">🎁 <%= pc.claims_count %> nhận</span>
+            <span class="l-chip">✓ <%= pc.used_count %> dùng</span>
+          </div>
+        <% end %>
+      <% end %>
+    <% end %>
+  </div>
+<% end %>

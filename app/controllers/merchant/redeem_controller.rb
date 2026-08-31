@@ -1,0 +1,39 @@
+module Merchant
+  class RedeemController < BaseController
+    # Step 1 — resolve the voucher from a scanned/typed use code (§6.4).
+    def lookup
+      token = params[:token].to_s.gsub(/\D/, "")
+      @voucher = token.present? ? Voucher.where(redeem_token: token).first : nil
+
+      if @voucher.nil?
+        @error = "Mã không hợp lệ hoặc đã hết hạn."
+        render :search, status: :unprocessable_entity
+      elsif @voucher.state == "used"
+        render :used   # already-used warning (with time)
+      elsif @voucher.redeem_token_expires_at.nil? || @voucher.redeem_token_expires_at < Time.current
+        @error = "Mã sử dụng đã hết hiệu lực. Khách vui lòng tạo lại mã."
+        render :search, status: :unprocessable_entity
+      else
+        render :confirm
+      end
+    end
+
+    # Step 2 — permanently mark the voucher used (anti-fraud lock).
+    def create
+      @voucher = Voucher.find_by(id: params[:voucher_id])
+      if @voucher.nil?
+        @error = "Không tìm thấy ưu đãi."
+        render :search, status: :unprocessable_entity
+      elsif @voucher.state == "used"
+        render :used
+      else
+        @voucher.mark_used!(outlet: current_membership&.outlet, staff: current_user)
+        render :success
+      end
+    end
+
+    private
+
+    def nav_key = :scanner
+  end
+end

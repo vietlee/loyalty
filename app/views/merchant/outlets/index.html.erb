@@ -1,0 +1,44 @@
+<% content_for :title, "Chi nhánh" %>
+<% content_for :title_en, "OUTLETS" %>
+
+<div style="display:grid; grid-template-columns:1fr 340px; gap:20px; align-items:start;">
+  <div>
+    <% if @outlets.empty? %>
+      <div class="l-panel" style="text-align:center; padding:40px; color:var(--ink-2);">Chưa có chi nhánh nào.</div>
+    <% else %>
+      <div style="display:grid; grid-template-columns:repeat(auto-fill,minmax(220px,1fr)); gap:14px;">
+        <% @outlets.each do |o| %>
+          <div class="l-panel" style="padding:16px; <%= 'opacity:.5;' unless o.active? %>">
+            <div style="display:flex; align-items:center; gap:8px;">
+              <span style="font-size:20px;">🏪</span>
+              <strong style="flex:1;"><%= o.name %></strong>
+              <% if o.code %><span class="l-chip"><%= o.code %></span><% end %>
+            </div>
+            <div style="font-size:13px; color:var(--ink-2); margin-top:8px;"><%= o.address %></div>
+            <% if o.phone %><div style="font-size:13px; color:var(--ink-2);">📞 <%= o.phone %></div><% end %>
+            <div style="display:flex; gap:8px; margin-top:12px;">
+              <%= link_to "Sửa", edit_merchant_outlet_path(o), class: "l-btn l-btn-ghost", style: "padding:6px 12px; font-size:13px;" %>
+              <%= button_to "Xoá", merchant_outlet_path(o), method: :delete, class: "l-btn l-btn-ghost", style: "padding:6px 12px; font-size:13px; color:var(--warn);", form: { data: { turbo_confirm: "Xoá chi nhánh?" } } %>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    <% end %>
+  </div>
+
+  <div class="l-panel" style="position:sticky; top:90px;">
+    <h3 class="l-display" style="font-size:18px; margin-bottom:12px;">Thêm chi nhánh</h3>
+    <%= form_with model: @outlet, url: merchant_outlets_path, method: :post do |f| %>
+      <label class="l-label">Tên chi nhánh</label>
+      <%= f.text_field :name, class: "l-field", placeholder: "VD: Chi nhánh Quận 1" %>
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-top:12px;">
+        <div><label class="l-label">Mã</label><%= f.text_field :code, class: "l-field", placeholder: "Q1" %></div>
+        <div><label class="l-label">SĐT</label><%= f.telephone_field :phone, class: "l-field" %></div>
+      </div>
+      <label class="l-label" style="margin-top:12px;">Địa chỉ</label>
+      <%= f.text_field :address, class: "l-field" %>
+      <%= f.hidden_field :active, value: true %>
+      <%= f.submit "Thêm chi nhánh", class: "l-btn l-btn-primary", style: "margin-top:14px;" %>
+    <% end %>
+  </div>
+</div>

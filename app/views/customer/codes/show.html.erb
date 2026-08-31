@@ -1,0 +1,45 @@
+<% content_for :title, "Mã của tôi" %>
+<% content_for :tab, "code" %>
+<% ink = current_workspace.theme_value(:ink).to_s.delete("#") %>
+
+<header class="l-appbar"><div class="nm l-display" style="font-size:22px;">Mã của tôi</div>
+  <%= link_to "Lịch sử", member_history_path, style: "margin-left:auto; color:var(--primary-ink); font-weight:600; font-size:13px; text-decoration:none;" %>
+</header>
+
+<div class="l-screen" style="display:flex; flex-direction:column; align-items:center;"
+     data-controller="mycode"
+     data-mycode-token-url-value="<%= member_my_code_token_path %>"
+     data-mycode-recent-url-value="<%= member_my_code_recent_path %>"
+     data-mycode-since-value="<%= @since %>"
+     data-mycode-ttl-value="<%= MemberQr::TTL %>">
+
+  <div class="l-tile" style="text-align:center; padding:26px 26px 20px; width:100%; position:relative; overflow:hidden;">
+    <div style="display:flex; align-items:center; gap:10px; justify-content:center; margin-bottom:16px;">
+      <div class="avatar" style="width:38px; height:38px; border-radius:12px; background:<%= @member.tier&.gradient_css || 'var(--primary)' %>; color:#fff; display:grid; place-items:center; font-weight:700;"><%= @member.initials %></div>
+      <div style="text-align:left;">
+        <div style="font-weight:700; line-height:1;"><%= @member.display_name %></div>
+        <div style="color:var(--ink-2); font-size:12px;"><%= @member.tier&.name %> · <%= @member.phone %></div>
+      </div>
+    </div>
+
+    <div data-mycode-target="qr" style="display:inline-block; padding:14px; background:#fff; border-radius:16px;">
+      <%= qr_svg(@token, color: ink, size: 210) %>
+    </div>
+
+    <div style="display:flex; align-items:center; justify-content:center; gap:8px; margin-top:14px; color:var(--ink-2); font-size:13px;">
+      <span style="width:8px; height:8px; border-radius:50%; background:var(--good); display:inline-block;"></span>
+      Mã tự làm mới sau <strong data-mycode-target="count" style="color:var(--ink);">45</strong>s
+    </div>
+
+    <%# +X điểm reveal overlay %>
+    <div data-mycode-target="burst" style="display:none; position:absolute; inset:0; background:color-mix(in srgb, var(--primary) 92%, #000); color:#fff; flex-direction:column; align-items:center; justify-content:center;">
+      <div style="font-size:15px; opacity:.85;">Bạn vừa nhận</div>
+      <div class="l-num" style="font-size:64px;">+<span data-mycode-target="burstPoints">0</span></div>
+      <div style="opacity:.85;">Số dư: <span data-mycode-target="burstBalance">0</span> điểm</div>
+    </div>
+  </div>
+
+  <p style="color:var(--ink-2); font-size:13px; text-align:center; margin-top:16px; max-width:280px;">
+    Đưa mã này cho nhân viên quét để tích điểm vào hoá đơn của <%= current_workspace.branding_value("customer_term") %>.
+  </p>
+</div>

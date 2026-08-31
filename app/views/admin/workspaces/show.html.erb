@@ -1,0 +1,33 @@
+<% content_for :title, @workspace.name %>
+<div style="display:grid; grid-template-columns:1fr 320px; gap:20px; align-items:start;">
+  <div class="l-panel">
+    <div style="display:flex; align-items:center; gap:12px; margin-bottom:16px;">
+      <span style="width:44px; height:44px; border-radius:12px; background:<%= @workspace.theme_value(:primary) %>;"></span>
+      <div><h2 class="l-display" style="font-size:22px;"><%= @workspace.name %></h2>
+        <div style="color:var(--ink-2); font-size:13px;"><%= @workspace.subdomain %> · <%= @workspace.industry %> · <%= @workspace.status_label %></div></div>
+    </div>
+    <div class="l-kpis">
+      <div class="l-kpi"><div class="k">Thành viên</div><div class="v"><%= number_with_delimiter(@members_count) %></div></div>
+      <div class="l-kpi"><div class="k">Điểm đã phát</div><div class="v"><%= number_with_delimiter(@points_issued) %></div></div>
+      <div class="l-kpi"><div class="k">Gói</div><div class="v" style="font-size:22px;"><%= @workspace.plan %></div><div class="d" style="color:var(--ink-2);"><%= number_with_delimiter(@workspace.monthly_price) %>đ/tháng</div></div>
+    </div>
+  </div>
+
+  <div class="l-panel">
+    <h3 class="l-display" style="font-size:18px; margin-bottom:10px;">Quản trị</h3>
+    <div style="display:flex; gap:8px; margin-bottom:16px;">
+      <% if @workspace.pending? || @workspace.status == "suspended" %>
+        <%= button_to "✓ Duyệt / Kích hoạt", approve_admin_workspace_path(@workspace), method: :patch, class: "l-btn l-btn-primary", style: "flex:1;" %>
+      <% elsif @workspace.active? %>
+        <%= button_to "Tạm ngưng", suspend_admin_workspace_path(@workspace), method: :patch, class: "l-btn l-btn-ghost", style: "flex:1;", form: { data: { turbo_confirm: "Tạm ngưng?" } } %>
+      <% end %>
+    </div>
+    <%= form_with model: @workspace, url: admin_workspace_path(@workspace), method: :patch do |f| %>
+      <label class="l-label">Trạng thái</label>
+      <%= f.select :status, Workspace::STATUSES.map { |s| [Workspace::STATUS_LABELS[s], s] }, {}, class: "l-field" %>
+      <label class="l-label" style="margin-top:12px;">Gói dịch vụ</label>
+      <%= f.select :plan, Workspace::PLANS.map { |p| [p, p] }, {}, class: "l-field" %>
+      <%= f.submit "Cập nhật", class: "l-btn l-btn-soft l-btn-block", style: "margin-top:16px;" %>
+    <% end %>
+  </div>
+</div>

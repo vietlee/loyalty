@@ -1,0 +1,21 @@
+<% content_for :title, "Máy quét tại quầy" %>
+<% content_for :title_en, "COUNTER SCANNER" %>
+
+<div style="max-width:560px; margin:0 auto;">
+  <div style="display:flex; gap:8px; margin-bottom:16px;">
+    <%= link_to "① Tích điểm", merchant_scanner_path(tab: "earn"),
+          class: "l-chip #{'l-chip-brand' if @tab == 'earn'}", data: { turbo_frame: "scan_tool" } %>
+    <%= link_to "② Xác thực ưu đãi", merchant_scanner_path(tab: "redeem"),
+          class: "l-chip #{'l-chip-brand' if @tab == 'redeem'}", data: { turbo_frame: "scan_tool" } %>
+    <% if current_program.scan_member? %>
+      <%= link_to "③ Tạo mã quầy", merchant_scanner_path(tab: "pos"),
+            class: "l-chip #{'l-chip-brand' if @tab == 'pos'}", data: { turbo_frame: "scan_tool" } %>
+    <% end %>
+  </div>
+
+  <div class="l-panel">
+    <%= turbo_frame_tag "scan_tool" do %>
+      <%= render "merchant/#{@tab}/search" %>
+    <% end %>
+  </div>
+</div>

@@ -1,0 +1,17 @@
+<% content_for :title, "Nhận ưu đãi" %>
+<% content_for :tab, "" %>
+<div class="l-screen" data-controller="pointburst" style="display:flex; flex-direction:column; align-items:center; justify-content:center; min-height:80vh; text-align:center;">
+  <div style="font-size:72px; animation:none;">🎁</div>
+  <h2 class="l-display" style="font-size:26px; margin-top:8px;">Bạn vừa nhận được ưu đãi!</h2>
+  <div class="l-ticket" style="margin:20px 0; width:100%; max-width:360px;">
+    <div class="stub"><div class="v"><%= @voucher.reward.value_label %></div><div class="u"><%= @voucher.reward.kind %></div></div>
+    <div class="perf"></div>
+    <div class="body" style="text-align:left;">
+      <div style="font-weight:700;"><%= @voucher.reward.display_icon %> <%= @voucher.reward.title %></div>
+      <div style="font-size:12px; color:var(--good); margin-top:4px;">✓ Đã lưu vào Ví thưởng</div>
+    </div>
+  </div>
+  <p style="color:var(--ink-2); font-size:13px;">Ưu đãi miễn phí — không trừ điểm của bạn.</p>
+  <%= link_to "Xem trong Ví thưởng", member_wallet_path, class: "l-btn l-btn-primary l-btn-block", style: "margin-top:18px; max-width:360px;" %>
+  <%= link_to "Quét mã khác", member_scan_path, style: "margin-top:12px; color:var(--ink-2); font-size:13px; text-decoration:none;" %>
+</div>

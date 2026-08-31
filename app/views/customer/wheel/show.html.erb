@@ -1,0 +1,41 @@
+<% content_for :title, "Vòng quay may mắn" %>
+<% content_for :tab, "" %>
+<% segs = @wheel.resolved_segments; n = segs.size; ang = 360.0 / n %>
+<header class="l-appbar">
+  <%= link_to "←", member_root_path, style: "font-size:22px; text-decoration:none; color:var(--ink);" %>
+  <div class="nm l-display" style="font-size:22px;">Vòng quay may mắn</div>
+</header>
+
+<div class="l-screen" data-controller="wheel"
+     data-wheel-spin-url-value="<%= member_wheel_spin_path %>"
+     data-wheel-count-value="<%= n %>"
+     data-wheel-cost-value="<%= @wheel.cost_points %>"
+     style="text-align:center;">
+
+  <div class="l-wheel-wrap">
+    <div class="l-wheel-pointer">▼</div>
+    <svg class="l-wheel" data-wheel-target="wheel" viewBox="0 0 200 200">
+      <% segs.each_with_index do |s, i| %>
+        <% a0 = (i * ang - 90) * Math::PI / 180; a1 = ((i + 1) * ang - 90) * Math::PI / 180 %>
+        <% x0 = 100 + 100 * Math.cos(a0); y0 = 100 + 100 * Math.sin(a0) %>
+        <% x1 = 100 + 100 * Math.cos(a1); y1 = 100 + 100 * Math.sin(a1) %>
+        <% mid = ((i + 0.5) * ang - 90) * Math::PI / 180 %>
+        <% tx = 100 + 62 * Math.cos(mid); ty = 100 + 62 * Math.sin(mid) %>
+        <path d="M100,100 L<%= x0.round(2) %>,<%= y0.round(2) %> A100,100 0 0,1 <%= x1.round(2) %>,<%= y1.round(2) %> Z" fill="<%= s['color'] %>"></path>
+        <text x="<%= tx.round(1) %>" y="<%= ty.round(1) %>" fill="#fff" font-size="8" font-weight="700"
+              text-anchor="middle" dominant-baseline="middle"
+              transform="rotate(<%= ((i + 0.5) * ang).round(1) %>, <%= tx.round(1) %>, <%= ty.round(1) %>)"><%= s['label'] %></text>
+      <% end %>
+    </svg>
+    <div class="l-wheel-hub">QUAY</div>
+  </div>
+
+  <div data-wheel-target="result" style="min-height:28px; margin:10px 0; font-weight:700; font-size:18px; color:var(--primary-ink);"></div>
+
+  <button class="l-btn l-btn-primary l-btn-block" data-wheel-target="btn" data-action="wheel#spin" style="max-width:340px; margin:0 auto;">
+    <%= @free ? "Quay miễn phí hôm nay 🎉" : "Quay (#{@wheel.cost_points} điểm)" %>
+  </button>
+  <p data-wheel-target="hint" style="color:var(--ink-2); font-size:13px; margin-top:10px;">
+    <%= @free ? "Bạn có 1 lượt quay miễn phí mỗi ngày." : "Đã dùng lượt miễn phí — quay thêm tốn #{@wheel.cost_points} điểm." %>
+  </p>
+</div>

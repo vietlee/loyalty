@@ -1,0 +1,21 @@
+<%= turbo_frame_tag "scan_tool" do %>
+  <div style="text-align:center; padding:14px 0;" data-controller="pointburst">
+    <div style="width:76px; height:76px; margin:0 auto 14px; border-radius:50%; background:var(--good); color:#fff; display:grid; place-items:center; font-size:38px;">✓</div>
+    <h3 class="l-display" style="font-size:22px;">Đã tích điểm thành công</h3>
+    <div class="l-num" style="font-size:46px; color:var(--primary-ink); margin:6px 0;">+<%= number_with_delimiter(@result.points) %></div>
+    <p style="color:var(--ink-2);">cho <strong><%= @member.display_name %></strong></p>
+
+    <div style="margin-top:16px; padding:16px; border-radius:16px; background:var(--surface-2); display:flex; justify-content:space-around;">
+      <div><div class="l-eyebrow">Hoá đơn</div><div style="font-weight:700;"><%= number_with_delimiter(@result.purchase.amount) %><%= current_program.currency == "VND" ? "đ" : " " + current_program.currency %></div></div>
+      <div><div class="l-eyebrow">Số dư mới</div><div style="font-weight:700;"><%= number_with_delimiter(@member.points_balance) %></div></div>
+      <div><div class="l-eyebrow">Hạng</div><div style="font-weight:700;"><%= @member.tier&.name %></div></div>
+    </div>
+
+    <% if @result.leveled_up %>
+      <div class="l-chip l-chip-brand" style="margin-top:14px;">🎉 Khách vừa thăng hạng <%= @result.tier_after&.name %>!</div>
+    <% end %>
+
+    <%= link_to "Giao dịch mới", merchant_scanner_path, class: "l-btn l-btn-primary l-btn-block",
+          style: "margin-top:18px;", data: { turbo_frame: "scan_tool" } %>
+  </div>
+<% end %>

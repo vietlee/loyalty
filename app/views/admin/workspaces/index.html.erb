@@ -1,0 +1,44 @@
+<% content_for :title, "Workspaces" %>
+
+<div style="display:flex; gap:8px; flex-wrap:wrap; margin-bottom:16px;">
+  <%= link_to "Tất cả · #{@counts.values.sum}", admin_workspaces_path,
+        class: "l-chip #{'l-chip-brand' if @status.nil?}" %>
+  <% Workspace::STATUSES.each do |s| %>
+    <%= link_to "#{Workspace::STATUS_LABELS[s]} · #{@counts[s] || 0}", admin_workspaces_path(status: s),
+          class: "l-chip #{'l-chip-brand' if @status == s}" %>
+  <% end %>
+</div>
+
+<div class="l-panel">
+  <table style="width:100%; border-collapse:collapse;">
+    <thead><tr style="text-align:left; color:var(--ink-2); font-size:12px; text-transform:uppercase; letter-spacing:.08em;">
+      <th style="padding:10px 8px;">Cửa hàng</th><th>Ngành</th><th>Gói</th><th>Trạng thái</th><th>Tạo</th><th></th>
+    </tr></thead>
+    <tbody>
+      <% @workspaces.each do |ws| %>
+        <tr style="border-top:1px solid var(--line);">
+          <td style="padding:12px 8px; display:flex; align-items:center; gap:10px;">
+            <span style="width:26px; height:26px; border-radius:8px; background:<%= ws.theme_value(:primary) %>;"></span>
+            <div><strong><%= ws.name %></strong><div style="font-size:11px; color:var(--ink-2);" class="l-mono"><%= ws.subdomain %></div></div>
+          </td>
+          <td><%= ws.industry %></td>
+          <td><%= ws.plan %></td>
+          <td>
+            <% color = { "active" => "var(--good)", "pending" => "var(--primary-2)", "past_due" => "var(--warn)", "suspended" => "var(--ink-2)", "trial" => "var(--primary)" }[ws.status] %>
+            <span class="l-chip" style="background:<%= color %>22; color:<%= color %>;"><%= ws.status_label %></span>
+          </td>
+          <td style="color:var(--ink-2);"><%= l(ws.created_at.to_date, format: :short) %></td>
+          <td style="text-align:right; white-space:nowrap;">
+            <% if ws.pending? || ws.status == "suspended" %>
+              <%= button_to "Duyệt", approve_admin_workspace_path(ws), method: :patch, class: "l-btn l-btn-primary", style: "padding:6px 12px; font-size:12px;" %>
+            <% elsif ws.active? %>
+              <%= button_to "Tạm ngưng", suspend_admin_workspace_path(ws), method: :patch, class: "l-btn l-btn-ghost", style: "padding:6px 12px; font-size:12px;", form: { data: { turbo_confirm: "Tạm ngưng workspace này?" } } %>
+            <% end %>
+            <%= link_to "Xem", admin_workspace_path(ws), class: "l-btn l-btn-ghost", style: "padding:6px 12px; font-size:12px;" %>
+          </td>
+        </tr>
+      <% end %>
+      <% if @workspaces.empty? %><tr><td colspan="6" style="padding:20px; text-align:center; color:var(--ink-2);">Không có workspace.</td></tr><% end %>
+    </tbody>
+  </table>
+</div>

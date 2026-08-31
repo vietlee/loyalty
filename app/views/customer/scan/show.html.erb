@@ -1,0 +1,33 @@
+<% content_for :title, "Quét mã" %>
+<% content_for :tab, "" %>
+
+<div class="l-screen" data-controller="qrnav" data-qrnav-resolve-url-value="<%= member_scan_resolve_path %>"
+     style="display:flex; flex-direction:column;">
+  <header class="l-appbar" style="padding-left:0;">
+    <%= link_to "←", member_root_path, style: "font-size:22px; text-decoration:none; color:var(--ink);" %>
+    <div class="nm l-display" style="font-size:22px;">Quét mã</div>
+  </header>
+
+  <div style="position:relative; aspect-ratio:1; border-radius:22px; overflow:hidden; background:#111; display:grid; place-items:center; margin-top:6px;">
+    <video data-qrnav-target="video" playsinline muted style="width:100%; height:100%; object-fit:cover;"></video>
+    <div data-qrnav-target="overlay" style="position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; color:#fff; text-align:center; padding:24px;">
+      <div style="max-width:240px;">
+        <div style="display:grid; place-items:center; margin-bottom:8px;"><%= ui_icon(:scan, size: 42) %></div>
+        <p style="font-size:13px; opacity:.85; line-height:1.4;">Quét mã tại quầy hoặc mã khuyến mãi để nhận ưu đãi</p>
+        <button type="button" class="l-btn l-btn-primary" style="margin-top:12px;" data-action="qrnav#start">Bật camera</button>
+      </div>
+    </div>
+    <div style="position:absolute; inset:16%; border:3px solid rgba(255,255,255,.75); border-radius:20px; pointer-events:none;"></div>
+  </div>
+  <p data-qrnav-target="status" style="text-align:center; color:var(--ink-2); font-size:12px; margin-top:8px;"></p>
+
+  <div style="display:flex; align-items:center; gap:10px; margin:16px 0; color:var(--ink-2); font-size:13px;">
+    <span style="flex:1; height:1px; background:var(--line);"></span> hoặc nhập mã <span style="flex:1; height:1px; background:var(--line);"></span>
+  </div>
+  <%= form_with url: member_scan_resolve_path, method: :get do %>
+    <div style="display:flex; gap:8px;">
+      <input name="code" class="l-field" placeholder="Nhập mã khuyến mãi" autocomplete="off">
+      <%= submit_tag "Nhận", class: "l-btn l-btn-primary", style: "white-space:nowrap;" %>
+    </div>
+  <% end %>
+</div>

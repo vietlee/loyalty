@@ -1,0 +1,26 @@
+<% admin = resource_name == :admin_user %>
+<h1><%= admin ? "Super Admin" : "Merchant" %></h1>
+<p class="sub"><%= admin ? "Đăng nhập vận hành nền tảng" : "Đăng nhập cửa hàng của bạn" %></p>
+
+<%= form_for(resource, as: resource_name, url: session_path(resource_name)) do |f| %>
+  <div class="field">
+    <%= f.label :email, "Email", class: "l-label" %>
+    <%= f.email_field :email, autofocus: true, autocomplete: "email", class: "l-field", placeholder: "you@example.com" %>
+  </div>
+  <div class="field">
+    <%= f.label :password, "Mật khẩu", class: "l-label" %>
+    <%= f.password_field :password, autocomplete: "current-password", class: "l-field", placeholder: "••••••••" %>
+  </div>
+  <% if devise_mapping.rememberable? %>
+    <label style="display:flex; align-items:center; gap:8px; font-size:13px; color:var(--ink-2); margin:6px 0 16px;">
+      <%= f.check_box :remember_me %> Ghi nhớ đăng nhập
+    </label>
+  <% end %>
+  <%= f.submit "Đăng nhập", class: "l-btn l-btn-primary l-btn-block" %>
+<% end %>
+
+<% unless admin %>
+  <p style="text-align:center; color:var(--ink-2); font-size:13px; margin-top:16px;">
+    Chưa có cửa hàng? <%= link_to "Đăng ký miễn phí", merchant_signup_path, style: "color:var(--primary-ink); font-weight:600;" %>
+  </p>
+<% end %>

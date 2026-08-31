@@ -1,0 +1,86 @@
+<% content_for :title, "Thương hiệu & Theme" %>
+<% content_for :title_en, "BRANDING" %>
+
+<div data-controller="theme-preview" style="display:grid; grid-template-columns:1fr 380px; gap:20px; align-items:start;">
+  <%# ---------------- Controls ---------------- %>
+  <div>
+    <div class="l-panel" style="margin-bottom:16px;">
+      <h3 class="l-display" style="font-size:18px; margin-bottom:10px;">Bộ theme mẫu</h3>
+      <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:10px;">
+        <% @presets.each do |key, p| %>
+          <%= button_to merchant_appearance_path, method: :patch, params: { preset: key }, class: "l-preset" do %>
+            <span class="sw">
+              <span style="background:<%= p['theme']['primary'] %>"></span>
+              <span style="background:<%= p['theme']['primary_2'] %>"></span>
+              <span style="background:<%= p['theme']['surface_2'] %>"></span>
+            </span>
+            <strong style="font-size:13px;"><%= p["label"] %></strong>
+          <% end %>
+        <% end %>
+      </div>
+    </div>
+
+    <%= form_with url: merchant_appearance_path, method: :patch do %>
+      <div class="l-panel" style="margin-bottom:16px;">
+        <h3 class="l-display" style="font-size:18px; margin-bottom:10px;">Màu sắc</h3>
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:14px;">
+          <% [["primary", "Màu chính"], ["primary_2", "Màu nhấn"], ["surface", "Nền"], ["ink", "Chữ"]].each do |k, label| %>
+            <div>
+              <label class="l-label"><%= label %></label>
+              <input type="color" name="theme[<%= k %>]" value="<%= current_workspace.theme_value(k) %>"
+                     data-theme-preview-target="<%= k %>" data-action="input->theme-preview#update"
+                     style="width:100%; height:44px; border:1px solid var(--line); border-radius:12px; background:#fff;">
+            </div>
+          <% end %>
+        </div>
+
+        <label class="l-label" style="margin-top:14px;">Bo góc</label>
+        <input type="range" name="theme[radius]" min="8" max="30"
+               value="<%= current_workspace.theme_value('radius').to_i %>"
+               data-theme-preview-target="radius" data-action="input->theme-preview#update"
+               style="width:100%;">
+      </div>
+
+      <div class="l-panel" style="margin-bottom:16px;">
+        <h3 class="l-display" style="font-size:18px; margin-bottom:10px;">Font & Giọng văn</h3>
+        <label class="l-label">Font tiêu đề (số điểm)</label>
+        <select name="theme[font_display]" class="l-field" data-theme-preview-target="fontDisplay" data-action="change->theme-preview#update">
+          <% Workspace::FONT_STACKS.keys.each do |fnt| %>
+            <option value="<%= fnt %>" <%= "selected" if current_workspace.theme_value('font_display') == fnt %>><%= fnt %></option>
+          <% end %>
+        </select>
+        <label class="l-label" style="margin-top:12px;">Font nội dung</label>
+        <select name="theme[font_body]" class="l-field" data-theme-preview-target="fontBody" data-action="change->theme-preview#update">
+          <% Workspace::FONT_STACKS.keys.each do |fnt| %>
+            <option value="<%= fnt %>" <%= "selected" if current_workspace.theme_value('font_body') == fnt %>><%= fnt %></option>
+          <% end %>
+        </select>
+
+        <label class="l-label" style="margin-top:12px;">Xưng hô với khách</label>
+        <input type="text" name="branding[customer_term]" value="<%= current_workspace.branding_value('customer_term') %>" class="l-field" placeholder="bạn / quý khách / Fan cứng">
+        <label class="l-label" style="margin-top:12px;">Tagline</label>
+        <input type="text" name="branding[tagline]" value="<%= current_workspace.branding_value('tagline') %>" class="l-field">
+      </div>
+
+      <%= submit_tag "Lưu giao diện", class: "l-btn l-btn-primary" %>
+    <% end %>
+  </div>
+
+  <%# ---------------- Live preview ---------------- %>
+  <div style="position:sticky; top:90px;">
+    <div class="l-eyebrow" style="margin-bottom:8px;">Xem trước · Customer app</div>
+    <div data-theme-preview-target="frame"
+         style="border-radius:26px; border:1px solid var(--line); padding:16px; background:var(--pv-surface, #FBF6EF); box-shadow:var(--shadow-lg);">
+      <div style="display:flex; align-items:center; gap:10px; margin-bottom:14px;">
+        <div style="width:38px; height:38px; border-radius:12px; background:var(--pv-primary,#8C4A2F); color:#fff; display:grid; place-items:center; font-weight:700; font-family:var(--pv-fd,'Fraunces');"><%= current_workspace.logo_initials %></div>
+        <strong style="color:var(--pv-ink,#3A2A20); font-family:var(--pv-fb,'Plus Jakarta Sans');"><%= current_workspace.name %></strong>
+      </div>
+      <div style="border-radius:var(--pv-radius,22px); padding:20px; color:#fff; background:linear-gradient(135deg, var(--pv-primary,#8C4A2F), color-mix(in srgb, var(--pv-primary,#8C4A2F) 55%, #000)); box-shadow:var(--shadow-lg);">
+        <div style="font-size:11px; letter-spacing:.14em; text-transform:uppercase; opacity:.85;">Điểm hiện có</div>
+        <div style="font-family:var(--pv-fd,'Fraunces'); font-size:42px; line-height:1;">2.480</div>
+        <div style="margin-top:14px; font-weight:600; letter-spacing:.04em;">NGUYỄN THUỲ LINH</div>
+      </div>
+      <button style="margin-top:14px; width:100%; padding:12px; border:none; border-radius:14px; color:#fff; font-weight:600; background:var(--pv-primary,#8C4A2F); font-family:var(--pv-fb,'Plus Jakarta Sans');">Đổi thưởng ngay</button>
+    </div>
+  </div>
+</div>

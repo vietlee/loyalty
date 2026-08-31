@@ -1,0 +1,30 @@
+<% content_for :title, "Thông báo đã gửi" %>
+<% content_for :title_en, "BROADCASTS" %>
+
+<div style="display:flex; justify-content:flex-end; margin-bottom:16px;">
+  <%= link_to "✉ Soạn thông báo", new_merchant_broadcast_path, class: "l-btn l-btn-primary" %>
+</div>
+
+<% if @broadcasts.empty? %>
+  <div class="l-panel" style="text-align:center; padding:48px;">
+    <div style="font-size:40px;">✉️</div>
+    <h3 class="l-display" style="font-size:20px; margin-top:8px;">Chưa gửi thông báo nào</h3>
+    <p style="color:var(--ink-2);">Chọn một nhóm khách và gửi ưu đãi nhắm đúng đối tượng.</p>
+  </div>
+<% else %>
+  <div class="l-panel">
+    <% @broadcasts.each do |b| %>
+      <div style="display:flex; align-items:center; gap:12px; padding:12px 0; border-top:1px solid var(--line);">
+        <span style="font-size:22px;"><%= MemberSegments.icon(b.segment_key) %></span>
+        <div style="flex:1; min-width:0;">
+          <div style="font-weight:700;"><%= b.title %></div>
+          <div style="font-size:13px; color:var(--ink-2);"><%= truncate(b.body.to_s, length: 70) %></div>
+        </div>
+        <div style="text-align:right;">
+          <div class="l-chip l-chip-brand"><%= b.sent_count %> khách</div>
+          <div style="font-size:11px; color:var(--ink-2); margin-top:4px;"><%= MemberSegments.label(b.segment_key) %> · <%= l(b.created_at, format: :short) %></div>
+        </div>
+      </div>
+    <% end %>
+  </div>
+<% end %>

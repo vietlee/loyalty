@@ -1,0 +1,83 @@
+<% content_for :title, "Gamification" %>
+<% content_for :title_en, "GAMES" %>
+
+<% unless @program.gamification_enabled %>
+  <div class="l-panel" style="margin-bottom:16px; display:flex; align-items:center; gap:12px;">
+    <span style="font-size:22px;">⚠️</span>
+    <div style="flex:1;">Gamification đang <strong>tắt</strong> cho workspace này. Bật trong Chương trình loyalty để khách thấy thẻ tem, nhiệm vụ, vòng quay.</div>
+    <%= link_to "Bật ngay", merchant_loyalty_program_path, class: "l-btn l-btn-soft" %>
+  </div>
+<% end %>
+
+<div style="display:grid; grid-template-columns:1fr 1fr; gap:20px; align-items:start;">
+  <%# ---- Stamp cards ---- %>
+  <div class="l-panel">
+    <h3 class="l-display" style="font-size:18px; margin-bottom:10px;">🎟️ Thẻ tem</h3>
+    <% @stamp_cards.each do |c| %>
+      <div style="display:flex; align-items:center; gap:10px; padding:8px 0; border-bottom:1px solid var(--line);">
+        <span style="font-size:20px;"><%= c.display_icon %></span>
+        <div style="flex:1;"><strong><%= c.title %></strong><div style="font-size:12px; color:var(--ink-2);">Mua <%= c.target_count %> · thưởng <%= c.reward&.title || "—" %></div></div>
+        <%= button_to "✕", merchant_stamp_card_path(c), method: :delete, class: "l-btn l-btn-ghost", style: "padding:4px 10px;", form: { data: { turbo_confirm: "Xoá thẻ tem?" } } %>
+      </div>
+    <% end %>
+    <%= form_with url: merchant_stamp_cards_path, method: :post, scope: :stamp_card do |f| %>
+      <input type="text" name="stamp_card[title]" class="l-field" placeholder="VD: Mua 9 ly tặng 1" style="margin-top:12px;">
+      <div style="display:grid; grid-template-columns:80px 1fr; gap:8px; margin-top:8px;">
+        <%= f.number_field :target_count, value: 9, class: "l-field", placeholder: "Số" %>
+        <%= f.select :reward_id, @rewards.map { |r| ["Thưởng: #{r.title}", r.id] }, { include_blank: "Phần thưởng —" }, class: "l-field" %>
+      </div>
+      <input type="text" name="stamp_card[icon]" class="l-field" placeholder="Icon 🧋" style="margin-top:8px;">
+      <%= f.hidden_field :active, value: true %>
+      <%= f.submit "Thêm thẻ tem", class: "l-btn l-btn-primary", style: "margin-top:10px;" %>
+    <% end %>
+  </div>
+
+  <%# ---- Missions ---- %>
+  <div class="l-panel">
+    <h3 class="l-display" style="font-size:18px; margin-bottom:10px;">🎯 Nhiệm vụ</h3>
+    <% @missions.each do |m| %>
+      <div style="display:flex; align-items:center; gap:10px; padding:8px 0; border-bottom:1px solid var(--line);">
+        <span style="font-size:20px;"><%= m.display_icon %></span>
+        <div style="flex:1;"><strong><%= m.title %></strong><div style="font-size:12px; color:var(--ink-2);"><%= m.period == 'daily' ? 'Hàng ngày' : 'Hàng tuần' %> · +<%= m.reward_points %> điểm</div></div>
+        <%= button_to "✕", merchant_mission_path(m), method: :delete, class: "l-btn l-btn-ghost", style: "padding:4px 10px;", form: { data: { turbo_confirm: "Xoá nhiệm vụ?" } } %>
+      </div>
+    <% end %>
+    <%= form_with url: merchant_missions_path, method: :post, scope: :mission do |f| %>
+      <input type="text" name="mission[title]" class="l-field" placeholder="VD: Check-in hôm nay" style="margin-top:12px;">
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-top:8px;">
+        <%= f.select :mission_type, [["Check-in", "checkin"], ["Chi tiêu", "spend"], ["Ghé thăm", "visit"]], {}, class: "l-field" %>
+        <%= f.select :period, [["Hàng ngày", "daily"], ["Hàng tuần", "weekly"]], {}, class: "l-field" %>
+      </div>
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-top:8px;">
+        <%= f.number_field :goal, value: 1, class: "l-field", placeholder: "Mục tiêu" %>
+        <%= f.number_field :reward_points, value: 20, class: "l-field", placeholder: "Điểm" %>
+      </div>
+      <%= f.hidden_field :active, value: true %>
+      <%= f.submit "Thêm nhiệm vụ", class: "l-btn l-btn-primary", style: "margin-top:10px;" %>
+    <% end %>
+  </div>
+
+  <%# ---- Badges ---- %>
+  <div class="l-panel">
+    <h3 class="l-display" style="font-size:18px; margin-bottom:10px;">🏅 Huy hiệu</h3>
+    <div class="l-badge-grid">
+      <% @badges.each do |b| %>
+        <div class="l-badge"><div class="ic"><%= b.display_icon %></div><div class="nm"><%= b.name %></div></div>
+      <% end %>
+    </div>
+    <p style="font-size:12px; color:var(--ink-2); margin-top:10px;">Huy hiệu tự trao khi khách đạt điều kiện (mua lần đầu, mua nhiều, điểm tích luỹ, cú đêm).</p>
+  </div>
+
+  <%# ---- Lucky wheel ---- %>
+  <div class="l-panel">
+    <h3 class="l-display" style="font-size:18px; margin-bottom:10px;">🎡 Vòng quay may mắn</h3>
+    <div style="display:flex; flex-wrap:wrap; gap:8px;">
+      <% @wheel.resolved_segments.each do |s| %>
+        <span class="l-chip" style="background:<%= s['color'] %>22; color:var(--ink);">
+          <span style="width:10px; height:10px; border-radius:50%; background:<%= s['color'] %>; display:inline-block; margin-right:6px;"></span><%= s['label'] %> · <%= s['weight'] %>%
+        </span>
+      <% end %>
+    </div>
+    <p style="font-size:12px; color:var(--ink-2); margin-top:10px;">1 lượt quay miễn phí mỗi ngày · quay thêm tốn <%= @wheel.cost_points %> điểm.</p>
+  </div>
+</div>

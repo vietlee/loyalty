@@ -1,0 +1,42 @@
+<% content_for :title, "Dynamic Loyalty — Launcher" %>
+<div class="l-launch">
+  <div class="l-eyebrow">Loyalty-as-a-Service · Dev launcher</div>
+  <h1 class="l-display">Dynamic Loyalty</h1>
+  <p style="color:var(--ink-2); max-width:560px; margin-top:8px;">
+    Một nền tảng lõi, mỗi cửa hàng là một workspace thương hiệu riêng. Chọn một app bên dưới để xem
+    (tenant giải quyết qua subdomain <code>shop.lvh.me</code> hoặc đường dẫn <code>/w/:slug</code>).
+  </p>
+
+  <div class="l-navgrp" style="color:var(--ink-2); margin-top:28px;">Bảng điều hành</div>
+  <div class="grid">
+    <%= link_to merchant_root_path, class: "l-tile", style: "text-decoration:none; color:var(--ink);" do %>
+      <div style="font-size:26px;">🛍️</div>
+      <div style="font-weight:700; margin-top:8px;">Merchant Dashboard</div>
+      <div style="color:var(--ink-2); font-size:13px;">Cấu hình chương trình, campaign, quét mã</div>
+    <% end %>
+    <%= link_to admin_root_path, class: "l-tile", style: "text-decoration:none; color:var(--ink);" do %>
+      <div style="font-size:26px;">🛡️</div>
+      <div style="font-weight:700; margin-top:8px;">Super Admin</div>
+      <div style="color:var(--ink-2); font-size:13px;">Vận hành nền tảng, duyệt workspace</div>
+    <% end %>
+  </div>
+
+  <div class="l-navgrp" style="color:var(--ink-2); margin-top:28px;">Customer App theo cửa hàng</div>
+  <div class="grid">
+    <% @workspaces.each do |ws| %>
+      <%= link_to member_root_path(workspace_slug: ws.slug), class: "l-tile", style: "text-decoration:none; color:var(--ink);" do %>
+        <div class="l-preset" style="border:none; padding:0;">
+          <div class="sw">
+            <span style="background:<%= ws.theme_value(:primary) %>"></span>
+            <span style="background:<%= ws.theme_value(:primary_2) %>"></span>
+            <span style="background:<%= ws.theme_value(:surface_2) %>"></span>
+          </div>
+        </div>
+        <div style="font-weight:700; margin-top:4px;"><%= ws.name %></div>
+        <div style="color:var(--ink-2); font-size:13px;">
+          <%= ws.industry.upcase %> · <%= ws.subdomain %>.lvh.me
+        </div>
+      <% end %>
+    <% end %>
+  </div>
+</div>

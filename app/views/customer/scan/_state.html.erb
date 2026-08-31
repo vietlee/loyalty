@@ -1,0 +1,9 @@
+<div class="l-screen" style="display:flex; flex-direction:column; align-items:center; justify-content:center; min-height:80vh; text-align:center;">
+  <div style="font-size:60px;"><%= icon %></div>
+  <h2 class="l-display" style="font-size:22px; margin-top:10px;"><%= title %></h2>
+  <p style="color:var(--ink-2); font-size:14px; margin-top:6px; max-width:300px;"><%= message %></p>
+  <div style="display:flex; gap:10px; margin-top:20px;">
+    <%= link_to "Ví thưởng", member_wallet_path, class: "l-btn l-btn-ghost" %>
+    <%= link_to "Quét mã khác", member_scan_path, class: "l-btn l-btn-primary" %>
+  </div>
+</div>

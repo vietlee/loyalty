@@ -1,0 +1,34 @@
+<% nav = defined?(nav_key) ? nav_key : nil %>
+<aside class="l-side">
+  <div class="brand">
+    <div class="logo">DL</div>
+    <div>
+      <div class="nm">Dynamic Loyalty</div>
+      <div class="sub">Super Admin</div>
+    </div>
+  </div>
+
+  <div class="l-navgrp">Nền tảng</div>
+  <%= link_to admin_root_path, class: "l-nav-item #{'active' if nav == :dashboard}" do %>
+    <span>▣</span><span>Tổng quan<span class="en">Overview</span></span>
+  <% end %>
+  <%= link_to admin_workspaces_path, class: "l-nav-item #{'active' if nav == :workspaces}" do %>
+    <span>▦</span><span>Workspaces<span class="en">Tenants</span></span>
+  <% end %>
+  <%= link_to admin_monitoring_path, class: "l-nav-item #{'active' if nav == :monitoring}" do %>
+    <span>◎</span><span>Giám sát<span class="en">Monitoring</span></span>
+  <% end %>
+  <%= link_to admin_billing_path, class: "l-nav-item #{'active' if nav == :billing}" do %>
+    <span>◈</span><span>Gói &amp; Billing<span class="en">Billing</span></span>
+  <% end %>
+
+  <div class="foot">
+    <div class="av"><%= current_admin_user&.initials %></div>
+    <div style="min-width:0;">
+      <div style="font-size:13px; font-weight:600;"><%= current_admin_user&.name %></div>
+      <div style="font-size:11px; opacity:.6;">Operator</div>
+    </div>
+    <%= button_to "⎋", destroy_admin_user_session_path, method: :delete,
+          style: "margin-left:auto;background:none;border:none;color:#EDE4D8;cursor:pointer;font-size:16px;" %>
+  </div>
+</aside>

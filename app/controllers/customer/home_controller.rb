@@ -1,0 +1,23 @@
+module Customer
+  class HomeController < BaseController
+    def show
+      if current_workspace.nil?
+        @workspaces = Workspace.order(:name).to_a
+        render "customer/home/launcher", layout: "launcher"
+      elsif !member_signed_in? || current_member&.workspace_id != current_workspace.id
+        redirect_to member_login_path
+      else
+        @member = current_member
+        @tier   = @member.tier
+        @unread = @member.notifications.unread.count
+        prog = current_workspace.program
+        if prog.gamification_enabled
+          @missions = current_workspace.missions.active.ordered.where(period: "daily").limit(3).to_a
+          @progress = @missions.index_with { |m| m.progress_for(@member) }
+          @has_stamps = current_workspace.stamp_cards.active.exists?
+        end
+        render :show
+      end
+    end
+  end
+end

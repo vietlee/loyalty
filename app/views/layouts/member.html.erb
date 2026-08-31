@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="<%= I18n.locale %>">
+  <head>
+    <%= render "layouts/head" %>
+    <% if current_workspace %>
+      <link rel="manifest" href="<%= pwa_manifest_path(host: request.host_with_port) %>">
+      <meta name="theme-color" content="<%= current_workspace.theme_value(:primary) %>">
+    <% end %>
+  </head>
+  <body>
+    <%= render "layouts/theme_vars", ws: current_workspace %>
+    <% if flash[:notice] || flash[:alert] %>
+      <div class="l-flash" data-controller="flash"><%= flash[:notice] || flash[:alert] %></div>
+    <% end %>
+
+    <div class="l-phone">
+      <%= yield %>
+      <% if current_workspace && member_signed_in? %>
+        <%= render "layouts/member_tabbar" %>
+      <% end %>
+    </div>
+  </body>
+</html>

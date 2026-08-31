@@ -1,0 +1,36 @@
+<% content_for :title, "Tổng quan" %>
+<% content_for :title_en, "DASHBOARD" %>
+
+<div class="l-kpis">
+  <div class="l-kpi"><div class="k">Thành viên</div><div class="v"><%= number_with_delimiter(@members_count) %></div><div class="d">đang hoạt động</div></div>
+  <div class="l-kpi"><div class="k">Điểm đã phát</div><div class="v"><%= number_with_delimiter(@points_issued) %></div><div class="d"><%= @purchases_count %> giao dịch</div></div>
+  <div class="l-kpi"><div class="k">Điểm đã đổi</div><div class="v"><%= number_with_delimiter(@points_redeemed) %></div><div class="d">Phase 2</div></div>
+  <div class="l-kpi"><div class="k">Chi nhánh</div><div class="v"><%= @outlets_count %></div><div class="d">outlets</div></div>
+</div>
+
+<div style="display:grid; grid-template-columns:1.4fr 1fr; gap:16px; margin-top:20px;">
+  <div class="l-panel">
+    <h3 class="l-display" style="font-size:18px; margin-bottom:4px;">Chương trình loyalty</h3>
+    <p style="color:var(--ink-2); font-size:14px; margin-bottom:16px;">Cơ chế đang bật cho workspace này.</p>
+    <% if @program %>
+      <div style="display:flex; gap:8px; flex-wrap:wrap;">
+        <% { "Points" => @program.points_enabled, "Tiers" => @program.tiers_enabled, "Stamp" => @program.stamps_enabled, "Gamification" => @program.gamification_enabled }.each do |label, on| %>
+          <span class="l-chip <%= 'l-chip-brand' if on %>"><%= on ? "●" : "○" %> <%= label %></span>
+        <% end %>
+      </div>
+      <p style="margin-top:16px; color:var(--ink-2);">Tỷ lệ tích điểm: <strong><%= @program.earn_rate_label %></strong></p>
+      <%= link_to "Cấu hình chương trình →", merchant_loyalty_program_path, class: "l-btn l-btn-soft", style: "margin-top:16px;" %>
+    <% end %>
+  </div>
+
+  <div class="l-panel">
+    <h3 class="l-display" style="font-size:18px; margin-bottom:10px;">Hạng thành viên</h3>
+    <% @tiers.each do |t| %>
+      <div style="display:flex; align-items:center; gap:10px; padding:8px 0; border-bottom:1px solid var(--line);">
+        <span style="width:26px; height:26px; border-radius:8px; background:<%= t.gradient_css %>;"></span>
+        <strong><%= t.name %></strong>
+        <span style="margin-left:auto; color:var(--ink-2);"><%= number_with_delimiter(t.threshold_points) %> điểm</span>
+      </div>
+    <% end %>
+  </div>
+</div>
