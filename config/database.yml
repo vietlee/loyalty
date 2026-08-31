@@ -81,5 +81,6 @@ test:
 production:
   <<: *default
   database: loyalty_production
+  host: localhost
   username: loyalty
   password: <%= ENV["LOYALTY_DATABASE_PASSWORD"] %>

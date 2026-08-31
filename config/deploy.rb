@@ -1,9 +1,7 @@
 lock "~> 3.18"
 
 set :application, "loyalty"
-# Server-local bare repo (no GitHub needed). Push with:
-#   git push production main
-set :repo_url,    "/home/deploy/repos/loyalty.git"
+set :repo_url,    "git@github.com:vietlee/loyalty.git"
 
 set :deploy_to,   "/var/www/loyalty"
 set :branch,      ENV.fetch("BRANCH", "main")
