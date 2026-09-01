@@ -4,9 +4,10 @@ import { Controller } from "@hotwired/stimulus"
 export default class extends Controller {
   static targets = ["item"]
 
+  // Entrance is CSS-driven (keyframe), so the toast is visible even if JS is
+  // delayed. Here we only schedule auto-dismiss and wire the close button.
   connect() {
     this.itemTargets.forEach((el) => {
-      requestAnimationFrame(() => el.classList.add("show"))
       el._toastTimer = setTimeout(() => this.dismiss(el), 4000)
     })
   }
@@ -16,10 +17,10 @@ export default class extends Controller {
   dismiss(el) {
     if (!el) return
     clearTimeout(el._toastTimer)
-    el.classList.remove("show")
+    el.classList.add("leaving")
     setTimeout(() => {
       el.remove()
       if (this.element.childElementCount === 0) this.element.remove()
-    }, 340)
+    }, 320)
   }
 }
