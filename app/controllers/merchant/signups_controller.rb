@@ -41,7 +41,8 @@ module Merchant
         sign_in(:user, owner)
         session[:workspace_id] = @workspace.id
       end
-      redirect_to merchant_root_path, notice: "Chào mừng! Workspace của bạn đang chờ duyệt — bạn vẫn có thể thiết lập ngay."
+      redirect_to merchant_url_for(@workspace), allow_other_host: true,
+                  notice: "Chào mừng! Workspace của bạn đang chờ duyệt — bạn vẫn có thể thiết lập ngay."
     rescue ActiveRecord::RecordInvalid
       render :new, status: :unprocessable_entity
     end

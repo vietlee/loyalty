@@ -19,11 +19,25 @@ module Merchant
 
     def set_current_workspace
       return unless current_user
-      if session[:workspace_id].present?
+      # The shop subdomain (or custom domain) is authoritative when the owner
+      # can access that workspace — so cozycafe.loyalty.czin.net/merchant always
+      # manages Cozy Cafe, regardless of any stale session selection.
+      host_ws = workspace_from_host
+      if host_ws && accessible_workspaces.any? { |w| w.id == host_ws.id }
+        @current_workspace = host_ws
+      elsif session[:workspace_id].present?
         @current_workspace = accessible_workspaces.find { |w| w.id == session[:workspace_id].to_i }
       end
       @current_workspace ||= accessible_workspaces.first
       session[:workspace_id] = @current_workspace&.id
+    end
+
+    def workspace_from_host
+      sub = request.subdomains.first
+      unless sub.blank? || TenantResolver::RESERVED_SUBDOMAINS.include?(sub)
+        ws = Workspace.find_by(subdomain: sub)
+      end
+      ws || Workspace.find_by(custom_domain: request.host)
     end
 
     def scope_tenant
