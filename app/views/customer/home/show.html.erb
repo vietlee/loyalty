@@ -34,24 +34,44 @@
     </div>
   <% end %>
 
-  <%# ---- Quick actions ---- %>
+  <%# ---- Quick actions — engaging shortcuts (My code + Scan already live in the
+        tab bar, so we promote reward/progress/game features here instead). ---- %>
+  <% prog = current_workspace.program %>
+  <%
+    tiles = []
+    tiles << [:tier,          member_tier_path,          :medal,   t("customer.home.q_tier")]
+    tiles << [:wallet,        member_wallet_path,        :gift,    t("customer.home.q_wallet")]
+    tiles << [:wheel,         member_wheel_path,         :wheel,   t("customer.home.q_wheel")]     if prog.gamification_enabled
+    tiles << [:missions,      member_missions_path,      :target,  t("customer.home.q_missions")]  if prog.gamification_enabled
+    tiles << [:refer,         member_refer_path,         :users,   t("customer.home.q_invite")]    if prog.referral_enabled
+    tiles << [:history,       member_history_path,       :history, t("customer.home.q_history")]
+    tiles << [:notifications, member_notifications_path, :bell,    t("customer.home.q_notifications")]
+    tiles = tiles.first(4)
+    used  = tiles.map(&:first)
+  %>
   <div class="l-quick">
-    <%= link_to member_my_code_path do %><span class="ic"><%= ui_icon(:qrcode, size: 26) %></span><%= t("customer.home.q_my_code") %><% end %>
-    <%= link_to member_scan_path do %><span class="ic"><%= ui_icon(:scan, size: 26) %></span><%= t("customer.home.q_scan") %><% end %>
-    <%= link_to member_wallet_path do %><span class="ic"><%= ui_icon(:gift, size: 26) %></span><%= t("customer.home.q_wallet") %><% end %>
-    <%= link_to member_wheel_path do %><span class="ic"><%= ui_icon(:wheel, size: 26) %></span><%= t("customer.home.q_wheel") %><% end %>
+    <% tiles.each do |_key, path, icon, label| %>
+      <%= link_to path do %><span class="ic"><%= ui_icon(icon, size: 26) %></span><%= label %><% end %>
+    <% end %>
   </div>
 
-  <div style="display:flex; gap:8px; margin-top:12px; overflow-x:auto;">
-    <% if current_workspace.program.gamification_enabled %>
-      <% if @has_stamps %><%= link_to member_stamps_path, class: "l-chip", style: "flex:none;" do %><%= ui_icon(:stamp, size: 15) %> <%= t("customer.home.chip_stamps") %><% end %><% end %>
-      <%= link_to member_missions_path, class: "l-chip", style: "flex:none;" do %><%= ui_icon(:target, size: 15) %> <%= t("customer.home.chip_missions") %><% end %>
-      <%= link_to member_badges_path, class: "l-chip", style: "flex:none;" do %><%= ui_icon(:medal, size: 15) %> <%= t("customer.home.chip_badges") %><% end %>
-    <% end %>
-    <% if current_workspace.program.referral_enabled %>
-      <%= link_to member_refer_path, class: "l-chip", style: "flex:none;" do %><%= ui_icon(:users, size: 15) %> <%= t("customer.home.chip_refer") %><% end %>
-    <% end %>
-  </div>
+  <%# ---- Secondary chips: only features NOT already promoted into the tiles ---- %>
+  <%
+    chips = []
+    if prog.gamification_enabled
+      chips << [member_stamps_path,   :stamp,  t("customer.home.chip_stamps")] if @has_stamps
+      chips << [member_missions_path, :target, t("customer.home.chip_missions")] unless used.include?(:missions)
+      chips << [member_badges_path,   :medal,  t("customer.home.chip_badges")]
+    end
+    chips << [member_refer_path, :users, t("customer.home.chip_refer")] if prog.referral_enabled && !used.include?(:refer)
+  %>
+  <% if chips.any? %>
+    <div style="display:flex; gap:8px; margin-top:12px; overflow-x:auto;">
+      <% chips.each do |path, icon, label| %>
+        <%= link_to path, class: "l-chip", style: "flex:none;" do %><%= ui_icon(icon, size: 15) %> <%= label %><% end %>
+      <% end %>
+    </div>
+  <% end %>
 
   <%# ---- Offers carousel (demo content; wired in later phases) ---- %>
   <div class="l-section-h"><h3><%= t("customer.home.offers_title", term: current_workspace.branding_value("customer_term")) %></h3><%= link_to t("customer.common.all"), member_wallet_path %></div>
