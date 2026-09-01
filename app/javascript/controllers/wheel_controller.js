@@ -11,6 +11,7 @@ export default class extends Controller {
   async spin() {
     if (this.spinning) return
     this.spinning = true
+    this.audio() // unlock/resume AudioContext inside the user gesture (mobile/iOS)
     this.btnTarget.disabled = true
     this.resultTarget.textContent = ""
 

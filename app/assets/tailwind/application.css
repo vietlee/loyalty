@@ -269,9 +269,11 @@ a.l-chip-brand:hover, button.l-chip-brand:hover { background: color-mix(in srgb,
 .l-badge .nm { font-size:12px; font-weight:600; margin-top:6px; }
 
 /* ---- lucky wheel ---- */
-.l-wheel-wrap { position:relative; width:280px; height:280px; margin:10px auto; }
+.l-wheel-wrap { position:relative; width:280px; height:280px; margin:10px auto; border-radius:50%; box-shadow:var(--shadow-lg); }
 .l-wheel { width:100%; height:100%; border-radius:50%; transition:transform 4s cubic-bezier(.15,.85,.25,1);
-  box-shadow:var(--shadow-lg); border:8px solid #fff; }
+  border:8px solid #fff; box-sizing:border-box;
+  /* force a clean circular raster while rotating (removes square GPU-tile artifacts on mobile/PWA) */
+  clip-path: circle(50%); -webkit-backface-visibility:hidden; backface-visibility:hidden; will-change:transform; }
 .l-wheel-pointer { position:absolute; top:-6px; left:50%; transform:translateX(-50%); font-size:30px; z-index:2; filter:drop-shadow(0 2px 3px rgba(0,0,0,.3)); }
 .l-wheel-hub { position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); width:56px; height:56px;
   border-radius:50%; background:#fff; box-shadow:var(--shadow); display:grid; place-items:center; font-weight:800; color:var(--primary); z-index:2; }
