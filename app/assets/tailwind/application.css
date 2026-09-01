@@ -128,6 +128,18 @@ body {
 .l-tabbar .scan-fab { justify-self:center; margin-top:-26px; background: var(--primary); color: var(--on-primary);
   width:56px; height:56px; border-radius:18px; display:grid; place-items:center; box-shadow:0 10px 24px color-mix(in srgb,var(--primary) 45%,transparent); }
 
+/* ===================== SCROLLBARS (subtle) ===================== */
+* { scrollbar-width: thin; scrollbar-color: rgba(120,120,130,.3) transparent; }
+*::-webkit-scrollbar { width: 8px; height: 8px; }
+*::-webkit-scrollbar-track { background: transparent; }
+*::-webkit-scrollbar-thumb { background: rgba(120,120,130,.28); border-radius: 8px; }
+*::-webkit-scrollbar-thumb:hover { background: rgba(120,120,130,.5); }
+.l-side { scrollbar-color: rgba(255,255,255,.18) transparent; }
+.l-side::-webkit-scrollbar-thumb { background: rgba(255,255,255,.16); }
+.l-side::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,.3); }
+.l-carousel::-webkit-scrollbar, .l-phone::-webkit-scrollbar { display: none; }
+.l-carousel, .l-phone { scrollbar-width: none; }
+
 /* =====================================================================
    MERCHANT / ADMIN — dashboard shell
    ===================================================================== */
