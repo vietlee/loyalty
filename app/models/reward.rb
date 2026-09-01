@@ -28,7 +28,7 @@ class Reward < ApplicationRecord
   def value_label
     case value_unit
     when "percent" then "-#{value}%"
-    when "item"    then "Miễn phí"
+    when "item"    then I18n.t("customer.reward.free")
     else "-#{ActiveSupport::NumberHelper.number_to_delimited(value)}đ"
     end
   end

@@ -27,15 +27,7 @@ class PointTransaction < ApplicationRecord
   def icon = ICONS[kind] || "•"
 
   def title
-    case kind
-    when "earn"     then "Tích điểm từ hoá đơn"
-    when "redeem"   then "Đổi thưởng"
-    when "referral" then "Thưởng giới thiệu"
-    when "mission"  then "Hoàn thành nhiệm vụ"
-    when "game"     then "Thưởng minigame"
-    when "birthday" then "Quà sinh nhật"
-    when "expire"   then "Điểm hết hạn"
-    else note.presence || "Điều chỉnh điểm"
-    end
+    return note if note.present? && kind == "adjust"
+    I18n.t("customer.tx.#{kind}", default: I18n.t("customer.tx.adjust"))
   end
 end

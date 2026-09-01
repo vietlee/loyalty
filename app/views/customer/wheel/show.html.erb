@@ -1,9 +1,9 @@
-<% content_for :title, "Vòng quay may mắn" %>
+<% content_for :title, t("customer.wheel.title") %>
 <% content_for :tab, "" %>
 <% segs = @wheel.resolved_segments; n = segs.size; ang = 360.0 / n %>
 <header class="l-appbar">
   <%= link_to "←", member_root_path, style: "font-size:22px; text-decoration:none; color:var(--ink);" %>
-  <div class="nm l-display" style="font-size:22px;">Vòng quay may mắn</div>
+  <div class="nm l-display" style="font-size:22px;"><%= t("customer.wheel.title") %></div>
 </header>
 
 <div class="l-screen" data-controller="wheel"
@@ -27,15 +27,15 @@
               transform="rotate(<%= ((i + 0.5) * ang).round(1) %>, <%= tx.round(1) %>, <%= ty.round(1) %>)"><%= s['label'] %></text>
       <% end %>
     </svg>
-    <div class="l-wheel-hub">QUAY</div>
+    <div class="l-wheel-hub"><%= t("customer.wheel.hub") %></div>
   </div>
 
   <div data-wheel-target="result" style="min-height:28px; margin:10px 0; font-weight:700; font-size:18px; color:var(--primary-ink);"></div>
 
   <button class="l-btn l-btn-primary l-btn-block" data-wheel-target="btn" data-action="wheel#spin" style="max-width:340px; margin:0 auto;">
-    <%= @free ? "Quay miễn phí hôm nay 🎉" : "Quay (#{@wheel.cost_points} điểm)" %>
+    <%= @free ? t("customer.wheel.spin_free") : t("customer.wheel.spin_cost", n: @wheel.cost_points) %>
   </button>
   <p data-wheel-target="hint" style="color:var(--ink-2); font-size:13px; margin-top:10px;">
-    <%= @free ? "Bạn có 1 lượt quay miễn phí mỗi ngày." : "Đã dùng lượt miễn phí — quay thêm tốn #{@wheel.cost_points} điểm." %>
+    <%= @free ? t("customer.wheel.hint_free") : t("customer.wheel.hint_paid", n: @wheel.cost_points) %>
   </p>
 </div>

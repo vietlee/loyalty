@@ -1,4 +1,4 @@
-<% content_for :title, "Cá nhân" %>
+<% content_for :title, t("customer.profile.title") %>
 <% content_for :tab, "me" %>
 <header class="l-appbar">
   <div class="avatar"><%= @member.initials %></div>
@@ -7,28 +7,30 @@
 <div class="l-screen">
   <div class="l-tile" style="margin-bottom:14px; padding:6px 16px;">
     <%= link_to member_history_path, class: "l-toggle-row", style: "text-decoration:none; color:var(--ink);" do %>
-      <span>🧾 Lịch sử điểm</span><span style="color:var(--ink-2);">›</span>
+      <span><%= t("customer.profile.history") %></span><span style="color:var(--ink-2);">›</span>
     <% end %>
     <%= link_to member_tier_path, class: "l-toggle-row", style: "text-decoration:none; color:var(--ink);" do %>
-      <span>🏅 Hạng thành viên</span><span style="color:var(--ink-2);">›</span>
+      <span><%= t("customer.profile.tier") %></span><span style="color:var(--ink-2);">›</span>
     <% end %>
     <%= link_to member_notifications_path, class: "l-toggle-row", style: "text-decoration:none; color:var(--ink);" do %>
-      <span>🔔 Thông báo</span><span style="color:var(--ink-2);">›</span>
+      <span><%= t("customer.profile.notifications") %></span><span style="color:var(--ink-2);">›</span>
     <% end %>
     <%= link_to member_refer_path, class: "l-toggle-row", style: "text-decoration:none; color:var(--ink);" do %>
-      <span>🤝 Giới thiệu bạn bè</span><span style="color:var(--ink-2);">›</span>
+      <span><%= t("customer.profile.refer") %></span><span style="color:var(--ink-2);">›</span>
     <% end %>
   </div>
 
   <div class="l-tile" style="margin-bottom:14px;">
-    <div class="l-toggle-row"><span>Ngôn ngữ</span>
+    <div class="l-toggle-row"><span><%= t("customer.profile.language") %></span>
       <span>
         <%= link_to "VI", set_locale_path(:vi), class: "l-chip #{'l-chip-brand' if I18n.locale == :vi}" %>
         <%= link_to "EN", set_locale_path(:en), class: "l-chip #{'l-chip-brand' if I18n.locale == :en}" %>
       </span>
     </div>
-    <div class="l-toggle-row"><span>Cửa hàng</span><span style="color:var(--ink-2);"><%= current_workspace.name %></span></div>
-    <div class="l-toggle-row"><span>Mã giới thiệu</span><span class="l-mono"><%= @member.referral_code %></span></div>
+    <div class="l-toggle-row"><span><%= t("customer.profile.store") %></span><span style="color:var(--ink-2);"><%= current_workspace.name %></span></div>
+    <div class="l-toggle-row"><span><%= t("customer.profile.referral_code") %></span><span class="l-mono"><%= @member.referral_code %></span></div>
   </div>
-  <%= button_to "Đăng xuất", member_logout_path, method: :delete, class: "l-btn l-btn-ghost l-btn-block" %>
+  <%= button_to t("customer.profile.logout"), member_logout_path, method: :delete,
+        form: { data: { turbo_confirm: t("customer.profile.logout") + "?" } },
+        class: "l-btn l-btn-ghost l-btn-block" %>
 </div>

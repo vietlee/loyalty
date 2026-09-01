@@ -1,17 +1,17 @@
-<% content_for :title, "Lịch sử điểm" %>
+<% content_for :title, t("customer.transactions.title") %>
 <% content_for :tab, "" %>
 <header class="l-appbar">
   <%= link_to "←", member_root_path, style: "font-size:22px; text-decoration:none; color:var(--ink);" %>
-  <div class="nm l-display" style="font-size:22px;">Lịch sử điểm</div>
-  <span class="l-chip l-chip-brand" style="margin-left:auto;"><%= number_with_delimiter(@member.points_balance) %> điểm</span>
+  <div class="nm l-display" style="font-size:22px;"><%= t("customer.transactions.title") %></div>
+  <span class="l-chip l-chip-brand" style="margin-left:auto;"><%= t("customer.common.points_count", n: number_with_delimiter(@member.points_balance)) %></span>
 </header>
 
 <div class="l-screen">
   <% if @transactions.empty? %>
     <div class="l-tile" style="text-align:center; padding:40px 20px;">
       <div style="font-size:40px;">🧾</div>
-      <p style="font-weight:600; margin-top:8px;">Chưa có giao dịch điểm</p>
-      <p style="color:var(--ink-2); font-size:13px;">Tích điểm ở lần mua tiếp theo để bắt đầu.</p>
+      <p style="font-weight:600; margin-top:8px;"><%= t("customer.transactions.empty") %></p>
+      <p style="color:var(--ink-2); font-size:13px;"><%= t("customer.transactions.empty_sub") %></p>
     </div>
   <% else %>
     <div class="l-tile" style="padding:6px 16px;">
@@ -29,7 +29,7 @@
       <% end %>
     </div>
     <% if @has_more %>
-      <%= link_to "Xem thêm", member_history_path(page: @page + 1), class: "l-btn l-btn-ghost l-btn-block", style: "margin-top:14px;" %>
+      <%= link_to t("customer.transactions.load_more"), member_history_path(page: @page + 1), class: "l-btn l-btn-ghost l-btn-block", style: "margin-top:14px;" %>
     <% end %>
   <% end %>
 </div>

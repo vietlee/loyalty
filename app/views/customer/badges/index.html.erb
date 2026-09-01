@@ -1,14 +1,14 @@
-<% content_for :title, "Huy hiệu" %>
+<% content_for :title, t("customer.badges.title") %>
 <% content_for :tab, "" %>
 <header class="l-appbar">
   <%= link_to "←", member_root_path, style: "font-size:22px; text-decoration:none; color:var(--ink);" %>
-  <div class="nm l-display" style="font-size:22px;">Huy hiệu</div>
+  <div class="nm l-display" style="font-size:22px;"><%= t("customer.badges.title") %></div>
   <span class="l-chip l-chip-brand" style="margin-left:auto;"><%= @earned.size %>/<%= @badges.size %></span>
 </header>
 
 <div class="l-screen">
   <% if @badges.empty? %>
-    <div class="l-tile" style="text-align:center; padding:40px 20px;"><div style="font-size:40px;">🏅</div><p style="font-weight:600; margin-top:8px;">Chưa có huy hiệu</p></div>
+    <div class="l-tile" style="text-align:center; padding:40px 20px;"><div style="font-size:40px;">🏅</div><p style="font-weight:600; margin-top:8px;"><%= t("customer.badges.empty") %></p></div>
   <% else %>
     <div class="l-badge-grid">
       <% @badges.each do |b| %>

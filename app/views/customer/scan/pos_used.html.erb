@@ -1,2 +1,2 @@
-<% content_for :title, "Quét mã" %><% content_for :tab, "" %>
-<%= render "state", icon: "⚠️", title: "Mã giao dịch đã được dùng", message: "Mã QR này đã được tích điểm trước đó. Vui lòng nhờ nhân viên tạo mã mới." %>
+<% content_for :title, t("customer.scan.title") %><% content_for :tab, "" %>
+<%= render "state", icon: "⚠️", title: t("customer.scan.pos_used_title"), message: t("customer.scan.pos_used_msg") %>

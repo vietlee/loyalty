@@ -1,37 +1,37 @@
-<% content_for :title, "Hạng thành viên" %>
+<% content_for :title, t("customer.tiers.title") %>
 <% content_for :tab, "" %>
 <header class="l-appbar">
   <%= link_to "←", member_root_path, style: "font-size:22px; text-decoration:none; color:var(--ink);" %>
-  <div class="nm l-display" style="font-size:22px;">Hành trình hạng</div>
+  <div class="nm l-display" style="font-size:22px;"><%= t("customer.tiers.journey") %></div>
 </header>
 
 <div class="l-screen">
   <%# ---- Progress to next tier ---- %>
   <div class="l-card" style="--tier-from: <%= @current&.gradient_from || '#B08D57' %>; --tier-to: <%= @current&.gradient_to || '#7A5C3A' %>;">
-    <div class="k">Hạng hiện tại</div>
+    <div class="k"><%= t("customer.tiers.current") %></div>
     <div class="pts" style="font-size:34px;"><%= @current&.name %></div>
     <% if @member.next_tier %>
       <div style="margin-top:14px;">
         <div style="height:8px; border-radius:999px; background:rgba(255,255,255,.25); overflow:hidden;">
           <div style="height:100%; width:<%= @member.tier_progress_pct %>%; background:#fff; border-radius:999px;"></div>
         </div>
-        <div class="meta" style="margin-top:8px;">Còn <strong><%= number_with_delimiter(@member.points_to_next) %></strong> điểm để lên hạng <%= @member.next_tier.name %></div>
+        <div class="meta" style="margin-top:8px;"><%= t("customer.tiers.to_next_html", n: number_with_delimiter(@member.points_to_next), tier: @member.next_tier.name) %></div>
       </div>
     <% else %>
-      <div class="meta" style="margin-top:12px;">Bạn đang ở hạng cao nhất 🎉</div>
+      <div class="meta" style="margin-top:12px;"><%= t("customer.tiers.top") %></div>
     <% end %>
   </div>
 
   <%# ---- All tiers & benefits ---- %>
-  <div class="l-section-h"><h3>Các hạng & quyền lợi</h3></div>
+  <div class="l-section-h"><h3><%= t("customer.tiers.tiers_benefits") %></h3></div>
   <% @tiers.each do |t| %>
     <% is_current = t.key == @current&.key %>
     <div class="l-tile" style="margin-bottom:12px; <%= 'border:2px solid var(--primary);' if is_current %>">
       <div style="display:flex; align-items:center; gap:12px;">
         <span style="width:40px; height:40px; border-radius:12px; background:<%= t.gradient_css %>; flex:none;"></span>
         <div style="flex:1;">
-          <div style="font-weight:700;"><%= t.name %> <% if is_current %><span class="l-chip l-chip-brand" style="margin-left:4px;">Hiện tại</span><% end %></div>
-          <div style="font-size:12px; color:var(--ink-2);">Từ <%= number_with_delimiter(t.threshold_points) %> điểm · ×<%= t.multiplier %> điểm</div>
+          <div style="font-weight:700;"><%= t.name %> <% if is_current %><span class="l-chip l-chip-brand" style="margin-left:4px;"><%= I18n.t("customer.tiers.current_chip") %></span><% end %></div>
+          <div style="font-size:12px; color:var(--ink-2);"><%= I18n.t("customer.tiers.from_points", n: number_with_delimiter(t.threshold_points), m: t.multiplier) %></div>
         </div>
       </div>
       <% benefits = t.benefits.presence || default_benefits(t) %>

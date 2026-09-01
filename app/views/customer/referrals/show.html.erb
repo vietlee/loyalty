@@ -1,36 +1,36 @@
-<% content_for :title, "Giới thiệu bạn bè" %>
+<% content_for :title, t("customer.referrals.title") %>
 <% content_for :tab, "" %>
 <% ink = current_workspace.theme_value(:ink).to_s.delete("#") %>
 <header class="l-appbar">
   <%= link_to "←", member_root_path, style: "font-size:22px; text-decoration:none; color:var(--ink);" %>
-  <div class="nm l-display" style="font-size:22px;">Giới thiệu bạn bè</div>
+  <div class="nm l-display" style="font-size:22px;"><%= t("customer.referrals.title") %></div>
 </header>
 
 <div class="l-screen">
   <div class="l-card" style="--tier-from: var(--primary); --tier-to: var(--primary-2); text-align:center;">
-    <div class="k" style="opacity:.9;">Mời bạn — cả hai cùng nhận</div>
-    <div class="pts" style="font-size:38px;">+<%= number_with_delimiter(@reward_points) %> điểm</div>
-    <div class="meta">cho mỗi người bạn hoàn thành giao dịch đầu tiên</div>
+    <div class="k" style="opacity:.9;"><%= t("customer.referrals.invite_both") %></div>
+    <div class="pts" style="font-size:38px;"><%= t("customer.common.points_plus", n: number_with_delimiter(@reward_points)) %></div>
+    <div class="meta"><%= t("customer.referrals.per_friend") %></div>
   </div>
 
   <div class="l-tile" style="text-align:center; margin-top:16px;">
     <div style="display:inline-block; padding:14px; background:#fff; border:1px solid var(--line); border-radius:16px;">
       <%= qr_svg(@join_url, color: ink, size: 180) %>
     </div>
-    <div class="l-eyebrow" style="margin-top:12px;">Mã giới thiệu của bạn</div>
+    <div class="l-eyebrow" style="margin-top:12px;"><%= t("customer.referrals.your_code") %></div>
     <div class="l-mono" style="font-size:26px; font-weight:700; letter-spacing:.14em;"><%= @member.referral_code %></div>
   </div>
 
   <div style="display:flex; gap:10px; margin-top:14px;"
        data-controller="share" data-share-url-value="<%= @join_url %>"
-       data-share-text-value="Tải app <%= current_workspace.name %> qua link của mình để nhận ưu đãi nhé!">
-    <button class="l-btn l-btn-primary" style="flex:1;" data-action="share#native">📤 Chia sẻ</button>
-    <button class="l-btn l-btn-ghost" style="flex:1;" data-action="share#copy" data-share-target="copyBtn">📋 Sao chép link</button>
+       data-share-text-value="<%= t("customer.referrals.share_text", name: current_workspace.name) %>">
+    <button class="l-btn l-btn-primary" style="flex:1;" data-action="share#native"><%= t("customer.referrals.share") %></button>
+    <button class="l-btn l-btn-ghost" style="flex:1;" data-action="share#copy" data-share-target="copyBtn"><%= t("customer.referrals.copy") %></button>
   </div>
 
   <div class="l-tile" style="margin-top:16px; display:flex; justify-content:space-around; text-align:center;">
-    <div><div class="l-num" style="font-size:28px;"><%= @invited %></div><div style="font-size:12px; color:var(--ink-2);">Đã mời</div></div>
-    <div><div class="l-num" style="font-size:28px; color:var(--good);"><%= @completed %></div><div style="font-size:12px; color:var(--ink-2);">Hoàn thành</div></div>
-    <div><div class="l-num" style="font-size:28px; color:var(--primary-ink);">+<%= number_with_delimiter(@completed * @reward_points) %></div><div style="font-size:12px; color:var(--ink-2);">Điểm nhận</div></div>
+    <div><div class="l-num" style="font-size:28px;"><%= @invited %></div><div style="font-size:12px; color:var(--ink-2);"><%= t("customer.referrals.invited") %></div></div>
+    <div><div class="l-num" style="font-size:28px; color:var(--good);"><%= @completed %></div><div style="font-size:12px; color:var(--ink-2);"><%= t("customer.referrals.completed") %></div></div>
+    <div><div class="l-num" style="font-size:28px; color:var(--primary-ink);">+<%= number_with_delimiter(@completed * @reward_points) %></div><div style="font-size:12px; color:var(--ink-2);"><%= t("customer.referrals.points_earned") %></div></div>
   </div>
 </div>

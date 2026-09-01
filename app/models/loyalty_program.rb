@@ -18,6 +18,7 @@ class LoyaltyProgram < ApplicationRecord
   def scan_member? = %w[member_scans_pos both].include?(scan_mode)
 
   def earn_rate_label
-    "#{earn_points} điểm / #{ActiveSupport::NumberHelper.number_to_delimited(earn_per_amount)}#{currency == 'VND' ? 'đ' : ' ' + currency}"
+    amt = "#{ActiveSupport::NumberHelper.number_to_delimited(earn_per_amount)}#{currency == 'VND' ? 'đ' : ' ' + currency}"
+    I18n.t("customer.earn_rate", pts: earn_points, amt: amt)
   end
 end

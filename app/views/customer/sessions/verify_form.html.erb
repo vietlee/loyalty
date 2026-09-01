@@ -1,14 +1,14 @@
-<% content_for :title, "Xác thực OTP" %>
+<% content_for :title, t("customer.session.verify_title") %>
 <div class="l-screen" style="display:flex; flex-direction:column; justify-content:center; min-height:100dvh;">
   <div style="text-align:center; margin-bottom:24px;">
     <div style="font-size:40px;">📩</div>
-    <h1 class="l-display" style="font-size:24px; margin-top:8px;">Nhập mã xác thực</h1>
-    <p style="color:var(--ink-2); font-size:14px;">Đã gửi tới <strong><%= @phone %></strong></p>
+    <h1 class="l-display" style="font-size:24px; margin-top:8px;"><%= t("customer.session.verify_heading") %></h1>
+    <p style="color:var(--ink-2); font-size:14px;"><%= t("customer.session.sent_to_html", phone: @phone) %></p>
   </div>
 
   <% if @dev_code.present? %>
     <div class="l-chip l-chip-brand" style="justify-content:center; margin-bottom:16px;">
-      DEV · mã của bạn là <strong style="margin-left:6px; letter-spacing:.2em;"><%= @dev_code %></strong>
+      <%= t("customer.session.dev_code_pre") %> <strong style="margin-left:6px; letter-spacing:.2em;"><%= @dev_code %></strong>
     </div>
   <% end %>
 
@@ -16,8 +16,8 @@
     <input type="text" name="code" inputmode="numeric" maxlength="6" autofocus
            class="l-field" placeholder="000000"
            style="text-align:center; font-size:28px; letter-spacing:.35em; margin-bottom:16px;">
-    <%= submit_tag "Xác nhận", class: "l-btn l-btn-primary l-btn-block" %>
+    <%= submit_tag t("customer.session.confirm"), class: "l-btn l-btn-primary l-btn-block" %>
   <% end %>
 
-  <%= link_to "← Đổi số điện thoại", member_login_path, style: "display:block; text-align:center; color:var(--ink-2); font-size:13px; margin-top:16px; text-decoration:none;" %>
+  <%= link_to t("customer.session.change_phone"), member_login_path, style: "display:block; text-align:center; color:var(--ink-2); font-size:13px; margin-top:16px; text-decoration:none;" %>
 </div>

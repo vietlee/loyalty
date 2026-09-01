@@ -6,7 +6,7 @@
   <div class="avatar"><%= current_workspace.logo_initials %></div>
   <div style="min-width:0;">
     <div class="nm"><%= current_workspace.name %></div>
-    <div class="hi">Chào <%= @member.name.presence || current_workspace.branding_value("customer_term") %>, chúc ngày tốt lành 👋</div>
+    <div class="hi"><%= t("customer.home.greeting", name: @member.name.presence || current_workspace.branding_value("customer_term")) %></div>
   </div>
   <div style="margin-left:auto; display:flex; align-items:center; gap:14px; color:var(--ink);">
     <%= link_to member_notifications_path, style: "position:relative; text-decoration:none; color:inherit; display:grid; place-items:center;" do %>
@@ -20,13 +20,13 @@
   <%= link_to member_tier_path, style: "text-decoration:none; color:#fff; display:block;" do %>
     <div class="l-card" style="--tier-from: var(--primary); --tier-to: color-mix(in srgb, var(--primary) 52%, #000);">
       <% if tier %>
-        <div class="tier-badge" style="background:<%= tier.gradient_css %>; color:#fff;">Hạng <%= tier.name %></div>
+        <div class="tier-badge" style="background:<%= tier.gradient_css %>; color:#fff;"><%= t("customer.home.tier_badge", name: tier.name) %></div>
       <% end %>
-      <div class="k">Điểm hiện có</div>
+      <div class="k"><%= t("customer.home.points_balance") %></div>
       <div style="display:flex; align-items:flex-end; justify-content:space-between; gap:12px;">
         <div class="pts"><%= number_with_delimiter(@member.points_balance) %></div>
         <div style="text-align:right; opacity:.85; font-size:12px; padding-bottom:8px;">
-          <% if tier && tier.multiplier.to_f > 1 %>×<%= tier.multiplier %> điểm<br>mỗi hoá đơn<% else %><%= current_workspace.program.earn_rate_label %><% end %>
+          <% if tier && tier.multiplier.to_f > 1 %><%= t("customer.home.per_bill_html", m: tier.multiplier) %><% else %><%= current_workspace.program.earn_rate_label %><% end %>
         </div>
       </div>
       <div class="name"><%= @member.display_name.upcase %></div>
@@ -36,45 +36,45 @@
 
   <%# ---- Quick actions ---- %>
   <div class="l-quick">
-    <%= link_to member_my_code_path do %><span class="ic"><%= ui_icon(:qrcode, size: 26) %></span>Mã của tôi<% end %>
-    <%= link_to member_scan_path do %><span class="ic"><%= ui_icon(:scan, size: 26) %></span>Quét mã<% end %>
-    <%= link_to member_wallet_path do %><span class="ic"><%= ui_icon(:gift, size: 26) %></span>Ví thưởng<% end %>
-    <%= link_to member_wheel_path do %><span class="ic"><%= ui_icon(:wheel, size: 26) %></span>Vòng quay<% end %>
+    <%= link_to member_my_code_path do %><span class="ic"><%= ui_icon(:qrcode, size: 26) %></span><%= t("customer.home.q_my_code") %><% end %>
+    <%= link_to member_scan_path do %><span class="ic"><%= ui_icon(:scan, size: 26) %></span><%= t("customer.home.q_scan") %><% end %>
+    <%= link_to member_wallet_path do %><span class="ic"><%= ui_icon(:gift, size: 26) %></span><%= t("customer.home.q_wallet") %><% end %>
+    <%= link_to member_wheel_path do %><span class="ic"><%= ui_icon(:wheel, size: 26) %></span><%= t("customer.home.q_wheel") %><% end %>
   </div>
 
   <div style="display:flex; gap:8px; margin-top:12px; overflow-x:auto;">
     <% if current_workspace.program.gamification_enabled %>
-      <% if @has_stamps %><%= link_to member_stamps_path, class: "l-chip", style: "flex:none;" do %><%= ui_icon(:stamp, size: 15) %> Thẻ tem<% end %><% end %>
-      <%= link_to member_missions_path, class: "l-chip", style: "flex:none;" do %><%= ui_icon(:target, size: 15) %> Nhiệm vụ<% end %>
-      <%= link_to member_badges_path, class: "l-chip", style: "flex:none;" do %><%= ui_icon(:medal, size: 15) %> Huy hiệu<% end %>
+      <% if @has_stamps %><%= link_to member_stamps_path, class: "l-chip", style: "flex:none;" do %><%= ui_icon(:stamp, size: 15) %> <%= t("customer.home.chip_stamps") %><% end %><% end %>
+      <%= link_to member_missions_path, class: "l-chip", style: "flex:none;" do %><%= ui_icon(:target, size: 15) %> <%= t("customer.home.chip_missions") %><% end %>
+      <%= link_to member_badges_path, class: "l-chip", style: "flex:none;" do %><%= ui_icon(:medal, size: 15) %> <%= t("customer.home.chip_badges") %><% end %>
     <% end %>
     <% if current_workspace.program.referral_enabled %>
-      <%= link_to member_refer_path, class: "l-chip", style: "flex:none;" do %><%= ui_icon(:users, size: 15) %> Mời bạn<% end %>
+      <%= link_to member_refer_path, class: "l-chip", style: "flex:none;" do %><%= ui_icon(:users, size: 15) %> <%= t("customer.home.chip_refer") %><% end %>
     <% end %>
   </div>
 
   <%# ---- Offers carousel (demo content; wired in later phases) ---- %>
-  <div class="l-section-h"><h3>Ưu đãi dành riêng cho <%= current_workspace.branding_value("customer_term") %></h3><%= link_to "Tất cả", member_wallet_path %></div>
+  <div class="l-section-h"><h3><%= t("customer.home.offers_title", term: current_workspace.branding_value("customer_term")) %></h3><%= link_to t("customer.common.all"), member_wallet_path %></div>
   <div data-controller="carousel">
     <div class="l-carousel" data-carousel-target="track">
-      <div class="l-offer"><div class="l-eyebrow" style="color:#fff; opacity:.85;">Giờ vàng</div><div class="big">×2 điểm</div><div style="font-size:12.5px; opacity:.9;">14:00–16:00 mỗi ngày</div></div>
-      <div class="l-offer" style="background:linear-gradient(135deg,#3F7A57,#2C5A3E);"><div class="l-eyebrow" style="color:#fff; opacity:.85;">Sinh nhật</div><div class="big">Quà tặng</div><div style="font-size:12.5px; opacity:.9;">Trong tuần sinh nhật</div></div>
-      <div class="l-offer" style="background:linear-gradient(135deg,#4B9FE1,#3574B0);"><div class="l-eyebrow" style="color:#fff; opacity:.85;">Giới thiệu</div><div class="big">+100 điểm</div><div style="font-size:12.5px; opacity:.9;">Mời bạn, cả hai cùng nhận</div></div>
+      <div class="l-offer"><div class="l-eyebrow" style="color:#fff; opacity:.85;"><%= t("customer.home.offer_gold_eyebrow") %></div><div class="big"><%= t("customer.home.offer_gold_big") %></div><div style="font-size:12.5px; opacity:.9;"><%= t("customer.home.offer_gold_sub") %></div></div>
+      <div class="l-offer" style="background:linear-gradient(135deg,#3F7A57,#2C5A3E);"><div class="l-eyebrow" style="color:#fff; opacity:.85;"><%= t("customer.home.offer_bday_eyebrow") %></div><div class="big"><%= t("customer.home.offer_bday_big") %></div><div style="font-size:12.5px; opacity:.9;"><%= t("customer.home.offer_bday_sub") %></div></div>
+      <div class="l-offer" style="background:linear-gradient(135deg,#4B9FE1,#3574B0);"><div class="l-eyebrow" style="color:#fff; opacity:.85;"><%= t("customer.home.offer_refer_eyebrow") %></div><div class="big"><%= t("customer.home.offer_refer_big") %></div><div style="font-size:12.5px; opacity:.9;"><%= t("customer.home.offer_refer_sub") %></div></div>
     </div>
     <div class="l-dots" data-carousel-target="dots"></div>
   </div>
 
   <%# ---- Today's missions ---- %>
   <% if @missions&.any? %>
-    <div class="l-section-h"><h3>Nhiệm vụ hôm nay</h3><%= link_to "Tất cả", member_missions_path %></div>
+    <div class="l-section-h"><h3><%= t("customer.home.missions_today") %></h3><%= link_to t("customer.common.all"), member_missions_path %></div>
     <div class="l-tile">
       <% @missions.each do |m| %>
         <% mp = @progress[m] %>
         <div class="l-check <%= 'done' if mp.completed? %>">
           <span class="box"><%= "✓" if mp.completed? %></span>
-          <div style="flex:1;"><div style="font-weight:600;"><%= m.display_icon %> <%= m.title %></div><div style="font-size:12px; color:var(--ink-2);">+<%= m.reward_points %> điểm</div></div>
+          <div style="flex:1;"><div style="font-weight:600;"><%= m.display_icon %> <%= m.title %></div><div style="font-size:12px; color:var(--ink-2);"><%= t("customer.common.points_plus", n: m.reward_points) %></div></div>
           <% if !mp.completed? && m.mission_type == "checkin" %>
-            <%= button_to "Check-in", member_mission_checkin_path(m), method: :post, class: "l-btn l-btn-soft", style: "padding:6px 12px; font-size:12px;" %>
+            <%= button_to t("customer.common.checkin"), member_mission_checkin_path(m), method: :post, class: "l-btn l-btn-soft", style: "padding:6px 12px; font-size:12px;" %>
           <% end %>
         </div>
       <% end %>

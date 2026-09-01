@@ -1,31 +1,202 @@
-# Files in the config/locales directory are used for internationalization and
-# are automatically loaded by Rails. If you want to use locales other than
-# English, add the necessary files in this directory.
-#
-# To use the locales, use `I18n.t`:
-#
-#     I18n.t "hello"
-#
-# In views, this is aliased to just `t`:
-#
-#     <%= t("hello") %>
-#
-# To use a different locale, set it with `I18n.locale`:
-#
-#     I18n.locale = :es
-#
-# This would use the information in config/locales/es.yml.
-#
-# To learn more about the API, please read the Rails Internationalization guide
-# at https://guides.rubyonrails.org/i18n.html.
-#
-# Be aware that YAML interprets the following case-insensitive strings as
-# booleans: `true`, `false`, `on`, `off`, `yes`, `no`. Therefore, these strings
-# must be quoted to be interpreted as strings. For example:
-#
-#     en:
-#       "yes": yup
-#       enabled: "ON"
-
 en:
   hello: "Hello world"
+  date:
+    formats:
+      short: "%b %d, %Y"
+  time:
+    formats:
+      short: "%H:%M %b %d"
+
+  customer:
+    common:
+      all: "All"
+      points_word: "pts"
+      points_count: "%{n} pts"
+      points_plus: "+%{n} pts"
+      code_label: "Code"
+      exp_short: "Exp %{date}"
+      wallet: "Rewards"
+      scan_other: "Scan another"
+      home_back: "Back to home"
+      checkin: "Check in"
+    nav:
+      home: "Home"
+      wallet: "Rewards"
+      scan: "Scan"
+      my_code: "My code"
+      me: "Account"
+    earn_rate: "%{pts} pts / %{amt}"
+    tx:
+      earn: "Points from purchase"
+      redeem: "Reward redeemed"
+      referral: "Referral reward"
+      mission: "Mission completed"
+      game: "Minigame reward"
+      birthday: "Birthday gift"
+      expire: "Points expired"
+      adjust: "Points adjustment"
+    reward:
+      free: "Free"
+      state:
+        active: "Available"
+        used: "Used"
+        expired: "Expired"
+    home:
+      greeting: "Hi %{name}, have a great day 👋"
+      points_balance: "Points balance"
+      tier_badge: "%{name} tier"
+      per_bill_html: "×%{m} pts<br>per bill"
+      q_my_code: "My code"
+      q_scan: "Scan"
+      q_wallet: "Rewards"
+      q_wheel: "Lucky wheel"
+      chip_stamps: "Stamps"
+      chip_missions: "Missions"
+      chip_badges: "Badges"
+      chip_refer: "Invite"
+      offers_title: "Offers just for %{term}"
+      offer_gold_eyebrow: "Golden hour"
+      offer_gold_big: "×2 points"
+      offer_gold_sub: "14:00–16:00 daily"
+      offer_bday_eyebrow: "Birthday"
+      offer_bday_big: "A gift"
+      offer_bday_sub: "During your birthday week"
+      offer_refer_eyebrow: "Referral"
+      offer_refer_big: "+100 pts"
+      offer_refer_sub: "Invite a friend, both get rewarded"
+      missions_today: "Today's missions"
+    profile:
+      title: "Account"
+      history: "🧾 Points history"
+      tier: "🏅 Membership tier"
+      notifications: "🔔 Notifications"
+      refer: "🤝 Refer friends"
+      language: "Language"
+      store: "Store"
+      referral_code: "Referral code"
+      logout: "Log out"
+    wallet:
+      title: "Rewards wallet"
+      tab_redeemable: "Redeemable"
+      tab_owned: "Redeemed"
+      tab_expiring: "Expiring"
+      empty_redeemable: "No rewards to redeem yet"
+      empty_owned: "You haven't redeemed any rewards"
+      empty_expiring: "No rewards expiring soon"
+      remaining: "%{n} left"
+    reward_detail:
+      title: "Reward detail"
+      terms: "Terms"
+      cost: "Redeem cost"
+      your_points: "Your points"
+      redeem_now: "Redeem now · %{n} pts"
+      confirm: "Redeem %{title} for %{n} pts?"
+      short_by: "%{n} points short"
+    voucher:
+      title: "Reward"
+      used_title: "Used"
+      used_time: "At %{time}"
+      used_at_outlet: " at %{outlet}"
+      expired_title: "Reward expired"
+      use_expires_pre: "Expires in"
+      fallback_label: "Backup code (read to staff)"
+      hand_to_staff: "Show this code to staff to redeem the reward."
+      cancel_later: "Cancel, use later"
+      use_now: "Use now"
+      use_hint: "Only tap when you're at the counter — the code is valid for %{min} min."
+    my_code:
+      title: "My code"
+      history: "History"
+      refresh_pre: "Code refreshes in"
+      you_earned: "You just earned"
+      balance_pre: "Balance:"
+      show_to_staff: "Show this code to staff to earn points on your bill."
+    scan:
+      title: "Scan"
+      prompt: "Scan a counter code or promo code to get rewards"
+      start_camera: "Start camera"
+      or_enter: "or enter code"
+      enter_placeholder: "Enter promo code"
+      submit: "Redeem"
+      invalid_message: "Invalid code, or it doesn't belong to this store."
+      invalid_title: "Invalid code"
+      claim_already_title: "You already claimed this offer"
+      claim_already_msg: "%{title} is already in your wallet."
+      claim_unavailable_title: "Offer ended"
+      claim_unavailable_msg: "This promo has run out or has ended. See you next time!"
+      pos_expired_title: "Transaction code expired"
+      pos_expired_msg: "The counter QR has expired. Please ask staff to generate a new one."
+      pos_used_title: "Transaction code already used"
+      pos_used_msg: "This QR has already been used to earn points. Please ask staff for a new one."
+    earn_success:
+      title: "Points earned"
+      heading: "Points earned!"
+      bill_balance_html: "Bill %{amount}đ · Balance <strong>%{bal}</strong> pts"
+    claim_success:
+      title: "Reward claimed"
+      heading: "You got a reward!"
+      saved: "✓ Saved to your wallet"
+      free_note: "Free reward — no points deducted."
+      view_in_wallet: "View in wallet"
+    session:
+      login_title: "Sign in · %{name}"
+      phone_label: "Phone number"
+      get_otp: "Get OTP"
+      login_footer: "Sign in with your phone · dev OTP shows on the next step"
+      verify_title: "Verify OTP"
+      verify_heading: "Enter verification code"
+      sent_to_html: "Sent to <strong>%{phone}</strong>"
+      dev_code_pre: "DEV · your code is"
+      confirm: "Confirm"
+      change_phone: "← Change phone number"
+    notifications:
+      title: "Notifications"
+      empty: "No notifications yet"
+      empty_sub: "Offers and reminders will show up here."
+      ago: "%{time} ago"
+    transactions:
+      title: "Points history"
+      empty: "No point transactions yet"
+      empty_sub: "Earn points on your next purchase to get started."
+      load_more: "Load more"
+    missions:
+      title: "Missions"
+      today: "Today"
+      this_week: "This week"
+      done: "✓ Done"
+      in_progress: "In progress"
+    stamps:
+      title: "Stamp cards"
+      empty: "No active stamp cards"
+      complete_to_get_html: "Complete to get <strong>%{reward}</strong>"
+      redeemed_times: " · redeemed %{n}×"
+    badges:
+      title: "Badges"
+      empty: "No badges yet"
+    wheel:
+      title: "Lucky wheel"
+      hub: "SPIN"
+      spin_free: "Free spin today 🎉"
+      spin_cost: "Spin (%{n} pts)"
+      hint_free: "You get 1 free spin every day."
+      hint_paid: "Free spin used — extra spins cost %{n} pts."
+    referrals:
+      title: "Refer friends"
+      invite_both: "Invite friends — both get rewarded"
+      per_friend: "for each friend who completes their first purchase"
+      your_code: "Your referral code"
+      share_text: "Download the %{name} app via my link to get rewards!"
+      share: "📤 Share"
+      copy: "📋 Copy link"
+      invited: "Invited"
+      completed: "Completed"
+      points_earned: "Points earned"
+    tiers:
+      title: "Membership tier"
+      journey: "Tier journey"
+      current: "Current tier"
+      to_next_html: "<strong>%{n}</strong> pts to reach %{tier}"
+      top: "You're at the top tier 🎉"
+      tiers_benefits: "Tiers & benefits"
+      current_chip: "Current"
+      from_points: "From %{n} pts · ×%{m} points"

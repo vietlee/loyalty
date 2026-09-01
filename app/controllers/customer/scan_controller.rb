@@ -51,7 +51,7 @@ module Customer
     end
 
     def invalid!
-      @message = "Mã không hợp lệ hoặc không thuộc cửa hàng này."
+      @message = t("customer.scan.invalid_message")
       render :invalid, status: :unprocessable_entity
     end
 

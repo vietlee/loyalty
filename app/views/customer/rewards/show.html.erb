@@ -3,7 +3,7 @@
 <% enough = @member.points_balance >= @reward.cost_points.to_i %>
 <header class="l-appbar">
   <%= link_to "←", member_wallet_path, style: "font-size:22px; text-decoration:none; color:var(--ink);" %>
-  <div class="nm l-display" style="font-size:20px;">Chi tiết ưu đãi</div>
+  <div class="nm l-display" style="font-size:20px;"><%= t("customer.reward_detail.title") %></div>
 </header>
 
 <div class="l-screen">
@@ -18,23 +18,23 @@
 
   <% if @reward.terms.present? %>
     <div class="l-tile" style="margin-bottom:16px;">
-      <div class="l-eyebrow">Điều kiện</div>
+      <div class="l-eyebrow"><%= t("customer.reward_detail.terms") %></div>
       <div style="font-size:13px; color:var(--ink-2); margin-top:6px;"><%= simple_format @reward.terms %></div>
     </div>
   <% end %>
 
   <div class="l-tile" style="display:flex; align-items:center; justify-content:space-between; margin-bottom:16px;">
-    <div><div class="l-eyebrow">Chi phí đổi</div><div class="l-num" style="font-size:24px;"><%= number_with_delimiter(@reward.cost_points) %> điểm</div></div>
-    <div style="text-align:right;"><div class="l-eyebrow">Điểm của bạn</div><div class="l-num" style="font-size:20px; color:<%= enough ? 'var(--good)' : 'var(--warn)' %>;"><%= number_with_delimiter(@member.points_balance) %></div></div>
+    <div><div class="l-eyebrow"><%= t("customer.reward_detail.cost") %></div><div class="l-num" style="font-size:24px;"><%= t("customer.common.points_count", n: number_with_delimiter(@reward.cost_points)) %></div></div>
+    <div style="text-align:right;"><div class="l-eyebrow"><%= t("customer.reward_detail.your_points") %></div><div class="l-num" style="font-size:20px; color:<%= enough ? 'var(--good)' : 'var(--warn)' %>;"><%= number_with_delimiter(@member.points_balance) %></div></div>
   </div>
 
   <% if enough %>
-    <%= button_to "Đổi ngay · #{number_with_delimiter(@reward.cost_points)} điểm", member_redeem_reward_path(@reward),
+    <%= button_to t("customer.reward_detail.redeem_now", n: number_with_delimiter(@reward.cost_points)), member_redeem_reward_path(@reward),
           method: :post, class: "l-btn l-btn-primary l-btn-block",
-          form: { data: { turbo_confirm: "Đổi #{@reward.title} với #{number_with_delimiter(@reward.cost_points)} điểm?" } } %>
+          form: { data: { turbo_confirm: t("customer.reward_detail.confirm", title: @reward.title, n: number_with_delimiter(@reward.cost_points)) } } %>
   <% else %>
     <button class="l-btn l-btn-block" disabled style="background:var(--surface-2); color:var(--ink-2);">
-      Còn thiếu <%= number_with_delimiter(@reward.cost_points - @member.points_balance) %> điểm
+      <%= t("customer.reward_detail.short_by", n: number_with_delimiter(@reward.cost_points - @member.points_balance)) %>
     </button>
   <% end %>
 </div>

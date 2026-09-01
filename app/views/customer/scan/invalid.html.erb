@@ -1,2 +1,2 @@
-<% content_for :title, "Quét mã" %><% content_for :tab, "" %>
-<%= render "state", icon: "❓", title: "Mã không hợp lệ", message: @message %>
+<% content_for :title, t("customer.scan.title") %><% content_for :tab, "" %>
+<%= render "state", icon: "❓", title: t("customer.scan.invalid_title"), message: @message %>

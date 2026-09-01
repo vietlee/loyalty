@@ -1,9 +1,9 @@
-<% content_for :title, "Mã của tôi" %>
+<% content_for :title, t("customer.my_code.title") %>
 <% content_for :tab, "code" %>
 <% ink = current_workspace.theme_value(:ink).to_s.delete("#") %>
 
-<header class="l-appbar"><div class="nm l-display" style="font-size:22px;">Mã của tôi</div>
-  <%= link_to "Lịch sử", member_history_path, style: "margin-left:auto; color:var(--primary-ink); font-weight:600; font-size:13px; text-decoration:none;" %>
+<header class="l-appbar"><div class="nm l-display" style="font-size:22px;"><%= t("customer.my_code.title") %></div>
+  <%= link_to t("customer.my_code.history"), member_history_path, style: "margin-left:auto; color:var(--primary-ink); font-weight:600; font-size:13px; text-decoration:none;" %>
 </header>
 
 <div class="l-screen" style="display:flex; flex-direction:column; align-items:center;"
@@ -28,18 +28,18 @@
 
     <div style="display:flex; align-items:center; justify-content:center; gap:8px; margin-top:14px; color:var(--ink-2); font-size:13px;">
       <span style="width:8px; height:8px; border-radius:50%; background:var(--good); display:inline-block;"></span>
-      Mã tự làm mới sau <strong data-mycode-target="count" style="color:var(--ink);">45</strong>s
+      <%= t("customer.my_code.refresh_pre") %> <strong data-mycode-target="count" style="color:var(--ink);">45</strong>s
     </div>
 
     <%# +X điểm reveal overlay %>
     <div data-mycode-target="burst" style="display:none; position:absolute; inset:0; background:color-mix(in srgb, var(--primary) 92%, #000); color:#fff; flex-direction:column; align-items:center; justify-content:center;">
-      <div style="font-size:15px; opacity:.85;">Bạn vừa nhận</div>
+      <div style="font-size:15px; opacity:.85;"><%= t("customer.my_code.you_earned") %></div>
       <div class="l-num" style="font-size:64px;">+<span data-mycode-target="burstPoints">0</span></div>
-      <div style="opacity:.85;">Số dư: <span data-mycode-target="burstBalance">0</span> điểm</div>
+      <div style="opacity:.85;"><%= t("customer.my_code.balance_pre") %> <span data-mycode-target="burstBalance">0</span> <%= t("customer.common.points_word") %></div>
     </div>
   </div>
 
   <p style="color:var(--ink-2); font-size:13px; text-align:center; margin-top:16px; max-width:280px;">
-    Đưa mã này cho nhân viên quét để tích điểm vào hoá đơn của <%= current_workspace.branding_value("customer_term") %>.
+    <%= t("customer.my_code.show_to_staff", term: current_workspace.branding_value("customer_term")) %>
   </p>
 </div>

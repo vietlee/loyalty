@@ -1,2 +1,2 @@
-<% content_for :title, "Ưu đãi" %><% content_for :tab, "" %>
-<%= render "state", icon: "✅", title: "Bạn đã nhận ưu đãi này rồi", message: "Ưu đãi #{@voucher&.reward&.title} đang có trong Ví thưởng của bạn." %>
+<% content_for :title, t("customer.voucher.title") %><% content_for :tab, "" %>
+<%= render "state", icon: "✅", title: t("customer.scan.claim_already_title"), message: t("customer.scan.claim_already_msg", title: @voucher&.reward&.title) %>
