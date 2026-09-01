@@ -31,7 +31,7 @@ module Customer
       @phone = session[:otp_phone]
       redirect_to(member_login_path) and return if @phone.blank?
       # Dev convenience: surface the latest code so testers can log in.
-      @dev_code = latest_dev_code(@phone) unless Rails.env.production?
+      @dev_code = latest_dev_code(@phone) if show_otp_onscreen?
     end
 
     # Step 2 submit — check OTP, sign in (create member on first login)
@@ -57,7 +57,7 @@ module Customer
         sign_in(:member, member)
         redirect_to member_root_path, notice: "Chào mừng #{member.display_name}!"
       else
-        @dev_code = latest_dev_code(@phone) unless Rails.env.production?
+        @dev_code = latest_dev_code(@phone) if show_otp_onscreen?
         flash.now[:alert] = otp_error_message(result)
         render :verify_form, status: :unprocessable_entity
       end
@@ -72,6 +72,12 @@ module Customer
 
     def normalize(phone)
       phone.to_s.gsub(/\s+/, "").presence
+    end
+
+    # Show the OTP on-screen while no real SMS/Zalo provider is wired
+    # (SHOW_OTP=true), or in any non-production env.
+    def show_otp_onscreen?
+      ENV["SHOW_OTP"] == "true" || !Rails.env.production?
     end
 
     def latest_dev_code(phone)
