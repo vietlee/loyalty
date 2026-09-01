@@ -40,12 +40,20 @@ export default class extends Controller {
     this.update()
   }
 
+  maxScroll() { return this.trackTarget.scrollWidth - this.trackTarget.clientWidth }
+
   go(i) {
-    this.trackTarget.scrollTo({ left: i * this.trackTarget.clientWidth, behavior: "smooth" })
+    const n = this.dotsTarget.children.length
+    const left = n > 1 ? (i / (n - 1)) * this.maxScroll() : 0
+    this.trackTarget.scrollTo({ left, behavior: "smooth" })
   }
 
+  // Map scroll position across the full range onto dot indices so the LAST dot
+  // activates at the end of the swipe (fixes coarse clientWidth-based rounding).
   update() {
-    const i = Math.round(this.trackTarget.scrollLeft / this.trackTarget.clientWidth)
+    const n = this.dotsTarget.children.length
+    const max = this.maxScroll()
+    const i = max > 4 ? Math.round((this.trackTarget.scrollLeft / max) * (n - 1)) : 0
     Array.from(this.dotsTarget.children).forEach((d, j) => d.classList.toggle("active", j === i))
   }
 }

@@ -17,6 +17,11 @@ module Pwa
       theme = ws&.theme_value("primary") || "#8C4A2F"
       bg    = ws&.theme_value("surface") || "#FBF6EF"
       start = ws ? member_root_url_for(ws) : "/"
+      icon_src = if ws&.logo&.attached?
+        Rails.application.routes.url_helpers.rails_blob_path(ws.logo, only_path: true)
+      else
+        "/icon.png"
+      end
       {
         name: name,
         short_name: (ws&.logo_initials || name)[0, 12],
@@ -28,7 +33,8 @@ module Pwa
         theme_color: theme,
         lang: ws&.locale_default || "vi",
         icons: [
-          { src: "/icon.png", sizes: "512x512", type: "image/png", purpose: "any maskable" }
+          { src: icon_src, sizes: "512x512", type: "image/png", purpose: "any" },
+          { src: icon_src, sizes: "192x192", type: "image/png", purpose: "any" }
         ]
       }
     end

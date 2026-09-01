@@ -11,6 +11,7 @@ class Workspace < ApplicationRecord
   PLAN_PRICES = { "starter" => 199_000, "growth" => 499_000, "scale" => 1_290_000 }.freeze
   PLANS      = %w[starter growth scale].freeze
 
+  has_one_attached :logo
   has_many :memberships, dependent: :destroy
   has_many :users,   through: :memberships
   has_many :outlets, dependent: :destroy

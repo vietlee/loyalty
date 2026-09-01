@@ -5,9 +5,11 @@
     <% if current_workspace %>
       <link rel="manifest" href="<%= pwa_manifest_path(host: request.host_with_port) %>">
       <meta name="theme-color" content="<%= current_workspace.theme_value(:primary) %>">
+      <link rel="icon" href="<%= workspace_icon_url(current_workspace) %>">
+      <link rel="apple-touch-icon" href="<%= workspace_icon_url(current_workspace) %>">
     <% end %>
   </head>
-  <body>
+  <body class="pwa-app">
     <%= render "layouts/theme_vars", ws: current_workspace %>
     <% if flash[:notice] || flash[:alert] %>
       <div class="l-flash" data-controller="flash"><%= flash[:notice] || flash[:alert] %></div>
@@ -22,6 +24,7 @@
          "pwa-off-text": t("customer.pwa.push_off"),
          "pwa-blocked-text": t("customer.pwa.push_blocked"),
          "pwa-unsupported-text": t("customer.pwa.push_unsupported"),
+         "pwa-got-it-text": t("customer.pwa.got_it"),
        } : {} %>
     <div class="l-phone"<%= tag.attributes(data: pwa) if pwa.any? %>>
       <%= yield %>

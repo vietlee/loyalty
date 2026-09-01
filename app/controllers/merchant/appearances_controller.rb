@@ -39,6 +39,7 @@ module Merchant
       else
         @workspace.theme    = (@workspace.theme || {}).merge(theme_params.to_h)
         @workspace.branding = (@workspace.branding || {}).merge(branding_params.to_h)
+        @workspace.logo.attach(params[:logo]) if params[:logo].present?
       end
 
       if @workspace.save

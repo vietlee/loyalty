@@ -4,7 +4,7 @@ import { Controller } from "@hotwired/stimulus"
 // subscription (opt-in), and drives the "Add to Home Screen" banner.
 export default class extends Controller {
   static values = { vapid: String, subscribeUrl: String, unsubscribeUrl: String }
-  static targets = ["installBanner", "installButton", "iosHint", "pushToggle", "pushLabel"]
+  static targets = ["installBanner", "installButton", "laterButton", "iosHint", "pushToggle", "pushLabel"]
 
   connect() {
     this.registerSW().then(() => this.reflectPush())
@@ -94,11 +94,17 @@ export default class extends Controller {
       this.showLater()
     })
 
-    // iOS Safari has no beforeinstallprompt — show manual instructions instead.
+    // iOS Safari has no beforeinstallprompt — show manual instructions and turn
+    // the single remaining button into a clear "Got it" primary (not just Later).
     const isIos = /iphone|ipad|ipod/i.test(navigator.userAgent)
     if (isIos && this.hasIosHintTarget) {
       this.iosHintTarget.hidden = false
       if (this.hasInstallButtonTarget) this.installButtonTarget.hidden = true
+      if (this.hasLaterButtonTarget) {
+        this.laterButtonTarget.textContent = this.data.get("gotItText") || this.laterButtonTarget.textContent
+        this.laterButtonTarget.classList.remove("l-btn-ghost")
+        this.laterButtonTarget.classList.add("l-btn-primary")
+      }
       this.showLater()
     }
   }

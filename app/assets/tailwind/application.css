@@ -70,6 +70,9 @@ body {
 /* interactive chips (links / buttons) get a hover */
 a.l-chip:hover, button.l-chip:hover { background: color-mix(in srgb, var(--ink) 10%, var(--surface-2)); color: var(--ink); }
 a.l-chip-brand:hover, button.l-chip-brand:hover { background: color-mix(in srgb, var(--primary) 22%, #fff); color: var(--primary-ink); }
+/* larger, more prominent shortcut chips (home) */
+.l-chip-lg { padding:11px 18px; font-size:15px; gap:9px; }
+.l-chip-lg svg { width:20px; height:20px; }
 .l-wtabs button { transition: background .15s, color .15s; }
 .l-wtabs button:hover:not(.active) { color: var(--ink); }
 .l-preset { transition: border-color .15s, box-shadow .15s; }
@@ -265,6 +268,10 @@ a.l-chip-brand:hover, button.l-chip-brand:hover { background: color-mix(in srgb,
 .l-wheel-pointer { position:absolute; top:-6px; left:50%; transform:translateX(-50%); font-size:30px; z-index:2; filter:drop-shadow(0 2px 3px rgba(0,0,0,.3)); }
 .l-wheel-hub { position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); width:56px; height:56px;
   border-radius:50%; background:#fff; box-shadow:var(--shadow); display:grid; place-items:center; font-weight:800; color:var(--primary); z-index:2; }
+
+/* Hide scrollbars in the customer app (keep scrolling functional) */
+.pwa-app, .pwa-app * { scrollbar-width: none; -ms-overflow-style: none; }
+.pwa-app::-webkit-scrollbar, .pwa-app *::-webkit-scrollbar { display: none; width: 0; height: 0; }
 
 /* ---- HTML confirm dialog ---- */
 .l-confirm-overlay { position:fixed; inset:0; z-index:2000; display:grid; place-items:center; padding:20px;

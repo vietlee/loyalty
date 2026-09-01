@@ -1,4 +1,14 @@
 module ApplicationHelper
+  # Icon/favicon URL for a workspace: the uploaded logo when present, else the
+  # platform default. Root-relative so it works on any shop host.
+  def workspace_icon_url(ws)
+    if ws&.logo&.attached?
+      rails_blob_path(ws.logo, only_path: true)
+    else
+      "/icon.png"
+    end
+  end
+
   # Builds the customer-app scan-resolve URL for a workspace (what promo / POS
   # QR codes encode). Dev uses the /w/:slug path form on the current host; a
   # custom domain / subdomain is used when configured.
