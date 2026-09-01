@@ -94,7 +94,7 @@
           <span class="box"><%= "✓" if mp.completed? %></span>
           <div style="flex:1;"><div style="font-weight:600;"><%= m.display_icon %> <%= m.title %></div><div style="font-size:12px; color:var(--ink-2);"><%= t("customer.common.points_plus", n: m.reward_points) %></div></div>
           <% if !mp.completed? && m.mission_type == "checkin" %>
-            <%= button_to t("customer.common.checkin"), member_mission_checkin_path(m), method: :post, class: "l-btn l-btn-soft", style: "padding:6px 12px; font-size:12px;" %>
+            <%= link_to t("customer.common.checkin"), member_scan_path, class: "l-btn l-btn-soft", style: "padding:6px 12px; font-size:12px;" %>
           <% end %>
         </div>
       <% end %>

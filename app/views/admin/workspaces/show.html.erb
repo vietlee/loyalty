@@ -46,10 +46,12 @@
         <%= ui_icon(:launch, size: 16) %> Mở app khách
       <% end %>
     </div>
-    <div style="margin-top:14px; padding:12px; border-radius:12px; background:var(--surface-2); font-size:12px; color:var(--ink-2);">
-      Dashboard merchant: <span class="l-mono"><%= @workspace.subdomain %>.loyalty.czin.net/merchant</span><br>
-      App khách: <span class="l-mono"><%= @workspace.subdomain %>.loyalty.czin.net</span>
-      (hoặc <span class="l-mono">loyalty.czin.net/w/<%= @workspace.slug %></span>)
+    <div style="margin-top:14px; padding:12px 14px; border-radius:12px; background:var(--surface-2); font-size:12px; color:var(--ink-2); line-height:1.5;">
+      <div style="font-weight:600; color:var(--ink);">Dashboard merchant</div>
+      <div class="l-mono" style="overflow-wrap:anywhere;"><%= @workspace.subdomain %>.loyalty.czin.net/merchant</div>
+      <div style="font-weight:600; color:var(--ink); margin-top:8px;">App khách</div>
+      <div class="l-mono" style="overflow-wrap:anywhere;"><%= @workspace.subdomain %>.loyalty.czin.net</div>
+      <div class="l-mono" style="overflow-wrap:anywhere; opacity:.75;">hoặc loyalty.czin.net/w/<%= @workspace.slug %></div>
     </div>
   </div>
 </div>

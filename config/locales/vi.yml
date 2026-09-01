@@ -170,6 +170,15 @@ vi:
       pos_expired_msg: "Mã QR tại quầy đã hết hiệu lực. Nhờ nhân viên tạo lại mã mới giúp bạn."
       pos_used_title: "Mã giao dịch đã được dùng"
       pos_used_msg: "Mã QR này đã được tích điểm trước đó. Vui lòng nhờ nhân viên tạo mã mới."
+    checkin:
+      success_title: "Check-in"
+      success_heading: "Check-in thành công"
+      success_points: "Số dư %{n} điểm"
+      success_recorded: "Đã ghi nhận lượt ghé hôm nay."
+      already_title: "Bạn đã check-in hôm nay"
+      already_msg: "Mỗi ngày chỉ check-in được 1 lần. Hẹn gặp lại ngày mai nhé!"
+      none_title: "Chưa có nhiệm vụ check-in"
+      none_msg: "Cửa hàng hiện chưa bật nhiệm vụ check-in. Bạn vẫn có thể tích điểm khi mua hàng."
     earn_success:
       title: "Tích điểm"
       heading: "Tích điểm thành công"

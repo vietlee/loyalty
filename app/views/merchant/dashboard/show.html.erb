@@ -34,3 +34,21 @@
     <% end %>
   </div>
 </div>
+
+<% if @has_checkin %>
+  <div class="l-panel" style="margin-top:16px; display:flex; gap:20px; align-items:center; flex-wrap:wrap;">
+    <div style="background:#fff; padding:12px; border:1px solid var(--line); border-radius:16px; flex:none;">
+      <%= qr_svg(@checkin_url, size: 148) %>
+    </div>
+    <div style="flex:1; min-width:240px;">
+      <h3 class="l-display" style="font-size:18px; margin-bottom:4px;">Mã check-in tại quầy</h3>
+      <p style="color:var(--ink-2); font-size:14px; margin-bottom:14px; max-width:520px;">
+        In mã QR này và dán tại quầy hoặc trên bàn. Khách mở app, chọn <strong>Quét mã</strong> để check-in
+        và nhận điểm nhiệm vụ — mỗi khách 1 lần/ngày, xác thực có mặt tại cửa hàng.
+      </p>
+      <%= link_to merchant_checkin_qr_path, class: "l-btn l-btn-soft" do %>
+        <%= ui_icon(:launch, size: 16) %> Tải mã để in
+      <% end %>
+    </div>
+  </div>
+<% end %>

@@ -46,6 +46,7 @@ Rails.application.routes.draw do
   # ---- Merchant dashboard : /merchant ------------------------------------
   namespace :merchant do
     root "dashboard#show"
+    get "checkin_qr", to: "dashboard#checkin_qr", as: :checkin_qr
     # First-run onboarding wizard
     get   "onboarding",      to: "onboarding#show",   as: :onboarding
     patch "onboarding",      to: "onboarding#update"
@@ -113,7 +114,6 @@ Rails.application.routes.draw do
     # Gamification
     get  "stamps",  to: "stamps#index",  as: :stamps
     get  "missions", to: "missions#index", as: :missions
-    post "missions/:id/checkin", to: "missions#checkin", as: :mission_checkin
     get  "badges",  to: "badges#index",  as: :badges
     get  "wheel",   to: "wheel#show",    as: :wheel
     post "wheel/spin", to: "wheel#spin",  as: :wheel_spin

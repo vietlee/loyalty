@@ -26,7 +26,7 @@
             <% if mp.completed? %>
               <span class="l-chip" style="background:var(--good-soft,#DEEBE1); color:var(--good);"><%= t("customer.missions.done") %></span>
             <% elsif m.mission_type == "checkin" %>
-              <%= button_to t("customer.common.checkin"), member_mission_checkin_path(m), method: :post, class: "l-btn l-btn-primary", style: "padding:8px 14px; font-size:13px;" %>
+              <%= link_to t("customer.common.checkin"), member_scan_path, class: "l-btn l-btn-primary", style: "padding:8px 14px; font-size:13px;" %>
             <% else %>
               <span class="l-chip"><%= t("customer.missions.in_progress") %></span>
             <% end %>

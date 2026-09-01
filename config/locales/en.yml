@@ -133,6 +133,15 @@ en:
       pos_expired_msg: "The counter QR has expired. Please ask staff to generate a new one."
       pos_used_title: "Transaction code already used"
       pos_used_msg: "This QR has already been used to earn points. Please ask staff for a new one."
+    checkin:
+      success_title: "Check-in"
+      success_heading: "Checked in!"
+      success_points: "Balance %{n} pts"
+      success_recorded: "Your visit today has been recorded."
+      already_title: "You already checked in today"
+      already_msg: "Only one check-in per day. See you again tomorrow!"
+      none_title: "No check-in mission"
+      none_msg: "This store hasn't enabled a check-in mission yet. You can still earn points on purchases."
     earn_success:
       title: "Points earned"
       heading: "Points earned!"

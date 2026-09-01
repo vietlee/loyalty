@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2026_09_01_120000) do
+ActiveRecord::Schema[7.2].define(version: 2026_09_01_212222) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -164,6 +164,7 @@ ActiveRecord::Schema[7.2].define(version: 2026_09_01_120000) do
     t.jsonb "settings", default: {}, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.datetime "last_checkin_at"
     t.index ["referred_by_id"], name: "index_members_on_referred_by_id"
     t.index ["workspace_id", "phone"], name: "index_members_on_workspace_id_and_phone", unique: true
     t.index ["workspace_id", "referral_code"], name: "index_members_on_workspace_id_and_referral_code", unique: true, where: "(referral_code IS NOT NULL)"

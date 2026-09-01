@@ -15,6 +15,8 @@ module Customer
         handle_promo(params[:promo])
       elsif params[:pos].present?
         handle_pos(params[:pos])
+      elsif params[:checkin].present?
+        handle_checkin(params[:checkin])
       elsif params[:token].present?
         dispatch_token(params[:token])
       else
@@ -23,6 +25,18 @@ module Customer
     end
 
     private
+
+    # ---- Store check-in (scan the on-site QR) ----
+    def handle_checkin(token)
+      return invalid! unless Checkin.valid?(token, workspace: current_workspace)
+      status, points = Checkin.check_in!(current_member, current_workspace)
+      @points = points
+      case status
+      when :done    then render :checkin_success
+      when :already then render :checkin_already, status: :unprocessable_entity
+      else render :checkin_none, status: :unprocessable_entity
+      end
+    end
 
     # ---- Promo claim-to-wallet (§6.6) ----
     def handle_promo(token)
@@ -67,6 +81,7 @@ module Customer
       s = raw.to_s.strip
       if s =~ /[?&]promo=([^&]+)/ then params[:promo] = $1
       elsif s =~ /[?&]pos=([^&]+)/ then params[:pos] = $1
+      elsif s =~ /[?&]checkin=([^&]+)/ then params[:checkin] = CGI.unescape($1)
       else params[:token] = s[%r{/([A-Za-z0-9]+)\z}, 1] || s
       end
     end
