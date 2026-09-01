@@ -9,6 +9,17 @@ module ApplicationHelper
     end
   end
 
+  # Workspace avatar: the uploaded logo (cover-cropped, inherits the box shape)
+  # if present, otherwise the initials. Pass extra style for the box.
+  def workspace_avatar(ws, klass: "avatar", style: nil)
+    if ws&.logo&.attached?
+      content_tag(:div, image_tag(url_for(ws.logo), style: "width:100%;height:100%;object-fit:cover;"),
+                  class: klass, style: ["overflow:hidden", style].compact.join(";"))
+    else
+      content_tag(:div, ws&.logo_initials, class: klass, style: style)
+    end
+  end
+
   # Builds the customer-app scan-resolve URL for a workspace (what promo / POS
   # QR codes encode). Dev uses the /w/:slug path form on the current host; a
   # custom domain / subdomain is used when configured.

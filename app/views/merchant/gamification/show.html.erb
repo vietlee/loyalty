@@ -68,16 +68,38 @@
     <p style="font-size:12px; color:var(--ink-2); margin-top:10px;">Huy hiệu tự trao khi khách đạt điều kiện (mua lần đầu, mua nhiều, điểm tích luỹ, cú đêm).</p>
   </div>
 
-  <%# ---- Lucky wheel ---- %>
+  <%# ---- Lucky wheel (editable prizes) ---- %>
   <div class="l-panel">
-    <h3 class="l-display" style="font-size:18px; margin-bottom:10px;">🎡 Vòng quay may mắn</h3>
-    <div style="display:flex; flex-wrap:wrap; gap:8px;">
-      <% @wheel.resolved_segments.each do |s| %>
-        <span class="l-chip" style="background:<%= s['color'] %>22; color:var(--ink);">
-          <span style="width:10px; height:10px; border-radius:50%; background:<%= s['color'] %>; display:inline-block; margin-right:6px;"></span><%= s['label'] %> · <%= s['weight'] %>%
-        </span>
-      <% end %>
-    </div>
-    <p style="font-size:12px; color:var(--ink-2); margin-top:10px;">1 lượt quay miễn phí mỗi ngày · quay thêm tốn <%= @wheel.cost_points %> điểm.</p>
+    <h3 class="l-display" style="font-size:18px; margin-bottom:4px;">🎡 Vòng quay may mắn</h3>
+    <p style="color:var(--ink-2); font-size:13px; margin-bottom:14px;">Tự đặt giải thưởng của cửa hàng. <strong>Điểm</strong> = số điểm trúng (để 0 nghĩa là ô “Chúc may mắn”). <strong>Tỉ lệ</strong> = trọng số, càng cao càng dễ trúng. Để trống <strong>Tên giải</strong> để bỏ ô đó.</p>
+    <% rows = @wheel.resolved_segments.dup; rows << {} while rows.size < 6 %>
+    <%= form_with url: merchant_wheel_config_path, method: :patch do %>
+      <div style="display:flex; flex-direction:column; gap:8px;">
+        <div style="display:flex; gap:8px; font-size:11px; color:var(--ink-2); text-transform:uppercase; letter-spacing:.05em; padding:0 2px;">
+          <span style="width:40px;">Màu</span><span style="flex:1;">Tên giải</span><span style="width:90px;">Điểm</span><span style="width:80px;">Tỉ lệ</span>
+        </div>
+        <% rows.first(8).each_with_index do |s, i| %>
+          <div style="display:flex; gap:8px; align-items:center;">
+            <input type="color" name="segments[<%= i %>][color]" value="<%= s['color'] || '#E08A3C' %>" style="width:40px; height:38px; border:1px solid var(--line); border-radius:10px; padding:2px; background:#fff; cursor:pointer;">
+            <input type="text" name="segments[<%= i %>][label]" value="<%= s['label'] %>" placeholder="Ví dụ: Giảm 20%" class="l-field" style="flex:1;">
+            <input type="number" name="segments[<%= i %>][value]" value="<%= s['value'] %>" min="0" placeholder="0" class="l-field" style="width:90px;">
+            <input type="number" name="segments[<%= i %>][weight]" value="<%= s['weight'] || 10 %>" min="1" placeholder="10" class="l-field" style="width:80px;">
+          </div>
+        <% end %>
+      </div>
+
+      <div style="display:flex; gap:16px; align-items:center; margin-top:14px; flex-wrap:wrap;">
+        <label style="display:flex; align-items:center; gap:8px; font-size:14px;">
+          <input type="checkbox" name="daily_free" value="1" <%= "checked" if @wheel.daily_free %>>
+          Tặng 1 lượt quay miễn phí mỗi ngày
+        </label>
+        <label style="display:flex; align-items:center; gap:8px; font-size:14px;">
+          Quay thêm tốn
+          <input type="number" name="cost_points" value="<%= @wheel.cost_points %>" min="0" class="l-field" style="width:90px;"> điểm
+        </label>
+      </div>
+
+      <%= submit_tag "Lưu vòng quay", class: "l-btn l-btn-primary", style: "margin-top:16px;" %>
+    <% end %>
   </div>
 </div>

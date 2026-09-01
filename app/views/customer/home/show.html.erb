@@ -3,7 +3,7 @@
 <% tier = @tier %>
 
 <header class="l-appbar">
-  <div class="avatar"><%= current_workspace.logo_initials %></div>
+  <%= workspace_avatar(current_workspace) %>
   <div style="min-width:0;">
     <div class="nm"><%= current_workspace.name %></div>
     <div class="hi"><%= t("customer.home.greeting", name: @member.name.presence || current_workspace.branding_value("customer_term")) %></div>
@@ -20,7 +20,7 @@
   <%= link_to member_tier_path, style: "text-decoration:none; color:#fff; display:block;" do %>
     <div class="l-card" style="--tier-from: var(--primary); --tier-to: color-mix(in srgb, var(--primary) 52%, #000);">
       <% if tier %>
-        <div class="tier-badge" style="background:<%= tier.gradient_css %>; color:#fff;"><%= t("customer.home.tier_badge", name: tier.name) %></div>
+        <div class="tier-badge" style="background:<%= tier.gradient_css %>;"><span class="medal">👑</span><%= t("customer.home.tier_badge", name: tier.name) %></div>
       <% end %>
       <div class="k"><%= t("customer.home.points_balance") %></div>
       <div style="display:flex; align-items:flex-end; justify-content:space-between; gap:12px;">

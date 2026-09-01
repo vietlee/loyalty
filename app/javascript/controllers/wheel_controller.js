@@ -27,13 +27,13 @@ export default class extends Controller {
 
     const n = this.countValue
     const ang = 360 / n
-    // Bring the winning segment's center to the top pointer, plus 5 full turns.
-    const target = 360 * 6 - (data.index * ang + ang / 2)
+    // Bring the winning segment's center to the top pointer, plus 7 full turns.
+    const target = 360 * 7 - (data.index * ang + ang / 2)
     this.rotation += target
     this.wheelTarget.style.transform = `rotate(${this.rotation}deg)`
 
-    this.playSpinTicks(4.0)
-    setTimeout(() => this.reveal(data), 4100)
+    this.playSpinTicks(5.0)
+    setTimeout(() => this.reveal(data), 5100)
   }
 
   reveal(data) {

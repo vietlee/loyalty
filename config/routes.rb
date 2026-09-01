@@ -81,7 +81,8 @@ Rails.application.routes.draw do
     post "redeem",        to: "redeem#create", as: :redeem
     resources :rewards, only: [:index, :new, :create, :edit, :update, :destroy]
     # Gamification management
-    get "gamification", to: "gamification#show"
+    get   "gamification",      to: "gamification#show"
+    patch "gamification/wheel", to: "gamification#update_wheel", as: :wheel_config
     resources :stamp_cards, only: [:create, :destroy]
     resources :missions,    only: [:create, :destroy]
   end
