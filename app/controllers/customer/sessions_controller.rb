@@ -45,14 +45,16 @@ module Customer
 
       if result == :ok
         member = Member.find_by(workspace: current_workspace, phone: @phone)
-        if member.nil? && !current_workspace.can_add_member?
+        is_new = member.nil?
+        if is_new && !current_workspace.can_add_member?
           flash.now[:alert] = "Chương trình đang tạm đầy. Vui lòng quay lại sau."
           return render :verify_form, status: :unprocessable_entity
         end
         member ||= Member.create!(workspace: current_workspace, phone: @phone)
-        if session[:ref_code].present?
-          Referrals.attach(referred: member, referrer_code: session.delete(:ref_code))
-        end
+        # Referral rewards apply ONLY to brand-new members. An existing account
+        # opening an invite link is not a new referral — discard the code.
+        ref_code = session.delete(:ref_code)
+        Referrals.attach(referred: member, referrer_code: ref_code) if is_new && ref_code.present?
         session.delete(:otp_phone)
         sign_in(:member, member)
         redirect_to member_root_path, notice: "Chào mừng #{member.display_name}!"
