@@ -223,11 +223,11 @@ a.l-chip-brand:hover, button.l-chip-brand:hover { background: color-mix(in srgb,
 
 /* ---- ticket-style voucher card ---- */
 .l-ticket { position:relative; display:flex; background:#fff; border:1px solid var(--line); border-radius:18px; overflow:hidden; box-shadow:var(--shadow); text-decoration:none; color:var(--ink); }
-.l-ticket .stub { width:96px; flex:none; background:linear-gradient(135deg, var(--primary) 0%, var(--primary-2) 100%); color:#fff; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; padding:14px 8px; }
-.l-ticket .stub .v { font-family:var(--font-display); font-size:24px; line-height:1; }
+.l-ticket .stub { width:108px; flex:none; background:linear-gradient(135deg, var(--primary) 0%, var(--primary-2) 100%); color:#fff; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; padding:14px 10px; }
+.l-ticket .stub .v { font-family:var(--font-display); font-size:22px; line-height:1.05; max-width:100%; overflow-wrap:anywhere; }
 .l-ticket .stub .u { font-size:10px; opacity:.85; letter-spacing:.1em; text-transform:uppercase; margin-top:4px; }
 .l-ticket .body { flex:1; min-width:0; padding:14px 16px; }
-.l-ticket .perf { position:absolute; left:88px; top:0; bottom:0; width:16px; background:
+.l-ticket .perf { position:absolute; left:100px; top:0; bottom:0; width:16px; background:
   radial-gradient(circle at center, var(--surface) 0 4px, transparent 4px) center/16px 14px repeat-y; }
 .l-ticket.used, .l-ticket.expired { opacity:.6; }
 .l-ticket .state { font-size:11px; font-weight:700; padding:2px 8px; border-radius:999px; }
