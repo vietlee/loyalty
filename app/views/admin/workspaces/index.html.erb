@@ -32,13 +32,24 @@
             <span class="l-chip" style="background:<%= color %>22; color:<%= color %>;"><%= ws.status_label %></span>
           </td>
           <td style="color:var(--ink-2);"><%= l(ws.created_at.to_date, format: :short) %></td>
-          <td style="text-align:right; white-space:nowrap;">
-            <% if ws.pending? || ws.status == "suspended" %>
-              <%= button_to "Duyệt", approve_admin_workspace_path(ws), method: :patch, class: "l-btn l-btn-primary", style: "padding:6px 12px; font-size:12px;" %>
-            <% elsif ws.active? %>
-              <%= button_to "Tạm ngưng", suspend_admin_workspace_path(ws), method: :patch, class: "l-btn l-btn-ghost", style: "padding:6px 12px; font-size:12px;", form: { data: { turbo_confirm: "Tạm ngưng workspace này?" } } %>
-            <% end %>
-            <%= link_to "Xem", admin_workspace_path(ws), class: "l-btn l-btn-ghost", style: "padding:6px 12px; font-size:12px;" %>
+          <td>
+            <div style="display:flex; gap:8px; justify-content:flex-end; align-items:center;">
+              <% if ws.pending? || ws.status == "suspended" %>
+                <%= button_to approve_admin_workspace_path(ws), method: :patch, class: "l-btn l-btn-primary",
+                      style: "padding:7px 12px; font-size:12px;", form: { style: "display:inline;" } do %>
+                  <%= ui_icon(:check, size: 15) %> Duyệt
+                <% end %>
+              <% elsif ws.active? %>
+                <%= button_to suspend_admin_workspace_path(ws), method: :patch, class: "l-btn l-btn-ghost",
+                      style: "padding:7px 12px; font-size:12px;",
+                      form: { style: "display:inline;", data: { turbo_confirm: "Tạm ngưng workspace này?" } } do %>
+                  <%= ui_icon(:pause, size: 15) %> Tạm ngưng
+                <% end %>
+              <% end %>
+              <%= link_to admin_workspace_path(ws), class: "l-btn l-btn-ghost", style: "padding:7px 12px; font-size:12px;" do %>
+                <%= ui_icon(:eye, size: 15) %> Xem
+              <% end %>
+            </div>
           </td>
         </tr>
       <% end %>
