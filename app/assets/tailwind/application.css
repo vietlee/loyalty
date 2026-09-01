@@ -245,6 +245,19 @@ body {
 .l-wheel-hub { position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); width:56px; height:56px;
   border-radius:50%; background:#fff; box-shadow:var(--shadow); display:grid; place-items:center; font-weight:800; color:var(--primary); z-index:2; }
 
+/* ---- HTML confirm dialog ---- */
+.l-confirm-overlay { position:fixed; inset:0; z-index:2000; display:grid; place-items:center; padding:20px;
+  background:rgba(20,14,8,.45); opacity:0; transition:opacity .18s; }
+.l-confirm-overlay.open { opacity:1; }
+.l-confirm { width:100%; max-width:340px; background:#fff; border-radius:20px; padding:26px 22px; text-align:center;
+  box-shadow:var(--shadow-lg); transform:translateY(8px) scale(.98); transition:transform .18s; }
+.l-confirm-overlay.open .l-confirm { transform:none; }
+.l-confirm-icon { width:52px; height:52px; margin:0 auto 12px; border-radius:50%; background:var(--primary-soft);
+  color:var(--primary-ink); display:grid; place-items:center; font-family:var(--font-display); font-size:26px; font-weight:700; }
+.l-confirm-msg { font-size:16px; font-weight:600; color:var(--ink); }
+.l-confirm-actions { display:flex; gap:10px; margin-top:20px; }
+.l-confirm-actions .l-btn { flex:1; }
+
 /* launcher (dev) */
 .l-launch { max-width:1000px; margin:0 auto; padding:48px 20px; }
 .l-launch h1 { font-family:var(--font-display); font-size:34px; }

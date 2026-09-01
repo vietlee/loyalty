@@ -75,6 +75,7 @@
       <div style="font-size:11px; opacity:.6;"><%= current_membership&.label %></div>
     </div>
     <%= button_to "⎋", destroy_user_session_path, method: :delete,
-          style: "margin-left:auto;background:none;border:none;color:#EDE4D8;cursor:pointer;font-size:16px;" %>
+          form: { data: { turbo_confirm: "Đăng xuất khỏi tài khoản?" } },
+          style: "margin-left:auto;background:none;border:none;color:inherit;cursor:pointer;font-size:16px;" %>
   </div>
 </aside>

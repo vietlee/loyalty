@@ -32,6 +32,7 @@
       <div style="font-size:11px; opacity:.6;">Operator</div>
     </div>
     <%= button_to "⎋", destroy_admin_user_session_path, method: :delete,
+          form: { data: { turbo_confirm: "Đăng xuất khỏi Super Admin?" } },
           style: "margin-left:auto;background:none;border:none;color:#EDE4D8;cursor:pointer;font-size:16px;" %>
   </div>
 </aside>
