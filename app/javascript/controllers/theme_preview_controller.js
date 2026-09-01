@@ -15,6 +15,11 @@ export default class extends Controller {
   }
 
   update() {
+    // Also drive the live dashboard chrome (sidebar tint + accents).
+    const root = document.documentElement.style
+    if (this.hasPrimaryTarget)   root.setProperty("--primary", this.primaryTarget.value)
+    if (this.hasPrimary_2Target) root.setProperty("--primary-2", this.primary_2Target.value)
+
     const f = this.frameTarget.style
     if (this.hasPrimaryTarget)  f.setProperty("--pv-primary", this.primaryTarget.value)
     if (this.hasSurfaceTarget)  f.setProperty("--pv-surface", this.surfaceTarget.value)
