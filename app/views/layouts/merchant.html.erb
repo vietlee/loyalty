@@ -4,7 +4,7 @@
     <%= render "layouts/head" %>
   </head>
   <body>
-    <%= render "layouts/theme_vars", ws: current_workspace %>
+    <%= render "layouts/merchant_theme_vars" %>
     <% if flash[:notice] || flash[:alert] %>
       <div class="l-flash" data-controller="flash"><%= flash[:notice] || flash[:alert] %></div>
     <% end %>

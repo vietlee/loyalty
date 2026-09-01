@@ -5,7 +5,8 @@
   <%# ---------------- Controls ---------------- %>
   <div>
     <div class="l-panel" style="margin-bottom:16px;">
-      <h3 class="l-display" style="font-size:18px; margin-bottom:10px;">Bộ theme mẫu</h3>
+      <h3 class="l-display" style="font-size:18px; margin-bottom:2px;">Bộ theme mẫu</h3>
+      <p style="color:var(--ink-2); font-size:13px; margin-bottom:10px;">Chọn nhanh để bắt đầu — hoặc tự tuỳ chỉnh màu &amp; font bên dưới.</p>
       <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:10px;">
         <% @presets.each do |key, p| %>
           <%= button_to merchant_appearance_path, method: :patch, params: { preset: key }, class: "l-preset" do %>
@@ -22,14 +23,20 @@
 
     <%= form_with url: merchant_appearance_path, method: :patch do %>
       <div class="l-panel" style="margin-bottom:16px;">
-        <h3 class="l-display" style="font-size:18px; margin-bottom:10px;">Màu sắc</h3>
+        <h3 class="l-display" style="font-size:18px; margin-bottom:2px;">Màu sắc — tự chọn</h3>
+        <p style="color:var(--ink-2); font-size:13px; margin-bottom:12px;">Bấm vào ô màu để chọn <strong>màu bất kỳ</strong>. Không giới hạn ở 3 bộ mẫu.</p>
         <div style="display:grid; grid-template-columns:1fr 1fr; gap:14px;">
           <% [["primary", "Màu chính"], ["primary_2", "Màu nhấn"], ["surface", "Nền"], ["ink", "Chữ"]].each do |k, label| %>
             <div>
               <label class="l-label"><%= label %></label>
-              <input type="color" name="theme[<%= k %>]" value="<%= current_workspace.theme_value(k) %>"
-                     data-theme-preview-target="<%= k %>" data-action="input->theme-preview#update"
-                     style="width:100%; height:44px; border:1px solid var(--line); border-radius:12px; background:#fff;">
+              <label style="display:flex; align-items:center; gap:10px; border:1px solid var(--line); border-radius:12px; padding:6px 10px 6px 6px; background:#fff; cursor:pointer;">
+                <input type="color" name="theme[<%= k %>]" value="<%= current_workspace.theme_value(k) %>"
+                       data-theme-preview-target="<%= k %>"
+                       data-action="input->theme-preview#update input->theme-preview#hex"
+                       data-hex-for="<%= k %>"
+                       style="width:44px; height:36px; border:none; border-radius:8px; padding:0; background:none; cursor:pointer;">
+                <span class="l-mono" data-hex="<%= k %>" style="font-size:13px; color:var(--ink-2); text-transform:uppercase;"><%= current_workspace.theme_value(k) %></span>
+              </label>
             </div>
           <% end %>
         </div>

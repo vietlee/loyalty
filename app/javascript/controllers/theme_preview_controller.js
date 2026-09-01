@@ -7,6 +7,13 @@ export default class extends Controller {
 
   connect() { this.update() }
 
+  // Reflect the picked hex next to each colour swatch.
+  hex(e) {
+    const key = e.target.dataset.hexFor
+    const span = this.element.querySelector(`[data-hex="${key}"]`)
+    if (span) span.textContent = e.target.value
+  }
+
   update() {
     const f = this.frameTarget.style
     if (this.hasPrimaryTarget)  f.setProperty("--pv-primary", this.primaryTarget.value)

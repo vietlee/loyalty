@@ -1,0 +1,26 @@
+<%# Merchant back-office chrome: crisp NEUTRAL palette (high contrast) with the
+    workspace's brand colour used only as an accent. Keeps the pro dashboard
+    legible across every workspace theme. %>
+<% ws = current_workspace %>
+<style>
+  :root {
+    --primary:      <%= ws&.theme_value(:primary)   || "#4B4DED" %>;
+    --primary-2:    <%= ws&.theme_value(:primary_2) || "#7C7EF5" %>;
+    --on-primary:   <%= ws&.theme_value(:on_primary) || "#FFFFFF" %>;
+    --surface:      #F5F6F8;
+    --surface-2:    #ECEEF2;
+    --ink:          #1B1E26;
+    --ink-2:        #5B6472;
+    --ink-3:        #8A93A3;
+    --line:         #E3E6EC;
+    --line-2:       #D3D8E0;
+    --radius:       14px;
+    <% if ws %>
+    --font-display: <%= ws.font_stack(:font_display).html_safe %>;
+    --font-body:    <%= ws.font_stack(:font_body).html_safe %>;
+    <% end %>
+  }
+  /* Neutral dashboard surfaces */
+  body { background: var(--surface); }
+  .l-side { background: #1B1E26; }
+</style>
