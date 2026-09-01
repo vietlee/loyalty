@@ -170,6 +170,16 @@ vi:
       pos_expired_msg: "Mã QR tại quầy đã hết hiệu lực. Nhờ nhân viên tạo lại mã mới giúp bạn."
       pos_used_title: "Mã giao dịch đã được dùng"
       pos_used_msg: "Mã QR này đã được tích điểm trước đó. Vui lòng nhờ nhân viên tạo mã mới."
+    pwa:
+      notifications: "Thông báo đẩy"
+      push_on: "Đang bật — bạn sẽ nhận ưu đãi & nhắc nhở"
+      push_off: "Đang tắt — chạm để bật nhận thông báo"
+      push_blocked: "Trình duyệt đang chặn — hãy bật trong cài đặt"
+      push_unsupported: "Thiết bị không hỗ trợ thông báo đẩy"
+      install_title: "Cài đặt ứng dụng"
+      install_sub: "Thêm vào màn hình chính để mở nhanh & nhận thông báo."
+      install_btn: "Cài đặt"
+      ios_hint: "Trên iPhone: bấm nút Chia sẻ ⎋ rồi chọn “Thêm vào MH chính”."
     checkin:
       success_title: "Check-in"
       success_heading: "Check-in thành công"

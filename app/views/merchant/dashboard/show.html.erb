@@ -1,6 +1,25 @@
 <% content_for :title, "Tổng quan" %>
 <% content_for :title_en, "DASHBOARD" %>
 
+<% if @sub_warning %>
+  <% w = @sub_warning %>
+  <div class="l-subwarn <%= w[:level] %>">
+    <div style="flex:1;">
+      <strong><%= { expired: "Thuê bao đã hết hạn", expiring: "Thuê bao sắp hết hạn", inactive: "Chưa kích hoạt thuê bao" }[w[:kind]] %></strong>
+      <div style="font-size:13px; opacity:.9; margin-top:2px;">
+        <% if w[:kind] == :expired %>
+          Vui lòng thanh toán trong <strong><%= w[:days] %> ngày</strong> để tránh bị khoá và gián đoạn dịch vụ.
+        <% elsif w[:kind] == :expiring %>
+          Còn <strong><%= w[:days] %> ngày</strong> là đến hạn — gia hạn sớm để không gián đoạn.
+        <% else %>
+          Thanh toán để kích hoạt đầy đủ dịch vụ cho cửa hàng.
+        <% end %>
+      </div>
+    </div>
+    <%= link_to "Thanh toán ngay", merchant_billing_path, class: "l-btn l-btn-primary", style: "flex:none;" %>
+  </div>
+<% end %>
+
 <%# ---- KPI strip ---- %>
 <div class="l-kpis">
   <div class="l-kpi"><div class="k">Thành viên</div><div class="v"><%= number_with_delimiter(@members_count) %></div><div class="d"><%= number_with_delimiter(@active_members) %> đang hoạt động</div></div>

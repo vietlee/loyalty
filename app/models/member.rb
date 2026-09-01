@@ -20,6 +20,7 @@ class Member < ApplicationRecord
   has_many :badges, through: :member_badges
   has_many :spin_logs, dependent: :destroy
   has_many :notifications, dependent: :destroy
+  has_many :push_subscriptions, dependent: :destroy
   has_many :referrals_made, class_name: "Referral", foreign_key: :referrer_id, dependent: :destroy
   has_one  :referral_received, class_name: "Referral", foreign_key: :referred_id, dependent: :destroy
 

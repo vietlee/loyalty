@@ -18,6 +18,7 @@ module Merchant
         @tier_counts     = @tiers.map { |t| [t, Member.where(tier_key: t.key).count] }
         @has_checkin     = current_workspace.missions.active.exists?(mission_type: "checkin")
         @checkin_url     = helpers.customer_scan_url(current_workspace, checkin: Checkin.encode(current_workspace)) if @has_checkin
+        @sub_warning     = subscription_warning(current_workspace)
       else
         @points_issued = @points_redeemed = @purchases_count = @redemption_rate = @active_members = 0
         @member_growth = []
@@ -41,6 +42,20 @@ module Merchant
     end
 
     private
+
+    GRACE_DAYS = 10 # days after expiry before the workspace is locked
+
+    # Returns a banner descriptor when the subscription needs attention, else nil.
+    def subscription_warning(ws)
+      pu = ws.paid_until
+      return { kind: :inactive, level: :warn, days: nil } if pu.nil?
+      left = (pu.to_date - Date.current).to_i
+      if left < 0
+        { kind: :expired, level: :danger, days: [GRACE_DAYS + left, 0].max }
+      elsif left <= 7
+        { kind: :expiring, level: :warn, days: left }
+      end
+    end
 
     # New members per month over the last 6 months, with the running total.
     def monthly_member_growth

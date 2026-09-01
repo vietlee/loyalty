@@ -27,6 +27,12 @@
         <%= link_to "EN", set_locale_path(:en), class: "l-chip #{'l-chip-brand' if I18n.locale == :en}" %>
       </span>
     </div>
+    <% if PushSender.configured? %>
+      <div class="l-toggle-row" data-action="click->pwa#togglePush" style="cursor:pointer;">
+        <span><%= t("customer.pwa.notifications") %><br><span data-pwa-target="pushLabel" style="font-size:12px; color:var(--ink-2);"></span></span>
+        <span class="l-switch" data-pwa-target="pushToggle"><span class="knob"></span></span>
+      </div>
+    <% end %>
     <div class="l-toggle-row"><span><%= t("customer.profile.store") %></span><span style="color:var(--ink-2);"><%= current_workspace.name %></span></div>
     <div class="l-toggle-row"><span><%= t("customer.profile.referral_code") %></span><span class="l-mono"><%= @member.referral_code %></span></div>
   </div>

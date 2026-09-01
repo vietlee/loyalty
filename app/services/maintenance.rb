@@ -5,8 +5,31 @@
 module Maintenance
   module_function
 
+  GRACE_DAYS = 10
+
   def run_all
-    { vouchers_expired: expire_vouchers, members_recomputed: recompute_members }
+    { vouchers_expired: expire_vouchers, members_recomputed: recompute_members,
+      subscriptions: sync_subscriptions }
+  end
+
+  # Enforce the billing lifecycle: an active workspace whose subscription lapsed
+  # moves to past_due; if still unpaid GRACE_DAYS after expiry it is suspended
+  # (locked out). Paid/pending/trial workspaces are left alone.
+  def sync_subscriptions
+    moved = { past_due: 0, suspended: 0 }
+    ActsAsTenant.without_tenant do
+      Workspace.where(status: %w[active past_due]).where.not(paid_until: nil).find_each do |ws|
+        days_over = (Date.current - ws.paid_until.to_date).to_i
+        next if days_over <= 0
+        if days_over > GRACE_DAYS && ws.status != "suspended"
+          ws.update_columns(status: "suspended"); moved[:suspended] += 1
+        elsif ws.status == "active"
+          ws.update_columns(status: "past_due"); moved[:past_due] += 1
+        end
+      end
+    end
+    Rails.logger.info("[Maintenance] subscriptions #{moved.inspect}")
+    moved
   end
 
   def expire_vouchers

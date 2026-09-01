@@ -41,6 +41,7 @@ gem "faraday"
 gem "faraday-retry"
 
 # Charts
+gem "web-push"
 gem "chartkick"
 gem "groupdate"
 

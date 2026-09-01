@@ -13,10 +13,21 @@
       <div class="l-flash" data-controller="flash"><%= flash[:notice] || flash[:alert] %></div>
     <% end %>
 
-    <div class="l-phone">
+    <% pwa = current_workspace ? {
+         controller: "pwa",
+         "pwa-vapid-value": PushSender.public_key,
+         "pwa-subscribe-url-value": member_push_subscribe_path,
+         "pwa-unsubscribe-url-value": member_push_unsubscribe_path,
+         "pwa-on-text": t("customer.pwa.push_on"),
+         "pwa-off-text": t("customer.pwa.push_off"),
+         "pwa-blocked-text": t("customer.pwa.push_blocked"),
+         "pwa-unsupported-text": t("customer.pwa.push_unsupported"),
+       } : {} %>
+    <div class="l-phone"<%= tag.attributes(data: pwa) if pwa.any? %>>
       <%= yield %>
       <% if current_workspace && member_signed_in? %>
         <%= render "layouts/member_tabbar" %>
+        <%= render "layouts/pwa_install" %>
       <% end %>
     </div>
   </body>

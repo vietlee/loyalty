@@ -112,6 +112,9 @@ Rails.application.routes.draw do
     get "my-code/recent", to: "codes#recent", as: :my_code_recent  # poll for a new earn
     get "history", to: "transactions#index", as: :history
     get "tier",    to: "tiers#show",    as: :tier
+    # Web Push subscription (PWA)
+    post "push/subscribe",   to: "push#subscribe",   as: :push_subscribe
+    post "push/unsubscribe", to: "push#unsubscribe", as: :push_unsubscribe
     # Gamification
     get  "stamps",  to: "stamps#index",  as: :stamps
     get  "missions", to: "missions#index", as: :missions

@@ -18,5 +18,7 @@ class Broadcast < ApplicationRecord
     end
     Notification.insert_all(rows) if rows.any?
     update!(sent_count: rows.size, sent_at: now)
+    # Push to installed PWAs (in-app inbox is populated above regardless).
+    PushJob.perform_later(workspace_id, members.map(&:id), title, body.to_s, "/notifications") if rows.any?
   end
 end

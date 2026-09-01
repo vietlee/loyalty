@@ -133,6 +133,16 @@ en:
       pos_expired_msg: "The counter QR has expired. Please ask staff to generate a new one."
       pos_used_title: "Transaction code already used"
       pos_used_msg: "This QR has already been used to earn points. Please ask staff for a new one."
+    pwa:
+      notifications: "Push notifications"
+      push_on: "On — you'll get offers & reminders"
+      push_off: "Off — tap to turn on notifications"
+      push_blocked: "Blocked by the browser — enable it in settings"
+      push_unsupported: "This device doesn't support push"
+      install_title: "Install the app"
+      install_sub: "Add to your home screen for quick access & alerts."
+      install_btn: "Install"
+      ios_hint: "On iPhone: tap the Share button ⎋ then “Add to Home Screen”."
     checkin:
       success_title: "Check-in"
       success_heading: "Checked in!"
