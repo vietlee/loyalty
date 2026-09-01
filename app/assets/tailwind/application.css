@@ -23,6 +23,10 @@
   /* derived */
   --primary-soft: color-mix(in srgb, var(--primary) 12%, #fff);
   --primary-ink:  color-mix(in srgb, var(--primary) 80%, #000);
+  /* Button colour — defaults to brand; per-app layouts (e.g. Super Admin)
+     override it to their leftbar colour. Single var so color-mix stays valid. */
+  --btn-primary:     var(--primary);
+  --btn-primary-ink: var(--on-primary);
   --shadow:       0 1px 2px rgba(40,24,12,.05), 0 10px 30px rgba(40,24,12,.08);
   --shadow-lg:    0 30px 70px rgba(40,24,12,.18);
   --good:         #3F7A57;
@@ -49,15 +53,15 @@ body {
 /* Buttons follow the leftbar's dominant colour. --btn-primary defaults to the
    brand --primary (merchant + customer, whose sidebar IS the brand); Super
    Admin overrides it to its dark sidebar colour so its buttons match too. */
-.l-btn-primary { background: var(--btn-primary, var(--primary)); color: var(--btn-primary-ink, var(--on-primary));
-  box-shadow: 0 8px 20px color-mix(in srgb, var(--btn-primary, var(--primary)) 32%, transparent); }
-.l-btn-primary:hover { background: color-mix(in srgb, var(--btn-primary, var(--primary)) 86%, #fff);
-  box-shadow: 0 10px 26px color-mix(in srgb, var(--btn-primary, var(--primary)) 42%, transparent); transform: translateY(-1px); }
-.l-btn-primary:active { transform: translateY(0); box-shadow: 0 4px 12px color-mix(in srgb, var(--btn-primary, var(--primary)) 30%, transparent); }
+.l-btn-primary { background: var(--btn-primary); color: var(--btn-primary-ink);
+  box-shadow: 0 8px 20px color-mix(in srgb, var(--btn-primary) 32%, transparent); }
+.l-btn-primary:hover { background: color-mix(in srgb, var(--btn-primary) 86%, #fff);
+  box-shadow: 0 10px 26px color-mix(in srgb, var(--btn-primary) 42%, transparent); transform: translateY(-1px); }
+.l-btn-primary:active { transform: translateY(0); box-shadow: 0 4px 12px color-mix(in srgb, var(--btn-primary) 30%, transparent); }
 .l-btn-ghost { background: transparent; color: var(--ink); border-color: var(--line); }
 .l-btn-ghost:hover { background: color-mix(in srgb, var(--ink) 6%, transparent); border-color: color-mix(in srgb, var(--ink) 22%, var(--line)); }
-.l-btn-soft  { background: color-mix(in srgb, var(--btn-primary, var(--primary)) 12%, #fff); color: var(--btn-primary, var(--primary-ink)); }
-.l-btn-soft:hover { background: color-mix(in srgb, var(--btn-primary, var(--primary)) 20%, #fff); }
+.l-btn-soft  { background: color-mix(in srgb, var(--btn-primary) 12%, #fff); color: var(--btn-primary); }
+.l-btn-soft:hover { background: color-mix(in srgb, var(--btn-primary) 20%, #fff); }
 .l-btn-block { width:100%; }
 
 .l-chip { display:inline-flex; align-items:center; gap:6px; padding:5px 11px; border-radius:999px;
