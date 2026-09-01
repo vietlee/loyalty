@@ -6,13 +6,13 @@
   <div class="l-subwarn <%= w[:level] %>">
     <div style="flex:1;">
       <strong><%= { expired: "Thuê bao đã hết hạn", expiring: "Thuê bao sắp hết hạn", inactive: "Chưa kích hoạt thuê bao" }[w[:kind]] %></strong>
-      <div style="font-size:13px; opacity:.9; margin-top:2px;">
+      <div style="font-size:13px; opacity:.9; margin-top:2px; max-width:760px;">
         <% if w[:kind] == :expired %>
-          Vui lòng thanh toán trong <strong><%= w[:days] %> ngày</strong> để tránh bị khoá và gián đoạn dịch vụ.
+          Vui lòng thanh toán trong <strong><%= w[:days] %> ngày</strong> tới. Quá <strong>10 ngày</strong> kể từ ngày hết hạn mà chưa thanh toán, cửa hàng sẽ <strong>tự động ngưng hoạt động (inactive)</strong> và không thể sử dụng dịch vụ cho đến khi thanh toán.
         <% elsif w[:kind] == :expiring %>
-          Còn <strong><%= w[:days] %> ngày</strong> là đến hạn — gia hạn sớm để không gián đoạn.
+          Còn <strong><%= w[:days] %> ngày</strong> là đến hạn — gia hạn sớm để không gián đoạn. Nếu để quá <strong>10 ngày</strong> sau khi hết hạn mà chưa thanh toán, cửa hàng sẽ tự động ngưng hoạt động.
         <% else %>
-          Thanh toán để kích hoạt đầy đủ dịch vụ cho cửa hàng.
+          Vui lòng thanh toán để kích hoạt đầy đủ dịch vụ. Trong vòng <strong>10 ngày</strong> kể từ ngày hết hạn, nếu chưa thanh toán cửa hàng sẽ <strong>tự động ngưng hoạt động (inactive)</strong> và không thể sử dụng dịch vụ.
         <% end %>
       </div>
     </div>
