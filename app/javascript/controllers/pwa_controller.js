@@ -80,16 +80,18 @@ export default class extends Controller {
     return Uint8Array.from([...raw].map((c) => c.charCodeAt(0)))
   }
 
-  // ---------- Add to Home Screen ----------
+  // ---------- Add to Home Screen (popup, shown at most once / 7 days) ----------
+  static SNOOZE_MS = 7 * 24 * 60 * 60 * 1000
+
   setupInstall() {
     if (!this.hasInstallBannerTarget) return
     const standalone = window.matchMedia("(display-mode: standalone)").matches || window.navigator.standalone
-    if (standalone || this.dismissed()) return
+    if (standalone || this.snoozed()) return
 
     window.addEventListener("beforeinstallprompt", (e) => {
       e.preventDefault()
       this.deferred = e
-      this.installBannerTarget.hidden = false
+      this.showLater()
     })
 
     // iOS Safari has no beforeinstallprompt — show manual instructions instead.
@@ -97,24 +99,36 @@ export default class extends Controller {
     if (isIos && this.hasIosHintTarget) {
       this.iosHintTarget.hidden = false
       if (this.hasInstallButtonTarget) this.installButtonTarget.hidden = true
-      this.installBannerTarget.hidden = false
+      this.showLater()
     }
   }
 
+  // Delay so it doesn't block the first paint; only once per page load.
+  showLater() {
+    if (this._shown) return
+    this._shown = true
+    setTimeout(() => { this.installBannerTarget.hidden = false }, 2500)
+  }
+
   async install() {
+    this.installBannerTarget.hidden = true
+    this.snooze()
     if (!this.deferred) return
     this.deferred.prompt()
     await this.deferred.userChoice
     this.deferred = null
-    this.installBannerTarget.hidden = true
   }
 
   dismissInstall() {
-    try { localStorage.setItem("a2hs_dismissed", "1") } catch (e) {}
+    this.snooze()
     if (this.hasInstallBannerTarget) this.installBannerTarget.hidden = true
   }
 
-  dismissed() {
-    try { return localStorage.getItem("a2hs_dismissed") === "1" } catch (e) { return false }
+  snoozed() {
+    try { return Date.now() < parseInt(localStorage.getItem("a2hs_snooze") || "0", 10) } catch (e) { return false }
+  }
+
+  snooze() {
+    try { localStorage.setItem("a2hs_snooze", String(Date.now() + this.constructor.SNOOZE_MS)) } catch (e) {}
   }
 }

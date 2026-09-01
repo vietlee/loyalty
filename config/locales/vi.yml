@@ -179,6 +179,7 @@ vi:
       install_title: "Cài đặt ứng dụng"
       install_sub: "Thêm vào màn hình chính để mở nhanh & nhận thông báo."
       install_btn: "Cài đặt"
+      install_later: "Để sau"
       ios_hint: "Trên iPhone: bấm nút Chia sẻ ⎋ rồi chọn “Thêm vào MH chính”."
     checkin:
       success_title: "Check-in"

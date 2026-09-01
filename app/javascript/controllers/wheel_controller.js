@@ -31,12 +31,13 @@ export default class extends Controller {
     this.rotation += target
     this.wheelTarget.style.transform = `rotate(${this.rotation}deg)`
 
+    this.playSpinTicks(4.0)
     setTimeout(() => this.reveal(data), 4100)
   }
 
   reveal(data) {
     this.resultTarget.textContent = data.points > 0 ? `🎉 ${data.label}!` : `${data.label} — chúc bạn may mắn lần sau`
-    if (data.points > 0) this.confetti()
+    if (data.points > 0) { this.confetti(); this.playWin() } else { this.playLose() }
     // Update spin state
     if (data.free_left) {
       this.btnTarget.textContent = "Quay miễn phí 🎉"
@@ -60,5 +61,50 @@ export default class extends Controller {
     el.dataset.controller = "pointburst"
     document.body.appendChild(el)
     setTimeout(() => el.remove(), 2000)
+  }
+
+  // ---------- Synthesized sound (Web Audio; no asset dependency) ----------
+  audio() {
+    try {
+      if (!this.ac) this.ac = new (window.AudioContext || window.webkitAudioContext)()
+      if (this.ac.state === "suspended") this.ac.resume()
+      return this.ac
+    } catch (e) { return null }
+  }
+
+  // Ratchet ticks that slow down over the spin, like a real wheel.
+  playSpinTicks(duration) {
+    const ac = this.audio(); if (!ac) return
+    let t = ac.currentTime + 0.02, interval = 0.045
+    const end = ac.currentTime + duration
+    while (t < end) {
+      this.blip(t, 1250, 0.014, 0.05)
+      t += interval
+      interval = Math.min(interval * 1.12, 0.32)
+    }
+  }
+
+  playWin() {
+    const ac = this.audio(); if (!ac) return
+    [523.25, 659.25, 783.99, 1046.5].forEach((f, i) => this.tone(ac.currentTime + i * 0.12, f, 0.2, 0.12, "sine"))
+  }
+
+  playLose() {
+    const ac = this.audio(); if (!ac) return
+    this.tone(ac.currentTime, 392, 0.22, 0.09, "sine")
+    this.tone(ac.currentTime + 0.16, 311.13, 0.34, 0.09, "sine")
+  }
+
+  blip(when, freq, dur, vol) { this.tone(when, freq, dur, vol, "square") }
+
+  tone(when, freq, dur, vol, type) {
+    const ac = this.audio(); if (!ac) return
+    const o = ac.createOscillator(), g = ac.createGain()
+    o.type = type; o.frequency.value = freq
+    g.gain.setValueAtTime(0.0001, when)
+    g.gain.linearRampToValueAtTime(vol, when + 0.006)
+    g.gain.exponentialRampToValueAtTime(0.0001, when + dur)
+    o.connect(g).connect(ac.destination)
+    o.start(when); o.stop(when + dur + 0.03)
   }
 }

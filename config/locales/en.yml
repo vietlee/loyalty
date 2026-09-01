@@ -142,6 +142,7 @@ en:
       install_title: "Install the app"
       install_sub: "Add to your home screen for quick access & alerts."
       install_btn: "Install"
+      install_later: "Later"
       ios_hint: "On iPhone: tap the Share button ⎋ then “Add to Home Screen”."
     checkin:
       success_title: "Check-in"
