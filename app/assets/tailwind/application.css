@@ -272,6 +272,22 @@ body {
 .l-confirm-actions { display:flex; gap:10px; margin-top:20px; }
 .l-confirm-actions .l-btn { flex:1; }
 
+/* form controls follow the brand */
+input[type="range"], input[type="checkbox"], input[type="radio"], progress { accent-color: var(--primary); }
+
+/* ---- Toast notifications (top-right) ---- */
+.l-toast-wrap { position:fixed; top:16px; right:16px; z-index:3000; display:flex; flex-direction:column; gap:10px; max-width:calc(100vw - 32px); }
+.l-toast { display:flex; align-items:flex-start; gap:10px; min-width:260px; max-width:380px; padding:13px 14px;
+  border-radius:14px; background:#fff; box-shadow:var(--shadow-lg); border:1px solid var(--line); border-left:4px solid var(--good);
+  transform:translateX(120%); opacity:0; transition:transform .32s cubic-bezier(.2,.8,.2,1), opacity .32s; }
+.l-toast.show { transform:none; opacity:1; }
+.l-toast.error { border-left-color:var(--warn); }
+.l-toast .ic { width:22px; height:22px; border-radius:50%; display:grid; place-items:center; flex:none; color:#fff; background:var(--good); font-size:13px; font-weight:700; margin-top:1px; }
+.l-toast.error .ic { background:var(--warn); }
+.l-toast .msg { flex:1; font-size:14px; color:var(--ink); line-height:1.4; }
+.l-toast .x { background:none; border:none; cursor:pointer; color:var(--ink-2); font-size:15px; line-height:1; padding:2px 4px; flex:none; }
+.l-toast .x:hover { color:var(--ink); }
+
 /* launcher (dev) */
 .l-launch { max-width:1000px; margin:0 auto; padding:48px 20px; }
 .l-launch h1 { font-family:var(--font-display); font-size:34px; }

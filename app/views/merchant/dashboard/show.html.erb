@@ -1,14 +1,62 @@
 <% content_for :title, "Tổng quan" %>
 <% content_for :title_en, "DASHBOARD" %>
 
+<%# ---- KPI strip ---- %>
 <div class="l-kpis">
-  <div class="l-kpi"><div class="k">Thành viên</div><div class="v"><%= number_with_delimiter(@members_count) %></div><div class="d">đang hoạt động</div></div>
+  <div class="l-kpi"><div class="k">Thành viên</div><div class="v"><%= number_with_delimiter(@members_count) %></div><div class="d"><%= number_with_delimiter(@active_members) %> đang hoạt động</div></div>
   <div class="l-kpi"><div class="k">Điểm đã phát</div><div class="v"><%= number_with_delimiter(@points_issued) %></div><div class="d"><%= @purchases_count %> giao dịch</div></div>
-  <div class="l-kpi"><div class="k">Điểm đã đổi</div><div class="v"><%= number_with_delimiter(@points_redeemed) %></div><div class="d">Phase 2</div></div>
+  <div class="l-kpi"><div class="k">Điểm đã đổi</div><div class="v"><%= number_with_delimiter(@points_redeemed) %></div><div class="d">tỷ lệ đổi <%= @redemption_rate %>%</div></div>
   <div class="l-kpi"><div class="k">Chi nhánh</div><div class="v"><%= @outlets_count %></div><div class="d">outlets</div></div>
 </div>
 
-<div style="display:grid; grid-template-columns:1.4fr 1fr; gap:16px; margin-top:20px;">
+<%# ---- Growth chart + loyalty snapshot ---- %>
+<div style="display:grid; grid-template-columns:1.5fr 1fr; gap:16px; margin-top:20px;">
+  <div class="l-panel">
+    <div style="display:flex; align-items:flex-start; justify-content:space-between; gap:12px; margin-bottom:6px;">
+      <div>
+        <h3 class="l-display" style="font-size:18px;">Khách hàng mới theo tháng</h3>
+        <p style="color:var(--ink-2); font-size:13px;">6 tháng gần nhất</p>
+      </div>
+      <div style="text-align:right;">
+        <div class="l-num" style="font-size:24px;"><%= number_with_delimiter(@members_count) %></div>
+        <div style="color:var(--ink-2); font-size:12px;">tổng thành viên</div>
+      </div>
+    </div>
+    <div style="color:var(--primary); margin-top:10px;">
+      <%= bar_chart_svg(@member_growth) %>
+    </div>
+  </div>
+
+  <div class="l-panel">
+    <h3 class="l-display" style="font-size:18px; margin-bottom:12px;">Bức tranh loyalty</h3>
+    <% total_tiered = @tier_counts.sum { |_, c| c } %>
+    <% if total_tiered.positive? %>
+      <div style="display:flex; flex-direction:column; gap:12px;">
+        <% @tier_counts.each do |t, c| %>
+          <% pct = (c.to_f / total_tiered * 100).round %>
+          <div>
+            <div style="display:flex; justify-content:space-between; font-size:13px; margin-bottom:4px;">
+              <span style="font-weight:600;"><%= t.name %></span>
+              <span style="color:var(--ink-2);"><%= number_with_delimiter(c) %> · <%= pct %>%</span>
+            </div>
+            <div style="height:8px; border-radius:999px; background:var(--surface-2); overflow:hidden;">
+              <div style="height:100%; width:<%= pct %>%; border-radius:999px; background:<%= t.gradient_css %>;"></div>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    <% else %>
+      <p style="color:var(--ink-2); font-size:13px;">Chưa có dữ liệu hạng thành viên.</p>
+    <% end %>
+    <div style="display:flex; gap:10px; margin-top:16px; padding-top:14px; border-top:1px solid var(--line);">
+      <div style="flex:1;"><div class="l-num" style="font-size:20px;"><%= @redemption_rate %>%</div><div style="font-size:11px; color:var(--ink-2);">Tỷ lệ đổi điểm</div></div>
+      <div style="flex:1;"><div class="l-num" style="font-size:20px;"><%= @members_count.positive? ? number_with_delimiter((@points_issued / @members_count)) : 0 %></div><div style="font-size:11px; color:var(--ink-2);">Điểm TB/khách</div></div>
+    </div>
+  </div>
+</div>
+
+<%# ---- Program mechanisms + check-in QR ---- %>
+<div style="display:grid; grid-template-columns:1.5fr 1fr; gap:16px; margin-top:16px;">
   <div class="l-panel">
     <h3 class="l-display" style="font-size:18px; margin-bottom:4px;">Chương trình loyalty</h3>
     <p style="color:var(--ink-2); font-size:14px; margin-bottom:16px;">Cơ chế đang bật cho workspace này.</p>
@@ -23,30 +71,18 @@
     <% end %>
   </div>
 
-  <div class="l-panel">
-    <h3 class="l-display" style="font-size:18px; margin-bottom:10px;">Hạng thành viên</h3>
-    <% @tiers.each do |t| %>
-      <div style="display:flex; align-items:center; gap:10px; padding:8px 0; border-bottom:1px solid var(--line);">
-        <span style="width:26px; height:26px; border-radius:8px; background:<%= t.gradient_css %>;"></span>
-        <strong><%= t.name %></strong>
-        <span style="margin-left:auto; color:var(--ink-2);"><%= number_with_delimiter(t.threshold_points) %> điểm</span>
-      </div>
-    <% end %>
-  </div>
-</div>
-
-<% if @has_checkin %>
-  <div class="l-panel" style="margin-top:16px; display:flex; gap:20px; align-items:center; flex-wrap:wrap;">
-    <div style="background:#fff; padding:12px; border:1px solid var(--line); border-radius:16px; flex:none;">
-      <%= qr_svg(@checkin_url, size: 148) %>
-    </div>
-    <div style="flex:1; min-width:240px;">
+  <% if @has_checkin %>
+    <div class="l-panel">
       <h3 class="l-display" style="font-size:18px; margin-bottom:4px;">Mã check-in tại quầy</h3>
-      <p style="color:var(--ink-2); font-size:14px; margin-bottom:14px; max-width:520px;">
-        In mã QR này và dán tại quầy hoặc trên bàn. Khách mở app, chọn <strong>Quét mã</strong> để check-in
-        và nhận điểm nhiệm vụ — mỗi khách 1 lần/ngày, xác thực có mặt tại cửa hàng.
-      </p>
-      <div style="display:flex; gap:8px; flex-wrap:wrap;">
+      <div style="display:flex; gap:14px; align-items:center; margin-top:10px;">
+        <div style="background:#fff; padding:10px; border:1px solid var(--line); border-radius:14px; flex:none;">
+          <%= qr_svg(@checkin_url, size: 104) %>
+        </div>
+        <p style="color:var(--ink-2); font-size:12.5px;">
+          In &amp; dán tại quầy. Khách quét để check-in nhận điểm — 1 lần/ngày.
+        </p>
+      </div>
+      <div style="display:flex; gap:8px; flex-wrap:wrap; margin-top:12px;">
         <%= link_to merchant_checkin_qr_path, class: "l-btn l-btn-soft" do %>
           <%= ui_icon(:launch, size: 16) %> Tải mã để in
         <% end %>
@@ -57,7 +93,17 @@
           <% end %>
         <% end %>
       </div>
-      <p style="color:var(--ink-2); font-size:12px; margin-top:8px;">Làm mới mã khi mã bị lộ hoặc cần thay poster — mã cũ sẽ lập tức vô hiệu.</p>
     </div>
-  </div>
-<% end %>
+  <% else %>
+    <div class="l-panel">
+      <h3 class="l-display" style="font-size:18px; margin-bottom:10px;">Hạng thành viên</h3>
+      <% @tiers.each do |t| %>
+        <div style="display:flex; align-items:center; gap:10px; padding:8px 0; border-bottom:1px solid var(--line);">
+          <span style="width:26px; height:26px; border-radius:8px; background:<%= t.gradient_css %>;"></span>
+          <strong><%= t.name %></strong>
+          <span style="margin-left:auto; color:var(--ink-2);"><%= number_with_delimiter(t.threshold_points) %> điểm</span>
+        </div>
+      <% end %>
+    </div>
+  <% end %>
+</div>

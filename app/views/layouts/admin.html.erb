@@ -16,9 +16,7 @@
         --font-display:"Fraunces",Georgia,serif; --font-body:"Inter",ui-sans-serif,system-ui,sans-serif;
       }
     </style>
-    <% if flash[:notice] || flash[:alert] %>
-      <div class="l-flash"><%= flash[:notice] || flash[:alert] %></div>
-    <% end %>
+    <%= render "layouts/flash" %>
 
     <div class="l-shell">
       <%= render "layouts/admin_sidebar" %>

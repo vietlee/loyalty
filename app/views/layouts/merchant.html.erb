@@ -5,9 +5,7 @@
   </head>
   <body>
     <%= render "layouts/merchant_theme_vars" %>
-    <% if flash[:notice] || flash[:alert] %>
-      <div class="l-flash" data-controller="flash"><%= flash[:notice] || flash[:alert] %></div>
-    <% end %>
+    <%= render "layouts/flash" %>
 
     <div class="l-shell">
       <%= render "layouts/merchant_sidebar" %>
