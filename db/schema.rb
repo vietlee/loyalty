@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2026_08_31_170000) do
+ActiveRecord::Schema[7.2].define(version: 2026_09_01_120000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -89,6 +89,24 @@ ActiveRecord::Schema[7.2].define(version: 2026_08_31_170000) do
     t.index ["slug", "sluggable_type", "scope"], name: "index_friendly_id_slugs_on_slug_and_sluggable_type_and_scope", unique: true
     t.index ["slug", "sluggable_type"], name: "index_friendly_id_slugs_on_slug_and_sluggable_type"
     t.index ["sluggable_type", "sluggable_id"], name: "index_friendly_id_slugs_on_sluggable_type_and_sluggable_id"
+  end
+
+  create_table "invoices", force: :cascade do |t|
+    t.bigint "workspace_id", null: false
+    t.string "plan", null: false
+    t.integer "amount", default: 0, null: false
+    t.string "status", default: "pending", null: false
+    t.date "period_start", null: false
+    t.date "period_end", null: false
+    t.bigint "payos_order_code"
+    t.string "checkout_url"
+    t.datetime "paid_at"
+    t.jsonb "gateway_response", default: {}, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["payos_order_code"], name: "index_invoices_on_payos_order_code", unique: true, where: "(payos_order_code IS NOT NULL)"
+    t.index ["workspace_id", "status"], name: "index_invoices_on_workspace_id_and_status"
+    t.index ["workspace_id"], name: "index_invoices_on_workspace_id"
   end
 
   create_table "loyalty_programs", force: :cascade do |t|
@@ -537,6 +555,8 @@ ActiveRecord::Schema[7.2].define(version: 2026_08_31_170000) do
     t.jsonb "settings", default: {}, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.datetime "paid_until"
+    t.boolean "auto_renew", default: false, null: false
     t.index ["custom_domain"], name: "index_workspaces_on_custom_domain", unique: true, where: "(custom_domain IS NOT NULL)"
     t.index ["slug"], name: "index_workspaces_on_slug", unique: true
     t.index ["status"], name: "index_workspaces_on_status"
@@ -548,6 +568,7 @@ ActiveRecord::Schema[7.2].define(version: 2026_08_31_170000) do
   add_foreign_key "broadcasts", "workspaces"
   add_foreign_key "campaigns", "rewards"
   add_foreign_key "campaigns", "workspaces"
+  add_foreign_key "invoices", "workspaces"
   add_foreign_key "loyalty_programs", "workspaces"
   add_foreign_key "member_badges", "badges"
   add_foreign_key "member_badges", "members"

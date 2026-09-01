@@ -7,8 +7,8 @@
     --primary:      <%= ws&.theme_value(:primary)   || "#4B4DED" %>;
     --primary-2:    <%= ws&.theme_value(:primary_2) || "#7C7EF5" %>;
     --on-primary:   <%= ws&.theme_value(:on_primary) || "#FFFFFF" %>;
-    --surface:      #F5F6F8;
-    --surface-2:    #ECEEF2;
+    --surface:      #EFF2F6;
+    --surface-2:    #E4E8EE;
     --ink:          #1B1E26;
     --ink-2:        #5B6472;
     --ink-3:        #8A93A3;
@@ -22,8 +22,16 @@
   }
   /* Neutral dashboard surfaces (crisp, high-contrast) … */
   body { background: var(--surface); }
-  /* … but the sidebar is a rich DARK tint of the brand colour, so it reflects
-     the workspace brand while staying dark & legible. */
-  .l-side { background: color-mix(in srgb, var(--primary) 20%, #15171C); color: #E9EBEF; }
-  .l-side .brand .sub, .l-side .l-navgrp { color: rgba(233,235,239,.5); }
+  /* … but the sidebar is a VIBRANT brand gradient — same energy as the customer
+     app card — so the brand colour reads clearly (not washed out). */
+  .l-side { background: linear-gradient(168deg, var(--primary) 0%, color-mix(in srgb, var(--primary) 55%, #000) 100%); color: rgba(255,255,255,.94); }
+  .l-side .brand .sub, .l-side .l-navgrp { color: rgba(255,255,255,.6); }
+  .l-side .l-nav-item { color: rgba(255,255,255,.9); }
+  .l-side .l-nav-item .en { color: rgba(255,255,255,.55); }
+  .l-side .l-nav-item:hover { background: rgba(255,255,255,.12); }
+  .l-side .l-nav-item.active { background: rgba(255,255,255,.18); box-shadow: inset 3px 0 0 #fff; }
+  .l-side .l-nav-item.active .icn, .l-side .l-nav-item.active .en { color: #fff; }
+  .l-ws { background: rgba(255,255,255,.12); border-color: rgba(255,255,255,.18); }
+  .l-side .foot { border-top-color: rgba(255,255,255,.16); }
+  .l-side .foot .av { background: rgba(255,255,255,.16); }
 </style>

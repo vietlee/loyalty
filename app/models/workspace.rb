@@ -27,6 +27,7 @@ class Workspace < ApplicationRecord
   has_many :notifications, dependent: :destroy
   has_many :broadcasts, dependent: :destroy
   has_many :referrals, dependent: :destroy
+  has_many :invoices, dependent: :destroy
   has_one  :loyalty_program, dependent: :destroy
 
   validates :name, :subdomain, presence: true
@@ -71,6 +72,20 @@ class Workspace < ApplicationRecord
 
   def outlet_limit = plan_record.max_outlets
   def member_limit = plan_record.max_members
+
+  # ---- Subscription / billing -------------------------------------------
+  def subscription_active? = paid_until.present? && paid_until >= Time.current
+
+  def subscription_days_left
+    return nil if paid_until.nil?
+    ((paid_until - Time.current) / 1.day).ceil
+  end
+
+  # The next unpaid billing month (starts when the current paid period ends).
+  def next_billing_period
+    start = subscription_active? ? paid_until.to_date : Date.current
+    [start, start + 1.month - 1.day]
+  end
 
   def can_add_outlet?(current = outlets.count)
     outlet_limit.nil? || current < outlet_limit
