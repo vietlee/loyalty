@@ -70,6 +70,11 @@ body {
 /* interactive chips (links / buttons) get a hover */
 a.l-chip:hover, button.l-chip:hover { background: color-mix(in srgb, var(--ink) 10%, var(--surface-2)); color: var(--ink); }
 a.l-chip-brand:hover, button.l-chip-brand:hover { background: color-mix(in srgb, var(--primary) 22%, #fff); color: var(--primary-ink); }
+/* wheel prize row remove button */
+.wheel-x { width:34px; height:38px; flex:none; border:1px solid var(--line); background:#fff; border-radius:10px;
+  color:var(--ink-2); cursor:pointer; font-size:14px; line-height:1; transition:border-color .15s, color .15s; }
+.wheel-x:hover { border-color:var(--warn); color:var(--warn); }
+
 /* styled file-upload button (dropzone look) */
 .l-upload { display:flex; align-items:center; gap:10px; width:100%; text-align:left; cursor:pointer;
   border:1.5px dashed var(--line); border-radius:12px; background:var(--surface); color:var(--ink-2);

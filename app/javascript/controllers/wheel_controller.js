@@ -27,9 +27,13 @@ export default class extends Controller {
 
     const n = this.countValue
     const ang = 360 / n
-    // Bring the winning segment's center to the top pointer, plus 7 full turns.
-    const target = 360 * 7 - (data.index * ang + ang / 2)
-    this.rotation += target
+    // Land the winning segment's centre under the top pointer. Compute the delta
+    // from the CURRENT angle (the wheel accumulates rotation across spins, so a
+    // fixed formula drifts by the previous result) + 7 full turns for effect.
+    const desired = (360 - (data.index * ang + ang / 2)) % 360
+    const current = ((this.rotation % 360) + 360) % 360
+    const delta = (desired - current + 360) % 360
+    this.rotation += delta + 360 * 7
     this.wheelTarget.style.transform = `rotate(${this.rotation}deg)`
 
     this.playSpinTicks(5.0)
