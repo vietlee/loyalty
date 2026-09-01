@@ -30,6 +30,7 @@ module Referrals
       award(referral.referrer, pts, "Thưởng giới thiệu bạn")
       award(referral.referred, pts, "Thưởng khi được giới thiệu")
       referral.update!(state: "completed", reward_points: pts, completed_at: Time.current)
+      advance_refer_missions(referral.referrer)
     end
   rescue => e
     Rails.logger.error("[Referrals] #{e.class}: #{e.message}")
@@ -39,5 +40,17 @@ module Referrals
     PointTransaction.create!(workspace: member.workspace, member: member, kind: "referral",
                              amount: points, note: note)
     member.recompute_points!
+  end
+
+  # Advance the referrer's "refer" missions (+1 per completed referral) and award
+  # their reward points when the goal is reached.
+  def advance_refer_missions(referrer)
+    ws = referrer.workspace
+    return unless ws.program.gamification_enabled
+    ws.missions.active.where(mission_type: "refer").each do |mission|
+      mp = mission.progress_for(referrer)
+      mp.save! if mp.new_record?
+      mp.advance!(1) unless mp.completed?
+    end
   end
 end
