@@ -46,9 +46,18 @@
         In mã QR này và dán tại quầy hoặc trên bàn. Khách mở app, chọn <strong>Quét mã</strong> để check-in
         và nhận điểm nhiệm vụ — mỗi khách 1 lần/ngày, xác thực có mặt tại cửa hàng.
       </p>
-      <%= link_to merchant_checkin_qr_path, class: "l-btn l-btn-soft" do %>
-        <%= ui_icon(:launch, size: 16) %> Tải mã để in
-      <% end %>
+      <div style="display:flex; gap:8px; flex-wrap:wrap;">
+        <%= link_to merchant_checkin_qr_path, class: "l-btn l-btn-soft" do %>
+          <%= ui_icon(:launch, size: 16) %> Tải mã để in
+        <% end %>
+        <% if current_membership&.can_manage? %>
+          <%= button_to merchant_rotate_checkin_path, method: :post, class: "l-btn l-btn-ghost",
+                form: { data: { turbo_confirm: "Làm mới mã sẽ khiến mã đã in trước đó ngừng hoạt động. Tiếp tục?" } } do %>
+            <%= ui_icon(:history, size: 16) %> Làm mới mã
+          <% end %>
+        <% end %>
+      </div>
+      <p style="color:var(--ink-2); font-size:12px; margin-top:8px;">Làm mới mã khi mã bị lộ hoặc cần thay poster — mã cũ sẽ lập tức vô hiệu.</p>
     </div>
   </div>
 <% end %>

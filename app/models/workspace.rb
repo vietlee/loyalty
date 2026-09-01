@@ -50,6 +50,18 @@ class Workspace < ApplicationRecord
   def trial?   = status == "trial"
   def pending? = status == "pending"
   def onboarded? = settings["onboarded"] == true
+
+  # Version tag baked into the check-in QR token. Rotating it invalidates every
+  # previously printed poster (so a leaked QR can be revoked). Lazily initialised.
+  def checkin_nonce
+    settings["checkin_nonce"].presence || rotate_checkin_nonce!
+  end
+
+  def rotate_checkin_nonce!
+    nonce = SecureRandom.hex(8)
+    update!(settings: settings.merge("checkin_nonce" => nonce))
+    nonce
+  end
   def status_label = STATUS_LABELS[status]
 
   # ---- Plan (limits & feature gates) ------------------------------------

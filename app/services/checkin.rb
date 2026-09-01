@@ -9,15 +9,17 @@ module Checkin
     Rails.application.message_verifier("loyalty/checkin")
   end
 
-  # Static token (no expiry) so a printed poster keeps working.
+  # Static token (no expiry) so a printed poster keeps working — until the
+  # merchant rotates the nonce, which revokes every older poster.
   def encode(workspace)
-    verifier.generate({ "w" => workspace.id })
+    verifier.generate({ "w" => workspace.id, "n" => workspace.checkin_nonce })
   end
 
-  # True when the token is a valid check-in token for this workspace.
+  # Valid only for this workspace AND the CURRENT nonce (old/rotated tokens fail).
   def valid?(token, workspace:)
     data = verifier.verify(token.to_s)
-    data.is_a?(Hash) && data["w"].to_i == workspace.id
+    data.is_a?(Hash) && data["w"].to_i == workspace.id &&
+      data["n"].to_s == workspace.checkin_nonce.to_s
   rescue ActiveSupport::MessageVerifier::InvalidSignature
     false
   end
