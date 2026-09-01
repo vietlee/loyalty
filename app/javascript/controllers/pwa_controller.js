@@ -33,7 +33,21 @@ export default class extends Controller {
 
   setPush(state) {
     this.pushState = state
-    if (this.hasPushToggleTarget) this.pushToggleTarget.classList.toggle("on", state === "on")
+    if (this.hasPushToggleTarget) {
+      const knob = this.pushToggleTarget.querySelector(".knob")
+      // No slide animation on the initial (async) state — avoids a blink on load.
+      if (!this._reflected && knob) {
+        this.pushToggleTarget.style.transition = "none"
+        knob.style.transition = "none"
+      }
+      this.pushToggleTarget.classList.toggle("on", state === "on")
+      if (!this._reflected && knob) {
+        void this.pushToggleTarget.offsetWidth
+        this.pushToggleTarget.style.transition = ""
+        knob.style.transition = ""
+        this._reflected = true
+      }
+    }
     if (this.hasPushLabelTarget) {
       this.pushLabelTarget.textContent =
         this.data.get(`${state}Text`) || this.data.get("offText") || ""
