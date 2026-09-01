@@ -28,7 +28,8 @@
     </div>
     <% if @payos_ready %>
       <div style="text-align:right;">
-        <%= button_to merchant_billing_pay_path, method: :post, class: "l-btn l-btn-primary", style: "white-space:nowrap;" do %>
+        <%= button_to merchant_billing_pay_path, method: :post, class: "l-btn l-btn-primary",
+              style: "white-space:nowrap;", form: { data: { turbo: false } } do %>
           Thanh toán <%= @plan.price_label %> · qua PayOS
         <% end %>
         <%= form_with url: merchant_billing_auto_renew_path, method: :patch, style: "margin-top:8px;" do %>
