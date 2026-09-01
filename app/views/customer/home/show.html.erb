@@ -66,7 +66,7 @@
     chips << [member_refer_path, :users, t("customer.home.chip_refer")] if prog.referral_enabled && !used.include?(:refer)
   %>
   <% if chips.any? %>
-    <div style="display:flex; gap:8px; margin-top:12px; overflow-x:auto;">
+    <div style="display:flex; gap:8px; margin-top:12px; justify-content:center; flex-wrap:wrap;">
       <% chips.each do |path, icon, label| %>
         <%= link_to path, class: "l-chip", style: "flex:none;" do %><%= ui_icon(icon, size: 15) %> <%= label %><% end %>
       <% end %>

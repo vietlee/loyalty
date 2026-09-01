@@ -36,6 +36,14 @@ class Invoice < ApplicationRecord
     update!(status: "failed", gateway_response: gateway_response) if pending?
   end
 
+  # Issue a brand-new PayOS order code before (re)starting a checkout, so a
+  # previously cancelled/expired link on this invoice can't collide at PayOS
+  # ("đơn hàng đã được xử lý"). Clears the stale checkout URL too.
+  def reassign_order_code!
+    update!(payos_order_code: 71_000_000_000 + (Time.now.to_i % 1_000_000_000) + rand(0..999),
+            checkout_url: nil)
+  end
+
   private
 
   # Unique integer order code for PayOS (offset to avoid clashing with other apps

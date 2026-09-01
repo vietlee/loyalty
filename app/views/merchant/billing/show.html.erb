@@ -15,34 +15,44 @@
   </div>
 
   <%# ---- Subscription status + pay ---- %>
-  <div class="l-panel" style="display:flex; align-items:center; gap:16px; margin-bottom:20px;">
-    <div style="flex:1;">
-      <div class="l-eyebrow">Trạng thái thuê bao</div>
-      <% if @workspace.subscription_active? %>
-        <div style="font-weight:700; color:var(--good); margin-top:4px;">✓ Đang hiệu lực</div>
-        <div style="color:var(--ink-2); font-size:13px;">Đã thanh toán đến <%= l(@workspace.paid_until.to_date, format: :long) %> (còn <%= @workspace.subscription_days_left %> ngày)</div>
-      <% else %>
-        <div style="font-weight:700; color:var(--warn); margin-top:4px;">● Chưa thanh toán</div>
-        <div style="color:var(--ink-2); font-size:13px;">Thanh toán để kích hoạt đầy đủ dịch vụ.</div>
-      <% end %>
-    </div>
-    <% if @payos_ready %>
-      <div style="text-align:right;">
-        <%= button_to merchant_billing_pay_path, method: :post, class: "l-btn l-btn-primary",
-              style: "white-space:nowrap;", form: { data: { turbo: false } } do %>
-          Thanh toán <%= @plan.price_label %> · qua PayOS
-        <% end %>
-        <%= form_with url: merchant_billing_auto_renew_path, method: :patch, style: "margin-top:8px;" do %>
-          <input type="hidden" name="auto_renew" value="<%= @workspace.auto_renew ? '0' : '1' %>">
-          <label style="display:flex; align-items:center; gap:6px; justify-content:flex-end; font-size:12px; color:var(--ink-2); cursor:pointer;">
-            <span class="l-switch" style="pointer-events:none;"><input type="checkbox" <%= 'checked' if @workspace.auto_renew %> disabled><span class="knob"></span></span>
-            Tự động tạo hoá đơn hàng tháng
-          </label>
-          <%= submit_tag @workspace.auto_renew ? "Tắt tự động" : "Bật tự động", class: "l-mono", style: "background:none;border:none;color:var(--primary-ink);font-size:11px;cursor:pointer;padding:0;" %>
+  <div class="l-panel" style="margin-bottom:20px;">
+    <div style="display:flex; align-items:center; gap:16px; flex-wrap:wrap;">
+      <div style="flex:1; min-width:220px;">
+        <div class="l-eyebrow">Trạng thái thuê bao</div>
+        <% if @workspace.subscription_active? %>
+          <div style="font-weight:700; color:var(--good); margin-top:4px;">✓ Đang hiệu lực</div>
+          <div style="color:var(--ink-2); font-size:13px;">Đã thanh toán đến <%= l(@workspace.paid_until.to_date, format: :long) %> (còn <%= @workspace.subscription_days_left %> ngày)</div>
+        <% else %>
+          <div style="font-weight:700; color:var(--warn); margin-top:4px;">● Chưa thanh toán</div>
+          <div style="color:var(--ink-2); font-size:13px;">Thanh toán để kích hoạt đầy đủ dịch vụ.</div>
         <% end %>
       </div>
-    <% else %>
-      <span class="l-chip">PayOS chưa cấu hình</span>
+      <% if @payos_ready %>
+        <%= button_to merchant_billing_pay_path, method: :post, class: "l-btn l-btn-primary",
+              style: "flex:none;", form: { target: "_blank", data: { turbo: false } } do %>
+          <%= ui_icon(:wallet, size: 18) %> Thanh toán <%= @plan.price_label %>
+        <% end %>
+      <% else %>
+        <span class="l-chip">PayOS chưa cấu hình</span>
+      <% end %>
+    </div>
+
+    <% if @payos_ready %>
+      <div style="display:flex; align-items:center; justify-content:space-between; gap:12px; margin-top:16px; padding-top:14px; border-top:1px solid var(--line);">
+        <div>
+          <div style="font-weight:600; font-size:14px;">Tự động gia hạn hàng tháng</div>
+          <div style="color:var(--ink-2); font-size:12px; max-width:520px;">
+            Trước khi hết hạn, hệ thống tự tạo sẵn hoá đơn tháng mới + link PayOS để bạn thanh toán nhanh
+            (PayOS không hỗ trợ tự động trừ tiền định kỳ).
+          </div>
+        </div>
+        <%= button_to merchant_billing_auto_renew_path, method: :patch,
+              params: { auto_renew: @workspace.auto_renew ? "0" : "1" },
+              class: "l-switch-btn", form: { style: "flex:none;" },
+              "aria-label": (@workspace.auto_renew ? "Tắt tự động gia hạn" : "Bật tự động gia hạn") do %>
+          <span class="l-switch <%= 'on' if @workspace.auto_renew %>"><span class="knob"></span></span>
+        <% end %>
+      </div>
     <% end %>
   </div>
 
@@ -58,7 +68,9 @@
             <td style="text-align:right;">
               <% color = { "paid" => "var(--good)", "pending" => "var(--primary)", "failed" => "var(--warn)", "cancelled" => "var(--ink-2)" }[inv.status] %>
               <span class="l-chip" style="background:<%= color %>22; color:<%= color %>;"><%= { "paid"=>"Đã trả","pending"=>"Chờ","failed"=>"Lỗi","cancelled"=>"Huỷ" }[inv.status] %></span>
-              <% if inv.pending? && inv.checkout_url %><%= link_to "Trả tiếp", inv.checkout_url, class: "l-chip l-chip-brand" %><% end %>
+              <% if inv.pending? %><%= button_to "Trả tiếp", merchant_billing_repay_path(inv), method: :post,
+                    class: "l-chip l-chip-brand", style: "border:none; cursor:pointer;",
+                    form: { style: "display:inline;", target: "_blank", data: { turbo: false } } %><% end %>
             </td>
           </tr>
         <% end %>

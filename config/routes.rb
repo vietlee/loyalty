@@ -60,6 +60,7 @@ Rails.application.routes.draw do
     end
     resource  :billing, only: [:show], controller: "billing"
     post  "billing/pay",        to: "payments#create", as: :billing_pay
+    post  "billing/repay/:id",  to: "payments#repay",  as: :billing_repay
     get   "billing/return",     to: "payments#return", as: :billing_return
     patch "billing/auto_renew", to: "payments#auto_renew", as: :billing_auto_renew
     resources :customers, only: [:index]
