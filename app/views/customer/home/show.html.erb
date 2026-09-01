@@ -12,7 +12,6 @@
     <%= link_to member_notifications_path, style: "position:relative; text-decoration:none; color:inherit; display:grid; place-items:center;" do %>
       <%= ui_icon(:bell, size: 22) %><% if @unread.to_i.positive? %><span style="position:absolute; top:-5px; right:-6px; background:var(--warn); color:#fff; font-size:10px; font-weight:700; min-width:16px; height:16px; border-radius:999px; display:grid; place-items:center; padding:0 4px;"><%= @unread %></span><% end %>
     <% end %>
-    <%= link_to member_profile_path, style: "text-decoration:none; color:inherit; display:grid; place-items:center;" do %><%= ui_icon(:gear, size: 22) %><% end %>
   </div>
 </header>
 

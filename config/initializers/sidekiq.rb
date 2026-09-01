@@ -8,7 +8,8 @@ Sidekiq.configure_server do |config|
   # Daily maintenance (voucher/point expiry + tier recompute) via sidekiq-cron.
   config.on(:startup) do
     schedule = {
-      "daily_maintenance" => { "cron" => "0 3 * * *", "class" => "MaintenanceJob", "queue" => "default" }
+      "daily_maintenance"    => { "cron" => "0 3 * * *", "class" => "MaintenanceJob", "queue" => "default" },
+      "daily_billing_renewal" => { "cron" => "30 3 * * *", "class" => "BillingRenewalJob", "queue" => "default" }
     }
     if defined?(Sidekiq::Cron::Job)
       Sidekiq::Cron::Job.load_from_hash(schedule)

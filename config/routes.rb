@@ -13,6 +13,9 @@ Rails.application.routes.draw do
   # for the Warden session helpers but not its routes.
   devise_for :members, skip: :all
 
+  # ---- PayOS webhook (no CSRF) -------------------------------------------
+  post "webhooks/payos" => "webhooks/payos#receive", as: :payos_webhook
+
   # ---- PWA (per-workspace, dynamic) --------------------------------------
   get "manifest.webmanifest" => "pwa/manifests#show",       as: :pwa_manifest
   get "service-worker.js"    => "pwa/service_workers#show", as: :pwa_service_worker
@@ -55,6 +58,9 @@ Rails.application.routes.draw do
       post :verify
     end
     resource  :billing, only: [:show], controller: "billing"
+    post  "billing/pay",        to: "payments#create", as: :billing_pay
+    get   "billing/return",     to: "payments#return", as: :billing_return
+    patch "billing/auto_renew", to: "payments#auto_renew", as: :billing_auto_renew
     resources :customers, only: [:index]
     resources :broadcasts, only: [:index, :new, :create]
     resources :campaigns, only: [:index, :new, :create, :show] do
