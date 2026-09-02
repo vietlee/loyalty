@@ -25,6 +25,17 @@ module Customer
       end
     end
 
+    # Save just the avatar (separate from the name/email/birthday form).
+    def avatar
+      file = params.dig(:member, :avatar)
+      if file.present?
+        current_member.avatar.attach(file)
+        redirect_to member_profile_path, notice: "Đã cập nhật ảnh đại diện."
+      else
+        redirect_to member_profile_path, alert: "Vui lòng chọn ảnh."
+      end
+    end
+
     private
 
     def profile_params

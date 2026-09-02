@@ -139,6 +139,7 @@ Rails.application.routes.draw do
     get  "join/:code",   to: "sessions#join",  as: :join
     get   "me", to: "profile#show",   as: :profile
     patch "me", to: "profile#update"
+    patch "me/avatar", to: "profile#avatar", as: :profile_avatar
     # Public shop / feedback page + reviews (members can leave many, edit own)
     get   "shop",            to: "reviews#index",  as: :shop_about
     get   "review",          to: "reviews#new",    as: :new_review

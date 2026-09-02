@@ -73,14 +73,15 @@
     end
     chips << [member_refer_path, :users, t("customer.home.chip_refer")] if prog.referral_enabled && !used.include?(:refer)
   %>
-  <% show_about = current_workspace.feedback_public? %>
-  <% if chips.any? || show_about %>
-    <div style="display:flex; gap:8px; margin-top:12px; justify-content:center; flex-wrap:wrap;">
-      <% chips.each do |path, icon, label| %>
-        <%= link_to path, class: "l-chip l-chip-lg", style: "flex:none;" do %><%= ui_icon(icon, size: 20) %> <%= label %><% end %>
-      <% end %>
-      <% if show_about %>
-        <%= link_to member_shop_about_path, class: "l-chip l-chip-lg", style: "flex:none;" do %>🏬 Về quán &amp; đánh giá<% end %>
+  <%# Secondary shortcuts as square tiles, matching the row above. %>
+  <% secondary = chips.map { |path, icon, label| [path, icon, label, false] } %>
+  <% secondary << [member_shop_about_path, "🏬", "Về quán", true] if current_workspace.feedback_public? %>
+  <% if secondary.any? %>
+    <div class="l-quick" style="margin-top:10px;">
+      <% secondary.each do |path, icon, label, emoji| %>
+        <%= link_to path do %>
+          <span class="ic"><% if emoji %><span style="font-size:24px; line-height:1;"><%= icon %></span><% else %><%= ui_icon(icon, size: 26) %><% end %></span><%= label %>
+        <% end %>
       <% end %>
     </div>
   <% end %>
