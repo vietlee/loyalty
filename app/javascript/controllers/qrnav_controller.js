@@ -6,6 +6,13 @@ export default class extends Controller {
   static targets = ["video", "status", "overlay"]
   static values = { resolveUrl: String }
 
+  connect() {
+    // Auto-start the camera so users don't tap "Bật camera" every time. If the
+    // browser needs a gesture / denies access, start() leaves the overlay button
+    // visible as a fallback.
+    this.start()
+  }
+
   async start() {
     if (!navigator.mediaDevices?.getUserMedia) {
       this.statusTarget.textContent = "Trình duyệt không hỗ trợ camera — hãy nhập mã bên dưới."

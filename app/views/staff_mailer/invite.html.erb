@@ -1,0 +1,8 @@
+<div style="font-family:-apple-system,Segoe UI,Roboto,sans-serif; max-width:460px; margin:0 auto; padding:8px;">
+  <h2 style="font-size:20px; color:#2A1B12; margin:0 0 6px;"><%= @workspace.name %></h2>
+  <p style="color:#6E5A4B; margin:0 0 18px;">Xin chào <%= @name %>, bạn được mời truy cập bảng điều khiển của <strong><%= @workspace.name %></strong>. Nhấn nút bên dưới để đặt mật khẩu và bắt đầu.</p>
+  <p style="margin:0 0 22px;">
+    <a href="<%= @url %>" style="display:inline-block; background:#8C4A2F; color:#FFF7EE; text-decoration:none; padding:13px 24px; border-radius:12px; font-weight:600;">Đặt mật khẩu</a>
+  </p>
+  <p style="color:#8A7867; font-size:12.5px; margin:0;">Nếu nút không bấm được, mở link: <br><%= @url %></p>
+</div>

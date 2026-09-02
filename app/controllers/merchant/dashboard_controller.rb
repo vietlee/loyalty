@@ -4,6 +4,7 @@ module Merchant
 
     def show
       return redirect_to merchant_onboarding_path if current_workspace && !current_workspace.onboarded?
+      return load_branch_dashboard if current_workspace && branch_scoped?
       @members_count   = current_workspace ? Member.count : 0
       @outlets_count   = current_workspace ? Outlet.count : 0
       @program         = current_program
@@ -69,6 +70,18 @@ module Merchant
         running += added
         { label: I18n.l(m, format: "%m/%y"), value: added, total: running }
       end
+    end
+
+    # Branch-scoped dashboard: only this outlet's numbers.
+    def load_branch_dashboard
+      @branch = scoped_outlet
+      oid = @branch.id
+      @members_count   = Purchase.where(outlet_id: oid).distinct.count(:member_id)
+      @points_issued   = Purchase.where(outlet_id: oid).sum(:points_earned)
+      @purchases_count = Purchase.where(outlet_id: oid).count
+      @revenue         = Purchase.where(outlet_id: oid).sum(:amount)
+      @vouchers_used   = Voucher.where(used_outlet_id: oid, state: "used").count
+      render :show
     end
 
     # Per-branch performance. Purchases and used vouchers are already tagged with

@@ -18,16 +18,27 @@ module Merchant
       end
 
       user = User.find_or_initialize_by(email: email)
-      if user.new_record?
-        user.assign_attributes(name: name, password: SecureRandom.hex(12), locale: "vi")
+      new_user = user.new_record?
+      if new_user
+        user.assign_attributes(name: name, password: SecureRandom.hex(16), locale: "vi")
         user.save!
       end
       if current_workspace.memberships.exists?(user_id: user.id)
-        redirect_to merchant_staff_index_path, alert: "Nhân viên này đã có trong workspace."
-      else
-        current_workspace.memberships.create!(user: user, role: role, outlet_id: params[:outlet_id].presence)
-        redirect_to merchant_staff_index_path, notice: "Đã mời #{name} (#{role})."
+        return redirect_to merchant_staff_index_path, alert: "Nhân viên này đã có trong workspace."
       end
+      current_workspace.memberships.create!(user: user, role: role, outlet_id: params[:outlet_id].presence)
+
+      notice =
+        if new_user && EmailOtp.configured?
+          token = user.send(:set_reset_password_token)
+          StaffMailer.invite(user, current_workspace, token).deliver_later
+          "Đã mời #{name} — email đặt mật khẩu đã gửi tới #{email}."
+        elsif new_user
+          "Đã thêm #{name}. Chưa cấu hình email: nhân viên vào /merchant/login → “Quên mật khẩu” để đặt mật khẩu."
+        else
+          "Đã thêm #{name} vào cửa hàng (dùng mật khẩu tài khoản sẵn có)."
+        end
+      redirect_to merchant_staff_index_path, notice: notice
     end
 
     def update

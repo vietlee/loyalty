@@ -9,7 +9,18 @@ module Merchant
     around_action :scope_tenant
 
     helper_method :current_workspace, :accessible_workspaces,
-                  :current_membership, :current_program, :nav_key
+                  :current_membership, :current_program, :nav_key,
+                  :scoped_outlet, :branch_scoped?
+
+    # A non-owner assigned to a branch only sees that branch's data. Owners (and
+    # managers with no branch) see the whole workspace.
+    def scoped_outlet
+      return @scoped_outlet if defined?(@scoped_outlet)
+      m = current_membership
+      @scoped_outlet = (m && !m.owner? && m.outlet_id.present?) ? m.outlet : nil
+    end
+
+    def branch_scoped? = scoped_outlet.present?
 
     private
 

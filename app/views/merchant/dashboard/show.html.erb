@@ -1,6 +1,25 @@
 <% content_for :title, "Tổng quan" %>
 <% content_for :title_en, "DASHBOARD" %>
 
+<% if @branch %>
+  <%# ---- Branch-scoped dashboard ---- %>
+  <div class="l-panel" style="margin-bottom:16px;">
+    <div class="l-eyebrow">Chi nhánh</div>
+    <div class="l-display" style="font-size:22px;"><%= @branch.name %></div>
+    <p style="color:var(--ink-2); font-size:13px;">Bạn đang xem số liệu của chi nhánh mình.</p>
+  </div>
+  <div class="l-kpis">
+    <div class="l-kpi"><div class="k">Doanh thu</div><div class="v"><%= number_with_delimiter(@revenue) %>đ</div><div class="d"><%= @purchases_count %> giao dịch</div></div>
+    <div class="l-kpi"><div class="k">Điểm đã phát</div><div class="v"><%= number_with_delimiter(@points_issued) %></div></div>
+    <div class="l-kpi"><div class="k">Khách đã ghé</div><div class="v"><%= number_with_delimiter(@members_count) %></div></div>
+    <div class="l-kpi"><div class="k">Ưu đãi đã dùng</div><div class="v"><%= number_with_delimiter(@vouchers_used) %></div></div>
+  </div>
+  <div style="margin-top:18px; display:flex; gap:10px; flex-wrap:wrap;">
+    <%= link_to merchant_scanner_path, class: "l-btn l-btn-primary" do %><%= ui_icon(:scan, size: 16) %> Máy quét tại quầy<% end %>
+    <%= link_to merchant_customers_path, class: "l-btn l-btn-soft" do %><%= ui_icon(:users, size: 16) %> Khách hàng<% end %>
+  </div>
+<% else %>
+
 <% if @sub_warning %>
   <% w = @sub_warning %>
   <div class="l-subwarn <%= w[:level] %>">
@@ -164,3 +183,5 @@
     </div>
   <% end %>
 </div>
+
+<% end %>

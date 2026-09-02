@@ -35,6 +35,7 @@
   <%= link_to merchant_customers_path, class: "l-nav-item #{'active' if nav == :customers}" do %>
     <span>☺</span><span>Khách hàng<span class="en">Customers</span></span>
   <% end %>
+  <% if current_membership&.can_manage? %>
   <%= link_to merchant_broadcasts_path, class: "l-nav-item #{'active' if nav == :broadcasts}" do %>
     <span>✉</span><span>Thông báo<span class="en">Broadcasts</span></span>
   <% end %>
@@ -66,6 +67,7 @@
   <% end %>
   <%= link_to merchant_billing_path, class: "l-nav-item #{'active' if nav == :billing}" do %>
     <span>◇</span><span>Gói dịch vụ<span class="en">Billing</span></span>
+  <% end %>
   <% end %>
 
   <div class="foot">
