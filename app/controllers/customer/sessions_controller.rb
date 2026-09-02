@@ -56,7 +56,7 @@ module Customer
         session.delete(:otp_email)
         member.remember_me = true          # keep them signed in for a long time
         sign_in(:member, member)
-        redirect_to member_root_path, notice: "Chào mừng #{member.display_name}!"
+        redirect_to member_root_path, notice: "#{current_workspace.name} chào mừng bạn 👋"
       else
         @dev_code = latest_dev_code(@email) if show_otp_onscreen?
         flash.now[:alert] = otp_error_message(result)
