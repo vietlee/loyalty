@@ -174,7 +174,6 @@ a.l-chip-brand:hover, button.l-chip-brand:hover { background: color-mix(in srgb,
 .l-tabbar .scan-fab { justify-self:center; align-self:start; margin-top:-12px; z-index:1;
   background: var(--primary); color: var(--on-primary);
   width:62px; height:62px; border-radius:20px; display:grid; place-items:center;
-  border:3px solid #fff;
   box-shadow:0 8px 20px color-mix(in srgb,var(--primary) 42%,transparent); }
 
 /* ===================== SCROLLBARS (subtle) ===================== */
