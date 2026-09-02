@@ -69,15 +69,43 @@
     <% end %>
   </div>
 
-  <%# ---- Badges ---- %>
+  <%# ---- Badges (editable) ---- %>
+  <% crit = { "first_purchase" => "Mua hàng lần đầu", "purchases_count" => "Số lần mua đạt mốc",
+              "points_total" => "Điểm tích luỹ đạt mốc", "night_owl" => "Mua sau 22h (cú đêm)" } %>
   <div class="l-panel">
     <h3 class="l-display" style="font-size:18px; margin-bottom:10px;">🏅 Huy hiệu</h3>
-    <div class="l-badge-grid">
-      <% @badges.each do |b| %>
-        <div class="l-badge"><div class="ic"><%= b.display_icon %></div><div class="nm"><%= b.name %></div></div>
-      <% end %>
-    </div>
-    <p style="font-size:12px; color:var(--ink-2); margin-top:10px;">Huy hiệu tự trao khi khách đạt điều kiện (mua lần đầu, mua nhiều, điểm tích luỹ, cú đêm).</p>
+    <% @badges.each do |b| %>
+      <details class="l-editrow">
+        <summary style="display:flex; align-items:center; gap:10px; padding:8px 0; cursor:pointer; list-style:none;">
+          <span style="font-size:20px;"><%= b.display_icon %></span>
+          <div style="flex:1;"><strong><%= b.name %></strong>
+            <div style="font-size:12px; color:var(--ink-2);"><%= crit[b.criteria_type] || b.criteria_type %><%= " · mốc #{b.threshold}" if %w[purchases_count points_total].include?(b.criteria_type) %></div>
+          </div>
+          <span class="l-chip" style="font-size:11px;">✎ Sửa</span>
+          <%= button_to "✕", merchant_badge_path(b), method: :delete, class: "l-btn l-btn-ghost", style: "padding:4px 10px;", form: { data: { turbo_confirm: "Xoá huy hiệu?" }, style: "display:inline;" } %>
+        </summary>
+        <%= form_with model: b, url: merchant_badge_path(b), method: :patch, scope: :badge do |f| %>
+          <%= f.text_field :name, class: "l-field", style: "margin:4px 0 8px;", placeholder: "Tên huy hiệu" %>
+          <div style="display:grid; grid-template-columns:80px 1fr 110px; gap:8px;">
+            <%= f.text_field :icon, class: "l-field", placeholder: "🏅" %>
+            <%= f.select :criteria_type, crit.map { |k, v| [v, k] }, {}, class: "l-field" %>
+            <%= f.number_field :threshold, class: "l-field", min: 1, placeholder: "Mốc" %>
+          </div>
+          <%= f.submit "Lưu thay đổi", class: "l-btn l-btn-primary", style: "margin:10px 0 12px;" %>
+        <% end %>
+      </details>
+    <% end %>
+
+    <%= form_with url: merchant_badges_path, method: :post, scope: :badge do %>
+      <input type="text" name="badge[name]" class="l-field" placeholder="VD: Khách VIP" style="margin-top:12px;">
+      <div style="display:grid; grid-template-columns:80px 1fr 110px; gap:8px; margin-top:8px;">
+        <input type="text" name="badge[icon]" class="l-field" placeholder="🏅">
+        <select name="badge[criteria_type]" class="l-field"><% crit.each { |k, v| %><option value="<%= k %>"><%= v %></option><% } %></select>
+        <input type="number" name="badge[threshold]" class="l-field" value="1" min="1" placeholder="Mốc">
+      </div>
+      <%= submit_tag "Thêm huy hiệu", class: "l-btn l-btn-primary", style: "margin-top:10px;" %>
+    <% end %>
+    <p style="font-size:12px; color:var(--ink-2); margin-top:10px;">Huy hiệu tự trao khi khách đạt điều kiện. <strong>Mốc</strong> = số lần mua hoặc số điểm tích luỹ (tuỳ loại điều kiện); loại “lần đầu” và “cú đêm” không cần mốc.</p>
   </div>
 
   <%# ---- Lucky wheel (editable prizes) ---- %>

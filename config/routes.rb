@@ -89,6 +89,7 @@ Rails.application.routes.draw do
     patch "gamification/wheel", to: "gamification#update_wheel", as: :wheel_config
     resources :stamp_cards, only: [:create, :update, :destroy]
     resources :missions,    only: [:create, :destroy]
+    resources :badges,      only: [:create, :update, :destroy]
   end
 
   # ---- Customer PWA : shop subdomain / custom domain, or /w/:slug ---------
