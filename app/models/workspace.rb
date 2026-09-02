@@ -160,6 +160,13 @@ class Workspace < ApplicationRecord
     theme.presence&.dig(key.to_s).presence || DEFAULT_THEME[key.to_s]
   end
 
+  # Radius as valid CSS: the appearance slider stores a bare number (e.g. "16"),
+  # which is invalid for border-radius without a unit — append px.
+  def css_radius
+    r = theme_value(:radius).to_s.strip
+    r.match?(/\A\d+(\.\d+)?\z/) ? "#{r}px" : (r.presence || "16px")
+  end
+
   def resolved_theme
     DEFAULT_THEME.merge(theme.presence || {})
   end

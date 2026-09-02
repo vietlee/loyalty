@@ -6,6 +6,15 @@ import { Controller } from "@hotwired/stimulus"
 export default class extends Controller {
   static targets = ["video", "token", "form", "status", "overlay"]
 
+  connect() {
+    // Auto-start; hide the "Bật camera" button immediately if granted before.
+    if (this.cameraSeen() && this.hasOverlayTarget) this.overlayTarget.style.display = "none"
+    this.start()
+  }
+
+  cameraSeen() { try { return localStorage.getItem("scannerCameraOk") === "1" } catch (e) { return false } }
+  rememberCamera(ok) { try { ok ? localStorage.setItem("scannerCameraOk", "1") : localStorage.removeItem("scannerCameraOk") } catch (e) {} }
+
   async start() {
     if (!("BarcodeDetector" in window)) {
       this.statusTarget.textContent = "Trình duyệt không hỗ trợ quét — hãy nhập mã thủ công bên dưới."
@@ -16,10 +25,13 @@ export default class extends Controller {
       this.videoTarget.srcObject = this.stream
       await this.videoTarget.play()
       if (this.hasOverlayTarget) this.overlayTarget.style.display = "none"
+      this.rememberCamera(true)
       this.detector = new BarcodeDetector({ formats: ["qr_code"] })
       this.statusTarget.textContent = "Đang quét…"
       this.timer = setInterval(() => this.tick(), 400)
     } catch (e) {
+      this.rememberCamera(false)
+      if (this.hasOverlayTarget) this.overlayTarget.style.display = ""
       this.statusTarget.textContent = "Không truy cập được camera — hãy nhập mã thủ công."
     }
   }
