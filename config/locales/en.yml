@@ -164,10 +164,10 @@ en:
     wallet:
       title: "Rewards wallet"
       tab_redeemable: "Redeemable"
-      tab_owned: "Redeemed"
+      tab_owned: "Available"
       tab_expiring: "Expiring"
       empty_redeemable: "No rewards to redeem yet"
-      empty_owned: "You haven't redeemed any rewards"
+      empty_owned: "You don't have any rewards yet"
       empty_expiring: "No rewards expiring soon"
       remaining: "%{n} left"
     reward_detail:

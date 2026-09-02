@@ -6,9 +6,10 @@
 </header>
 
 <div class="l-screen" data-controller="tabs" data-tabs-active-value="rewards">
+  <% usable_count = @vouchers.count(&:usable?) %>
   <div class="l-wtabs">
     <button data-tabs-target="tab" data-name="rewards" data-action="tabs#select"><%= t("customer.wallet.tab_redeemable") %></button>
-    <button data-tabs-target="tab" data-name="owned"   data-action="tabs#select"><%= t("customer.wallet.tab_owned") %></button>
+    <button data-tabs-target="tab" data-name="owned"   data-action="tabs#select"><%= t("customer.wallet.tab_owned") %><% if usable_count > 0 %> · <%= usable_count %><% end %></button>
     <button data-tabs-target="tab" data-name="expiring" data-action="tabs#select"><%= t("customer.wallet.tab_expiring") %></button>
   </div>
 
