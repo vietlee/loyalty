@@ -42,49 +42,27 @@
     <% end %>
   <% end %>
 
-  <%# ---- Quick actions — engaging shortcuts (My code + Scan already live in the
-        tab bar, so we promote reward/progress/game features here instead). ---- %>
+  <%# ---- Quick actions — fixed order (My code + Scan already live in the tab
+        bar). Each item is shown only when its feature is enabled. ---- %>
   <% prog = current_workspace.program %>
   <%
-    tiles = []
-    tiles << [:tier,          member_tier_path,          :medal,   t("customer.home.q_tier")]
-    tiles << [:wallet,        member_wallet_path,        :gift,    t("customer.home.q_wallet")]
-    tiles << [:wheel,         member_wheel_path,         :wheel,   t("customer.home.q_wheel")]     if prog.gamification_enabled
-    tiles << [:missions,      member_missions_path,      :target,  t("customer.home.q_missions")]  if prog.gamification_enabled
-    tiles << [:refer,         member_refer_path,         :users,   t("customer.home.q_invite")]    if prog.referral_enabled
-    tiles << [:history,       member_history_path,       :history, t("customer.home.q_history")]
-    tiles << [:notifications, member_notifications_path, :bell,    t("customer.home.q_notifications")]
-    tiles = tiles.first(4)
-    used  = tiles.map(&:first)
+    items = []
+    items << [member_wheel_path,      :wheel,  t("customer.home.q_wheel"),     false] if prog.gamification_enabled
+    items << [member_missions_path,   :target, t("customer.home.q_missions"),  false] if prog.gamification_enabled
+    items << [member_stamps_path,     :stamp,  t("customer.home.chip_stamps"), false] if prog.gamification_enabled && @has_stamps
+    items << [member_refer_path,      :users,  t("customer.home.q_invite"),    false] if prog.referral_enabled
+    items << [member_badges_path,     :medal,  t("customer.home.chip_badges"), false] if prog.gamification_enabled
+    items << [member_wallet_path,     :gift,   t("customer.home.q_wallet"),    false]
+    items << [member_tier_path,       :medal,  t("customer.home.q_tier"),      false]
+    items << [member_shop_about_path, "🏬",    "Về quán",                      true]  if current_workspace.feedback_public?
   %>
   <div class="l-quick">
-    <% tiles.each do |_key, path, icon, label| %>
-      <%= link_to path do %><span class="ic"><%= ui_icon(icon, size: 26) %></span><%= label %><% end %>
+    <% items.each do |path, icon, label, emoji| %>
+      <%= link_to path do %>
+        <span class="ic"><% if emoji %><span style="font-size:24px; line-height:1;"><%= icon %></span><% else %><%= ui_icon(icon, size: 26) %><% end %></span><%= label %>
+      <% end %>
     <% end %>
   </div>
-
-  <%# ---- Secondary chips: only features NOT already promoted into the tiles ---- %>
-  <%
-    chips = []
-    if prog.gamification_enabled
-      chips << [member_stamps_path,   :stamp,  t("customer.home.chip_stamps")] if @has_stamps
-      chips << [member_missions_path, :target, t("customer.home.chip_missions")] unless used.include?(:missions)
-      chips << [member_badges_path,   :medal,  t("customer.home.chip_badges")]
-    end
-    chips << [member_refer_path, :users, t("customer.home.chip_refer")] if prog.referral_enabled && !used.include?(:refer)
-  %>
-  <%# Secondary shortcuts as square tiles, matching the row above. %>
-  <% secondary = chips.map { |path, icon, label| [path, icon, label, false] } %>
-  <% secondary << [member_shop_about_path, "🏬", "Về quán", true] if current_workspace.feedback_public? %>
-  <% if secondary.any? %>
-    <div class="l-quick" style="margin-top:10px;">
-      <% secondary.each do |path, icon, label, emoji| %>
-        <%= link_to path do %>
-          <span class="ic"><% if emoji %><span style="font-size:24px; line-height:1;"><%= icon %></span><% else %><%= ui_icon(icon, size: 26) %><% end %></span><%= label %>
-        <% end %>
-      <% end %>
-    </div>
-  <% end %>
 
   <%# ---- Offers carousel (real redeemable rewards; each card opens the reward) ---- %>
   <% if @offers.present? %>
