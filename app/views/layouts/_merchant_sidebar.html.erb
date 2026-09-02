@@ -73,7 +73,7 @@
   <% end %>
 
   <div class="foot">
-    <%= link_to merchant_account_path, style: "display:flex; align-items:center; gap:10px; flex:1; min-width:0; text-decoration:none; color:inherit;", title: "Tài khoản" do %>
+    <%= link_to merchant_account_path, style: "display:flex; align-items:center; gap:10px; flex:1; min-width:0; text-decoration:none; color:inherit; border-radius:10px; padding:4px 6px; #{'background:rgba(255,255,255,.1);' if nav == :account}", title: "Tài khoản" do %>
       <div class="av"><%= current_user&.initials %></div>
       <div style="min-width:0;">
         <div style="font-size:13px; font-weight:600;"><%= current_user&.name %></div>
