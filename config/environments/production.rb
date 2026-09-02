@@ -101,8 +101,13 @@ Rails.application.configure do
   # Mailer URLs
   config.action_mailer.default_url_options = { host: "loyalty.czin.net", protocol: "https" }
 
-  # SMTP delivery for OTP emails — configured via ENV when available.
-  if ENV["SMTP_ADDRESS"].present?
+  # Email delivery for OTP. Prefer Brevo's HTTP API (works over 443 where SMTP
+  # ports are blocked, e.g. DigitalOcean); fall back to SMTP if configured.
+  if ENV["BREVO_API_KEY"].present?
+    config.action_mailer.delivery_method = :brevo
+    config.action_mailer.perform_deliveries = true
+    config.action_mailer.raise_delivery_errors = true
+  elsif ENV["SMTP_ADDRESS"].present?
     config.action_mailer.delivery_method = :smtp
     config.action_mailer.perform_deliveries = true
     config.action_mailer.raise_delivery_errors = true

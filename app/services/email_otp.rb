@@ -4,6 +4,7 @@ module EmailOtp
   module_function
 
   def configured?
-    ENV["SMTP_ADDRESS"].present? && ENV["SMTP_USERNAME"].present?
+    ENV["BREVO_API_KEY"].present? ||
+      (ENV["SMTP_ADDRESS"].present? && ENV["SMTP_USERNAME"].present?)
   end
 end
