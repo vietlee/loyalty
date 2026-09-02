@@ -8,7 +8,9 @@ function readToastCookie() {
   if (!m) return null
   // clear immediately so it shows once
   document.cookie = "toast=; Max-Age=0; path=/"
-  try { return JSON.parse(decodeURIComponent(m[1])) } catch (e) { return null }
+  // Rack encodes spaces as "+" in the cookie; decodeURIComponent leaves those, so
+  // convert them back before parsing.
+  try { return JSON.parse(decodeURIComponent(m[1].replace(/\+/g, " "))) } catch (e) { return null }
 }
 
 function addToast(wrap, msg, isError) {
