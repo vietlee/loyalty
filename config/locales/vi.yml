@@ -1,4 +1,10 @@
 vi:
+  activerecord:
+    attributes:
+      reward:
+        value: "Giá trị"
+        title: "Tên ưu đãi"
+        cost_points: "Điểm đổi"
   date:
     formats:
       short: "%d/%m/%Y"

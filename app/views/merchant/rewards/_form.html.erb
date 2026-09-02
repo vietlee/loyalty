@@ -1,4 +1,4 @@
-<%= form_with model: reward, url: url, method: method do |f| %>
+<%= form_with model: reward, url: url, method: method, data: { controller: "rewardform" } do |f| %>
   <% if reward.errors.any? %>
     <div class="l-chip" style="background:#F3DDD7; color:#B4402F; margin-bottom:12px;"><%= reward.errors.full_messages.to_sentence %></div>
   <% end %>
@@ -8,7 +8,8 @@
   <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-top:12px;">
     <div>
       <label class="l-label">Loại</label>
-      <%= f.select :kind, [["Voucher", "voucher"], ["Quà tặng", "gift"], ["Giảm giá", "discount"]], {}, class: "l-field" %>
+      <%= f.select :kind, [["Voucher", "voucher"], ["Quà tặng", "gift"], ["Giảm giá", "discount"]], {},
+            class: "l-field", data: { rewardform_target: "kind", action: "change->rewardform#kindChanged" } %>
     </div>
     <div>
       <label class="l-label">Icon (emoji)</label>
@@ -22,12 +23,14 @@
       <%= f.number_field :cost_points, class: "l-field", placeholder: "300" %>
     </div>
     <div>
-      <label class="l-label">Giá trị</label>
-      <%= f.number_field :value, class: "l-field", placeholder: "30" %>
+      <label class="l-label" data-rewardform-target="valueLabel">Giá trị</label>
+      <%= f.number_field :value, class: "l-field", min: 0, step: "any", placeholder: "30",
+            data: { rewardform_target: "value" } %>
     </div>
     <div>
       <label class="l-label">Đơn vị</label>
-      <%= f.select :value_unit, [["đ", "vnd"], ["%", "percent"], ["Sản phẩm", "item"]], {}, class: "l-field" %>
+      <%= f.select :value_unit, [["đ", "vnd"], ["%", "percent"], ["Sản phẩm", "item"]], {},
+            class: "l-field", data: { rewardform_target: "unit", action: "change->rewardform#syncLabel" } %>
     </div>
   </div>
 
