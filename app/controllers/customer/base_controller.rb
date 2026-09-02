@@ -5,6 +5,7 @@ module Customer
     layout "member"
 
     before_action :set_current_workspace
+    before_action :enforce_workspace_access
     around_action :scope_tenant
     helper_method :current_workspace, :current_program
 
@@ -20,6 +21,12 @@ module Customer
       else
         yield
       end
+    end
+
+    # A suspended / long-unpaid shop's customer app is turned off too.
+    def enforce_workspace_access
+      return unless @current_workspace&.access_blocked?
+      render "customer/shared/unavailable", layout: "member", status: :forbidden
     end
 
     def current_workspace = @current_workspace

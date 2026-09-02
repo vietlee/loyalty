@@ -1,0 +1,25 @@
+<% content_for :title, "Tài khoản tạm khoá" %>
+<div style="text-align:center;">
+  <div style="width:64px; height:64px; margin:0 auto 16px; border-radius:18px; background:var(--surface-2); display:grid; place-items:center; font-size:30px;">🔒</div>
+
+  <% if @block_reason == :unpaid %>
+    <h1>Cần thanh toán để tiếp tục</h1>
+    <p class="sub">
+      Thuê bao đã quá hạn hơn <%= Workspace::GRACE_DAYS %> ngày nên cửa hàng tạm bị khoá.
+      Vui lòng thanh toán để mở lại toàn bộ dịch vụ ngay.
+    </p>
+    <%= link_to "Thanh toán ngay", merchant_billing_path, class: "l-btn l-btn-primary l-btn-block" %>
+    <p style="color:var(--ink-2); font-size:12.5px; margin-top:14px;">
+      Cần hỗ trợ? Liên hệ bộ phận chăm sóc khách hàng của nền tảng.
+    </p>
+  <% else %>
+    <h1>Cửa hàng đã bị tạm ngưng</h1>
+    <p class="sub">
+      Tài khoản của bạn hiện đang bị tạm ngưng. Vui lòng <strong>liên hệ bộ phận hỗ trợ</strong>
+      để được kích hoạt lại. Trong thời gian này bạn không thể sử dụng dịch vụ.
+    </p>
+  <% end %>
+
+  <%= button_to "Đăng xuất", destroy_user_session_path, method: :delete,
+        class: "l-btn l-btn-ghost l-btn-block", style: "margin-top:10px;" %>
+</div>

@@ -87,12 +87,32 @@ class Workspace < ApplicationRecord
   def member_limit = plan_record.max_members
 
   # ---- Subscription / billing -------------------------------------------
+  GRACE_DAYS = 10 # days after expiry before an unpaid workspace is locked out
+
   def subscription_active? = paid_until.present? && paid_until >= Time.current
 
   def subscription_days_left
     return nil if paid_until.nil?
     ((paid_until - Time.current) / 1.day).ceil
   end
+
+  # Whole days the subscription is past due (nil if never paid or still active).
+  def subscription_overdue_days
+    return nil if paid_until.nil? || subscription_active?
+    ((Time.current - paid_until) / 1.day).floor
+  end
+
+  # Why the workspace is locked out (nil = usable):
+  #   :suspended — an operator suspended it → contact support to reopen
+  #   :unpaid    — subscription expired more than GRACE_DAYS ago → pay to reopen
+  def access_blocked_reason
+    return :suspended if status == "suspended"
+    d = subscription_overdue_days
+    return :unpaid if d && d > GRACE_DAYS
+    nil
+  end
+
+  def access_blocked? = access_blocked_reason.present?
 
   # The next unpaid billing month (starts when the current paid period ends).
   def next_billing_period

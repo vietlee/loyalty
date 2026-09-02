@@ -12,20 +12,19 @@ module Maintenance
       subscriptions: sync_subscriptions }
   end
 
-  # Enforce the billing lifecycle: an active workspace whose subscription lapsed
-  # moves to past_due; if still unpaid GRACE_DAYS after expiry it is suspended
-  # (locked out). Paid/pending/trial workspaces are left alone.
+  # Billing lifecycle: an active workspace whose subscription lapsed moves to
+  # past_due (for Super Admin visibility). The hard lock-out after GRACE_DAYS is
+  # enforced dynamically at request time (Workspace#access_blocked_reason), so an
+  # unpaid shop can always pay to reactivate — we never auto-flip it to
+  # "suspended" (that status is reserved for a manual operator suspension).
+  # Paid/pending/trial workspaces are left alone.
   def sync_subscriptions
-    moved = { past_due: 0, suspended: 0 }
+    moved = { past_due: 0 }
     ActsAsTenant.without_tenant do
-      Workspace.where(status: %w[active past_due]).where.not(paid_until: nil).find_each do |ws|
+      Workspace.where(status: "active").where.not(paid_until: nil).find_each do |ws|
         days_over = (Date.current - ws.paid_until.to_date).to_i
         next if days_over <= 0
-        if days_over > GRACE_DAYS && ws.status != "suspended"
-          ws.update_columns(status: "suspended"); moved[:suspended] += 1
-        elsif ws.status == "active"
-          ws.update_columns(status: "past_due"); moved[:past_due] += 1
-        end
+        ws.update_columns(status: "past_due"); moved[:past_due] += 1
       end
     end
     Rails.logger.info("[Maintenance] subscriptions #{moved.inspect}")

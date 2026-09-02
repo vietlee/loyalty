@@ -4,6 +4,7 @@ module Merchant
 
     before_action :authenticate_user!
     before_action :set_current_workspace
+    before_action :enforce_workspace_access
     around_action :scope_tenant
 
     helper_method :current_workspace, :accessible_workspaces,
@@ -46,6 +47,17 @@ module Merchant
       else
         yield
       end
+    end
+
+    # Lock the dashboard when the workspace is suspended (operator) or unpaid past
+    # the grace period. An unpaid shop may still reach billing/payments to pay and
+    # reactivate; a suspended one is fully locked (contact support).
+    def enforce_workspace_access
+      return unless @current_workspace
+      @block_reason = @current_workspace.access_blocked_reason
+      return unless @block_reason
+      return if @block_reason == :unpaid && %w[billing payments].include?(controller_name)
+      render "merchant/shared/locked", layout: "auth", status: :forbidden
     end
 
     def current_membership
