@@ -101,6 +101,22 @@ Rails.application.configure do
   # Mailer URLs
   config.action_mailer.default_url_options = { host: "loyalty.czin.net", protocol: "https" }
 
+  # SMTP delivery for OTP emails — configured via ENV when available.
+  if ENV["SMTP_ADDRESS"].present?
+    config.action_mailer.delivery_method = :smtp
+    config.action_mailer.perform_deliveries = true
+    config.action_mailer.raise_delivery_errors = true
+    config.action_mailer.smtp_settings = {
+      address:              ENV["SMTP_ADDRESS"],
+      port:                 ENV.fetch("SMTP_PORT", 587).to_i,
+      user_name:            ENV["SMTP_USERNAME"],
+      password:             ENV["SMTP_PASSWORD"],
+      domain:               ENV.fetch("SMTP_DOMAIN", "loyalty.czin.net"),
+      authentication:       :login,
+      enable_starttls_auto: true
+    }
+  end
+
   # Host authorization — apex + every shop subdomain (white-label PWA).
   config.hosts << "loyalty.czin.net"
   config.hosts << /.*\.loyalty\.czin\.net/

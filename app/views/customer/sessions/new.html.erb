@@ -16,8 +16,8 @@
 
   <%= form_with url: member_login_path, method: :post do %>
     <label class="l-label"><%= t("customer.session.phone_label") %></label>
-    <input type="tel" name="phone" value="<%= @phone %>" inputmode="numeric" autofocus
-           class="l-field" placeholder="09xx xxx xxx" style="margin-bottom:16px;">
+    <input type="email" name="email" value="<%= @email %>" autocomplete="email" autofocus
+           class="l-field" placeholder="you@example.com" style="margin-bottom:16px;">
     <%= submit_tag t("customer.session.get_otp"), class: "l-btn l-btn-primary l-btn-block" %>
   <% end %>
 

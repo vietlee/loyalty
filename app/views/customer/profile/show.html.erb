@@ -2,7 +2,7 @@
 <% content_for :tab, "me" %>
 <header class="l-appbar">
   <div class="avatar"><%= @member.initials %></div>
-  <div><div class="nm"><%= @member.display_name %></div><div class="hi"><%= @member.phone %></div></div>
+  <div><div class="nm"><%= @member.display_name %></div><div class="hi"><%= @member.email.presence || @member.phone %></div></div>
 </header>
 <div class="l-screen">
   <div class="l-tile" style="margin-bottom:14px; padding:6px 16px;">

@@ -24,12 +24,16 @@ class Member < ApplicationRecord
   has_many :referrals_made, class_name: "Referral", foreign_key: :referrer_id, dependent: :destroy
   has_one  :referral_received, class_name: "Referral", foreign_key: :referred_id, dependent: :destroy
 
-  validates :phone, presence: true,
-                    uniqueness: { scope: :workspace_id },
-                    format: { with: /\A0\d{8,10}\z/, message: "số điện thoại không hợp lệ" }
+  # Login identifier is email (OTP). Phone is now an optional profile field.
+  validates :email, uniqueness: { scope: :workspace_id, case_sensitive: false },
+                    format: { with: URI::MailTo::EMAIL_REGEXP, message: "email không hợp lệ" },
+                    allow_blank: true
+  validates :phone, uniqueness: { scope: :workspace_id },
+                    format: { with: /\A0\d{8,10}\z/, message: "số điện thoại không hợp lệ" },
+                    allow_blank: true
   validates :locale, inclusion: { in: LOCALES }
 
-  before_validation :normalize_phone
+  before_validation :normalize_phone, :normalize_email
   before_create :assign_referral_code, :set_placeholder_password
 
   # Current tier from the cached key (falls back to lowest tier).
@@ -92,6 +96,10 @@ class Member < ApplicationRecord
 
   def normalize_phone
     self.phone = phone.to_s.gsub(/\s+/, "").presence
+  end
+
+  def normalize_email
+    self.email = email.to_s.strip.downcase.presence
   end
 
   def assign_referral_code

@@ -8,58 +8,57 @@ module Customer
       redirect_to member_login_path, notice: "Đăng nhập để nhận ưu đãi giới thiệu 🎁"
     end
 
-    # Step 1 — enter phone
+    # Step 1 — enter email
     def new
       redirect_to(member_root_path) and return if member_signed_in? && current_member.workspace_id == current_workspace.id
-      @phone = ""
+      @email = ""
     end
 
     # Step 1 submit — issue OTP, go to verify screen
     def create
-      @phone = normalize(params[:phone])
-      if @phone.blank?
-        flash.now[:alert] = "Vui lòng nhập số điện thoại."
+      @email = normalize(params[:email])
+      unless @email&.match?(URI::MailTo::EMAIL_REGEXP)
+        flash.now[:alert] = "Vui lòng nhập email hợp lệ."
         return render :new, status: :unprocessable_entity
       end
-      OtpChallenge.issue!(workspace: current_workspace, phone: @phone)
-      session[:otp_phone] = @phone
+      OtpChallenge.issue!(workspace: current_workspace, email: @email)
+      session[:otp_email] = @email
       redirect_to member_verify_path
     end
 
     # Step 2 — enter OTP
     def verify_form
-      @phone = session[:otp_phone]
-      redirect_to(member_login_path) and return if @phone.blank?
-      # Dev convenience: surface the latest code so testers can log in.
-      @dev_code = latest_dev_code(@phone) if show_otp_onscreen?
+      @email = session[:otp_email]
+      redirect_to(member_login_path) and return if @email.blank?
+      @dev_code = latest_dev_code(@email) if show_otp_onscreen?
     end
 
     # Step 2 submit — check OTP, sign in (create member on first login)
     def verify
-      @phone = session[:otp_phone]
-      redirect_to(member_login_path) and return if @phone.blank?
+      @email = session[:otp_email]
+      redirect_to(member_login_path) and return if @email.blank?
 
-      challenge = OtpChallenge.where(workspace: current_workspace, phone: @phone, purpose: "login")
+      challenge = OtpChallenge.where(workspace: current_workspace, email: @email, purpose: "login")
                               .order(created_at: :desc).first
       result = challenge&.verify(params[:code])
 
       if result == :ok
-        member = Member.find_by(workspace: current_workspace, phone: @phone)
+        member = Member.find_by(workspace: current_workspace, email: @email)
         is_new = member.nil?
         if is_new && !current_workspace.can_add_member?
           flash.now[:alert] = "Chương trình đang tạm đầy. Vui lòng quay lại sau."
           return render :verify_form, status: :unprocessable_entity
         end
-        member ||= Member.create!(workspace: current_workspace, phone: @phone)
-        # Referral rewards apply ONLY to brand-new members. An existing account
-        # opening an invite link is not a new referral — discard the code.
+        member ||= Member.create!(workspace: current_workspace, email: @email)
+        # Referral rewards apply ONLY to brand-new members.
         ref_code = session.delete(:ref_code)
         Referrals.attach(referred: member, referrer_code: ref_code) if is_new && ref_code.present?
-        session.delete(:otp_phone)
+        session.delete(:otp_email)
+        member.remember_me = true          # keep them signed in for a long time
         sign_in(:member, member)
         redirect_to member_root_path, notice: "Chào mừng #{member.display_name}!"
       else
-        @dev_code = latest_dev_code(@phone) if show_otp_onscreen?
+        @dev_code = latest_dev_code(@email) if show_otp_onscreen?
         flash.now[:alert] = otp_error_message(result)
         render :verify_form, status: :unprocessable_entity
       end
@@ -72,20 +71,18 @@ module Customer
 
     private
 
-    def normalize(phone)
-      phone.to_s.gsub(/\s+/, "").presence
+    def normalize(email)
+      email.to_s.strip.downcase.presence
     end
 
-    # Show the OTP on-screen while no real SMS/Zalo provider is wired
-    # (SHOW_OTP=true), or in any non-production env.
+    # Show the code on-screen in dev, when explicitly enabled, or until an email
+    # delivery provider (SMTP) is configured.
     def show_otp_onscreen?
-      # Show the code on-screen in dev, when explicitly enabled, or whenever no
-      # real delivery provider (Zalo ZNS) is configured yet.
-      ENV["SHOW_OTP"] == "true" || !Rails.env.production? || !OtpSender.configured?
+      ENV["SHOW_OTP"] == "true" || !Rails.env.production? || !EmailOtp.configured?
     end
 
-    def latest_dev_code(phone)
-      OtpChallenge.where(workspace: current_workspace, phone: phone).order(created_at: :desc).first&.code
+    def latest_dev_code(email)
+      OtpChallenge.where(workspace: current_workspace, email: email).order(created_at: :desc).first&.code
     end
 
     def otp_error_message(result)
