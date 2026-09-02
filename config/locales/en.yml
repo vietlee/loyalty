@@ -1,5 +1,27 @@
 en:
   hello: "Hello world"
+  merchant:
+    nav:
+      group_ops: "Operations"
+      group_config: "Configuration"
+      dashboard: "Dashboard"
+      outlets: "Outlets"
+      scanner: "Counter scanner"
+      customers: "Customers"
+      broadcasts: "Broadcasts"
+      rewards: "Rewards & gifts"
+      campaigns: "Campaigns"
+      gamification: "Gamification"
+      program: "Loyalty program"
+      appearance: "Branding & theme"
+      staff: "Staff"
+      domain: "Domain"
+      billing: "Billing"
+      account: "Account"
+      workspace: "Shop"
+      merchant_tag: "Merchant"
+      language: "Language"
+      logout_confirm: "Log out of your account?"
   date:
     formats:
       short: "%b %d, %Y"

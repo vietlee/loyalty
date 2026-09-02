@@ -4,14 +4,14 @@
     <div class="logo"><%= current_workspace&.logo_initials || "DL" %></div>
     <div>
       <div class="nm"><%= current_workspace&.name || "Dynamic Loyalty" %></div>
-      <div class="sub">Merchant</div>
+      <div class="sub"><%= t("merchant.nav.merchant_tag") %></div>
     </div>
   </div>
 
   <% if accessible_workspaces.size > 1 %>
     <details class="l-ws">
       <summary style="cursor:pointer; list-style:none;">
-        <div class="k">Workspace</div>
+        <div class="k"><%= t("merchant.nav.workspace") %></div>
         <div class="v"><%= current_workspace&.name %> ▾</div>
       </summary>
       <div style="margin-top:8px; display:flex; flex-direction:column; gap:4px;">
@@ -22,58 +22,69 @@
       </div>
     </details>
   <% else %>
-    <div class="l-ws"><div class="k">Workspace</div><div class="v"><%= current_workspace&.name %></div></div>
+    <div class="l-ws"><div class="k"><%= t("merchant.nav.workspace") %></div><div class="v"><%= current_workspace&.name %></div></div>
   <% end %>
 
-  <div class="l-navgrp">Vận hành</div>
+  <div class="l-navgrp"><%= t("merchant.nav.group_ops") %></div>
   <%= link_to merchant_root_path, class: "l-nav-item #{'active' if nav == :dashboard}" do %>
-    <span>▣</span><span>Tổng quan<span class="en">Dashboard</span></span>
+    <span>▣</span><span><%= t("merchant.nav.dashboard") %></span>
   <% end %>
   <% if current_membership&.can_manage? %>
     <%= link_to merchant_outlets_path, class: "l-nav-item #{'active' if nav == :outlets}" do %>
-      <span>⌂</span><span>Chi nhánh<span class="en">Outlets</span></span>
+      <span>⌂</span><span><%= t("merchant.nav.outlets") %></span>
     <% end %>
   <% end %>
   <%= link_to merchant_scanner_path, class: "l-nav-item #{'active' if nav == :scanner}" do %>
-    <span>⧉</span><span>Máy quét tại quầy<span class="en">Counter scanner</span></span>
+    <span>⧉</span><span><%= t("merchant.nav.scanner") %></span>
   <% end %>
   <%= link_to merchant_customers_path, class: "l-nav-item #{'active' if nav == :customers}" do %>
-    <span>☺</span><span>Khách hàng<span class="en">Customers</span></span>
+    <span>☺</span><span><%= t("merchant.nav.customers") %></span>
   <% end %>
   <% if current_membership&.can_manage? %>
   <%= link_to merchant_broadcasts_path, class: "l-nav-item #{'active' if nav == :broadcasts}" do %>
-    <span>✉</span><span>Thông báo<span class="en">Broadcasts</span></span>
+    <span>✉</span><span><%= t("merchant.nav.broadcasts") %></span>
   <% end %>
   <%= link_to merchant_rewards_path, class: "l-nav-item #{'active' if nav == :rewards}" do %>
-    <span>🎁</span><span>Ưu đãi &amp; quà<span class="en">Rewards</span></span>
+    <span>🎁</span><span><%= t("merchant.nav.rewards") %></span>
   <% end %>
   <%= link_to merchant_campaigns_path, class: "l-nav-item #{'active' if nav == :campaigns}" do %>
-    <span>◈</span><span>Chiến dịch<span class="en">Campaigns</span></span>
+    <span>◈</span><span><%= t("merchant.nav.campaigns") %></span>
   <% end %>
   <%= link_to merchant_gamification_path, class: "l-nav-item #{'active' if nav == :gamification}" do %>
-    <span>🎯</span><span>Gamification<span class="en">Games</span></span>
+    <span>🎯</span><span><%= t("merchant.nav.gamification") %></span>
   <% end %>
 
-  <div class="l-navgrp">Cấu hình</div>
+  <div class="l-navgrp"><%= t("merchant.nav.group_config") %></div>
   <%= link_to merchant_loyalty_program_path, class: "l-nav-item #{'active' if nav == :program}" do %>
-    <span>◉</span><span>Chương trình loyalty<span class="en">Loyalty program</span></span>
+    <span>◉</span><span><%= t("merchant.nav.program") %></span>
   <% end %>
   <%= link_to merchant_appearance_path, class: "l-nav-item #{'active' if nav == :appearance}" do %>
-    <span>◐</span><span>Thương hiệu &amp; Theme<span class="en">Branding</span></span>
+    <span>◐</span><span><%= t("merchant.nav.appearance") %></span>
   <% end %>
   <%= link_to merchant_staff_index_path, class: "l-nav-item #{'active' if nav == :staff}" do %>
-    <span>☻</span><span>Nhân viên<span class="en">Staff</span></span>
+    <span>☻</span><span><%= t("merchant.nav.staff") %></span>
   <% end %>
   <%= link_to merchant_domain_path, class: "l-nav-item #{'active' if nav == :domain}" do %>
-    <span>◍</span><span>Tên miền<span class="en">Domain</span></span>
+    <span>◍</span><span><%= t("merchant.nav.domain") %></span>
   <% end %>
   <%= link_to merchant_billing_path, class: "l-nav-item #{'active' if nav == :billing}" do %>
-    <span>◇</span><span>Gói dịch vụ<span class="en">Billing</span></span>
+    <span>◇</span><span><%= t("merchant.nav.billing") %></span>
   <% end %>
   <% end %>
 
+  <div style="margin-top:14px; padding:0 4px;">
+    <div class="l-navgrp" style="margin-bottom:6px;"><%= t("merchant.nav.language") %></div>
+    <span style="display:inline-flex; border:1px solid rgba(255,255,255,.16); border-radius:999px; overflow:hidden;">
+      <% [["VI", :vi], ["EN", :en]].each do |lbl, loc| %>
+        <% on = I18n.locale == loc %>
+        <%= link_to lbl, set_locale_path(loc),
+              style: "padding:5px 14px; font-size:12px; font-weight:700; text-decoration:none; #{on ? 'background:var(--primary); color:var(--on-primary);' : 'color:#EDE4D8; opacity:.7;'}" %>
+      <% end %>
+    </span>
+  </div>
+
   <div class="foot">
-    <%= link_to merchant_account_path, style: "display:flex; align-items:center; gap:10px; flex:1; min-width:0; text-decoration:none; color:inherit; border-radius:10px; padding:4px 6px; #{'background:rgba(255,255,255,.1);' if nav == :account}", title: "Tài khoản" do %>
+    <%= link_to merchant_account_path, style: "display:flex; align-items:center; gap:10px; flex:1; min-width:0; text-decoration:none; color:inherit; border-radius:10px; padding:4px 6px; #{'background:rgba(255,255,255,.1);' if nav == :account}", title: t("merchant.nav.account") do %>
       <div class="av"><%= current_user&.initials %></div>
       <div style="min-width:0;">
         <div style="font-size:13px; font-weight:600;"><%= current_user&.name %></div>
@@ -81,7 +92,7 @@
       </div>
     <% end %>
     <%= button_to "⎋", destroy_user_session_path, method: :delete,
-          form: { data: { turbo_confirm: "Đăng xuất khỏi tài khoản?" } },
+          form: { data: { turbo_confirm: t("merchant.nav.logout_confirm") } },
           style: "margin-left:auto;background:none;border:none;color:inherit;cursor:pointer;font-size:16px;" %>
   </div>
 </aside>
