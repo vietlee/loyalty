@@ -154,6 +154,13 @@ en:
       store: "Store"
       referral_code: "Referral code"
       logout: "Log out"
+      account: "Personal details"
+      name: "Full name"
+      email: "Email"
+      birthday: "Birthday"
+      birthday_hint: "Get a special gift on your birthday 🎂"
+      save: "Save changes"
+      updated: "Your details were updated."
     wallet:
       title: "Rewards wallet"
       tab_redeemable: "Redeemable"

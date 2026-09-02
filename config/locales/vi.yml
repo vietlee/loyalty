@@ -191,6 +191,13 @@ vi:
       store: "Cửa hàng"
       referral_code: "Mã giới thiệu"
       logout: "Đăng xuất"
+      account: "Thông tin cá nhân"
+      name: "Họ tên"
+      email: "Email"
+      birthday: "Ngày sinh"
+      birthday_hint: "Nhận quà đặc biệt vào ngày sinh nhật 🎂"
+      save: "Lưu thay đổi"
+      updated: "Đã cập nhật thông tin."
     wallet:
       title: "Ví thưởng"
       tab_redeemable: "Có thể đổi"

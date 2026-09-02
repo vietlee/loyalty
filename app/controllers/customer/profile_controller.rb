@@ -8,14 +8,18 @@ module Customer
     end
 
     def update
-      current_member.update(profile_params)
-      redirect_to member_profile_path, notice: "Đã cập nhật thông tin."
+      @member = current_member
+      if @member.update(profile_params)
+        redirect_to member_profile_path, notice: t("customer.profile.updated")
+      else
+        render :show, status: :unprocessable_entity
+      end
     end
 
     private
 
     def profile_params
-      params.require(:member).permit(:name, :birthday)
+      params.require(:member).permit(:name, :email, :birthday)
     end
   end
 end
