@@ -3,6 +3,7 @@ module Admin
     layout "admin"
 
     before_action :authenticate_admin_user!
+    before_action :no_browser_cache
 
     helper_method :nav_key
 

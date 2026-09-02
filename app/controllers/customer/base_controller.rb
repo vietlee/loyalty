@@ -6,6 +6,7 @@ module Customer
 
     before_action :set_current_workspace
     before_action :enforce_workspace_access
+    before_action -> { no_browser_cache if member_signed_in? }
     around_action :scope_tenant
     helper_method :current_workspace, :current_program
 

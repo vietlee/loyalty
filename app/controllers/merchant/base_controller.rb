@@ -3,6 +3,7 @@ module Merchant
     layout "merchant"
 
     before_action :authenticate_user!
+    before_action :no_browser_cache
     before_action :set_current_workspace
     before_action :enforce_workspace_access
     around_action :scope_tenant

@@ -88,6 +88,13 @@ class ApplicationController < ActionController::Base
     end
   end
 
+  # Prevent the browser back/forward cache (and any shared cache) from restoring
+  # an authenticated page after logout. Called on authed back-office pages.
+  def no_browser_cache
+    response.headers["Cache-Control"] = "no-store, no-cache, must-revalidate, private"
+    response.headers["Pragma"] = "no-cache"
+  end
+
   # Hand flash messages to the client as a short-lived, JS-readable cookie so the
   # toast can be built after Turbo's final render (see app/javascript/toast.js).
   def stash_toast_cookie
