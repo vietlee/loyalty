@@ -1,0 +1,91 @@
+<% content_for :title, "Dynamic Loyalty — #{t('landing.hero_eyebrow')}" %>
+
+<%# ---- Hero ---- %>
+<section class="m-hero"><div class="m-in grid">
+  <div class="m-hero-copy">
+    <div class="eyebrow"><%= t("landing.hero_eyebrow") %></div>
+    <h1 style="margin-top:14px;"><%= t("landing.hero_title") %></h1>
+    <p class="lead"><%= t("landing.hero_sub") %></p>
+    <div class="m-cta">
+      <a class="m-btn solid lg" href="/merchant/signup"><%= t("landing.hero_cta") %></a>
+      <a class="m-btn ghost lg" href="#features"><%= t("landing.hero_cta2") %> →</a>
+    </div>
+    <div class="m-trust"><%= t("landing.trust") %></div>
+  </div>
+
+  <div class="m-visual">
+    <div class="m-phone">
+      <div class="m-mem">
+        <span class="bdg">👑 <%= t("landing.hero_tier") %></span>
+        <div class="k"><%= t("landing.hero_points_label") %></div>
+        <div class="pts">13.990</div>
+        <div class="per"><%= t("landing.hero_per_bill") %></div>
+        <div class="nm">NGUYEN AN · 0912 •• 456</div>
+      </div>
+      <div class="m-chips">
+        <span><%= ui_icon(:qrcode, size: 18) %></span>
+        <span><%= ui_icon(:gift, size: 18) %></span>
+        <span><%= ui_icon(:wheel, size: 18) %></span>
+        <span><%= ui_icon(:medal, size: 18) %></span>
+      </div>
+    </div>
+  </div>
+</div></section>
+
+<%# ---- Features ---- %>
+<section class="m-sec" id="features"><div class="m-in">
+  <div class="m-head">
+    <div class="eyebrow"><%= t("landing.nav_features") %></div>
+    <h2><%= t("landing.feat_title") %></h2>
+    <p><%= t("landing.feat_sub") %></p>
+  </div>
+  <div class="m-features">
+    <% [[:medal,:f1],[:qrcode,:f2],[:wheel,:f3],[:bell,:f4],[:users,:f5],[:target,:f6]].each do |icon, k| %>
+      <div class="m-feat">
+        <div class="ic"><%= ui_icon(icon, size: 24) %></div>
+        <h3><%= t("landing.#{k}_t") %></h3>
+        <p><%= t("landing.#{k}_d") %></p>
+      </div>
+    <% end %>
+  </div>
+</div></section>
+
+<%# ---- How it works ---- %>
+<section class="m-sec alt" id="how"><div class="m-in">
+  <div class="m-head">
+    <div class="eyebrow"><%= t("landing.nav_how") %></div>
+    <h2><%= t("landing.how_title") %></h2>
+  </div>
+  <div class="m-steps">
+    <% [:s1,:s2,:s3].each_with_index do |k, i| %>
+      <div class="m-step">
+        <div class="n"><%= i + 1 %></div>
+        <h3><%= t("landing.#{k}_t") %></h3>
+        <p><%= t("landing.#{k}_d") %></p>
+      </div>
+    <% end %>
+  </div>
+</div></section>
+
+<%# ---- Pricing teaser ---- %>
+<section class="m-sec" id="pricing"><div class="m-in">
+  <div class="m-head" style="margin-bottom:26px;">
+    <div class="eyebrow"><%= t("landing.nav_pricing") %></div>
+    <h2><%= t("landing.pricing_title") %></h2>
+    <p><%= t("landing.pricing_sub") %></p>
+  </div>
+  <div style="text-align:center;">
+    <a class="m-btn solid lg" href="/merchant/signup"><%= t("landing.pricing_cta") %></a>
+  </div>
+</div></section>
+
+<%# ---- Final CTA ---- %>
+<section style="padding:20px 0 80px;"><div class="m-in" style="padding:0;">
+  <div class="m-band">
+    <h2><%= t("landing.cta_title") %></h2>
+    <p><%= t("landing.cta_sub") %></p>
+    <div class="m-cta">
+      <a class="m-btn solid lg" href="/merchant/signup"><%= t("landing.cta_btn") %></a>
+    </div>
+  </div>
+</div></section>

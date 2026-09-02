@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="<%= I18n.locale %>">
+  <head>
+    <%= render "layouts/head" %>
+    <link rel="icon" href="/icon.png" type="image/png">
+    <style>
+      .m{
+        --ink:#2A1B12; --ink-2:#6E5A4B; --cream:#FBF6EF; --cream-2:#F4EADD; --line:#EADBCA;
+        --brown:#8C4A2F; --amber:#E8933C; --gold:#E0B54A; --espresso:#20130C;
+        --fd:"Fraunces",Georgia,serif; --fb:"Plus Jakarta Sans","Be Vietnam Pro",system-ui,sans-serif;
+      }
+      .m *{box-sizing:border-box}
+      .m{margin:0;background:var(--cream);color:var(--ink);font-family:var(--fb);line-height:1.65;-webkit-font-smoothing:antialiased}
+      .m a{color:inherit;text-decoration:none}
+      .m-in{max-width:1120px;margin:0 auto;padding:0 24px}
+      .m h1,.m h2,.m h3{font-family:var(--fd);font-weight:600;line-height:1.08;text-wrap:balance;margin:0}
+      .m .eyebrow{font-size:12.5px;letter-spacing:.22em;text-transform:uppercase;font-weight:700;color:var(--brown)}
+
+      /* nav */
+      .m-nav{position:sticky;top:0;z-index:50;background:rgba(251,246,239,.85);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+      .m-nav .row{display:flex;align-items:center;gap:20px;height:66px}
+      .m-brand{display:flex;align-items:center;gap:11px;font-weight:800;font-size:17px}
+      .m-brand svg{width:34px;height:34px;border-radius:9px;flex:none}
+      .m-brand b{font-family:var(--fd);font-weight:700}
+      .m-brand .d{color:var(--ink-2);font-weight:600}
+      .m-links{display:flex;gap:24px;margin-left:14px;font-size:14.5px;font-weight:500;color:var(--ink-2)}
+      .m-links a:hover{color:var(--ink)}
+      .m-actions{margin-left:auto;display:flex;align-items:center;gap:12px}
+      .m-lang{display:flex;gap:2px;font-size:12px;font-weight:700;background:var(--cream-2);border-radius:999px;padding:3px}
+      .m-lang a{padding:4px 9px;border-radius:999px;color:var(--ink-2)}
+      .m-lang a.on{background:#fff;color:var(--brown);box-shadow:0 1px 2px rgba(0,0,0,.08)}
+      .m-btn{display:inline-flex;align-items:center;gap:8px;font-weight:600;font-size:14.5px;padding:10px 18px;border-radius:12px;transition:.15s;white-space:nowrap}
+      .m-btn.ghost{color:var(--ink)}
+      .m-btn.ghost:hover{background:var(--cream-2)}
+      .m-btn.solid{background:linear-gradient(180deg,var(--brown),#7A3E28);color:#FFF7EE;box-shadow:0 8px 20px rgba(140,74,47,.28)}
+      .m-btn.solid:hover{filter:brightness(1.06);transform:translateY(-1px)}
+      .m-btn.lg{padding:15px 26px;font-size:16px;border-radius:14px}
+      @media(max-width:760px){.m-links{display:none}.m-btn.ghost{display:none}}
+
+      /* hero */
+      .m-hero{position:relative;overflow:hidden;background:
+          radial-gradient(90% 120% at 85% -20%, rgba(232,147,60,.16), transparent 55%),
+          var(--cream)}
+      .m-hero .grid{display:grid;grid-template-columns:1.05fr .95fr;gap:48px;align-items:center;padding:72px 0 84px}
+      .m-hero h1{font-size:clamp(34px,5.4vw,58px)}
+      .m-hero p.lead{font-size:clamp(16px,2vw,19px);color:var(--ink-2);margin:20px 0 0;max-width:34ch}
+      .m-cta{display:flex;gap:12px;margin-top:30px;flex-wrap:wrap}
+      .m-trust{margin-top:22px;font-size:13px;color:var(--ink-2);font-weight:600;letter-spacing:.01em}
+      @media(max-width:860px){.m-hero .grid{grid-template-columns:1fr;gap:36px;padding:48px 0 60px}}
+
+      /* hero card mockup */
+      .m-visual{position:relative;display:grid;place-items:center}
+      .m-phone{width:300px;max-width:100%;background:#fff;border:1px solid var(--line);border-radius:30px;padding:16px;
+        box-shadow:0 40px 80px -30px rgba(60,34,20,.5);transform:rotate(2deg)}
+      .m-mem{border-radius:20px;padding:22px;color:#fff;position:relative;overflow:hidden;
+        background:linear-gradient(140deg,var(--brown),var(--amber))}
+      .m-mem .bdg{position:absolute;top:16px;right:16px;display:inline-flex;gap:6px;align-items:center;background:var(--gold);color:#3A2A20;font-weight:800;font-size:12px;padding:6px 11px;border-radius:999px}
+      .m-mem .k{font-size:11px;letter-spacing:.14em;text-transform:uppercase;opacity:.85;margin-top:26px}
+      .m-mem .pts{font-family:var(--fd);font-weight:700;font-size:44px;line-height:1;margin-top:4px}
+      .m-mem .per{opacity:.9;font-size:12.5px;margin-top:4px}
+      .m-mem .nm{margin-top:22px;font-weight:600;letter-spacing:.04em}
+      .m-chips{display:flex;gap:8px;margin-top:16px}
+      .m-chips span{flex:1;text-align:center;background:var(--cream-2);border-radius:12px;padding:11px 0;font-size:12px;font-weight:600;color:var(--brown)}
+
+      /* sections */
+      section.m-sec{padding:76px 0}
+      .m-sec.alt{background:var(--cream-2)}
+      .m-head{text-align:center;max-width:620px;margin:0 auto 44px}
+      .m-head h2{font-size:clamp(26px,3.6vw,38px);margin-top:10px}
+      .m-head p{color:var(--ink-2);margin:12px 0 0;font-size:16px}
+
+      .m-features{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+      @media(max-width:860px){.m-features{grid-template-columns:1fr}}
+      .m-feat{background:#fff;border:1px solid var(--line);border-radius:20px;padding:26px}
+      .m-feat .ic{width:46px;height:46px;border-radius:13px;display:grid;place-items:center;color:var(--brown);background:var(--cream-2);margin-bottom:16px}
+      .m-feat h3{font-size:19px}
+      .m-feat p{color:var(--ink-2);font-size:14.5px;margin:7px 0 0}
+
+      .m-steps{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;counter-reset:s}
+      @media(max-width:860px){.m-steps{grid-template-columns:1fr}}
+      .m-step{position:relative;padding-top:16px}
+      .m-step .n{font-family:var(--fd);font-weight:700;font-size:15px;color:#fff;background:var(--brown);width:34px;height:34px;border-radius:50%;display:grid;place-items:center;margin-bottom:14px}
+      .m-step h3{font-size:19px}
+      .m-step p{color:var(--ink-2);font-size:14.5px;margin:7px 0 0}
+
+      /* cta band */
+      .m-band{background:linear-gradient(150deg,var(--espresso),#4A2C1B);color:#FBEFE2;border-radius:28px;padding:56px 40px;text-align:center;margin:0 24px}
+      .m-band h2{font-size:clamp(24px,3.4vw,34px);color:#fff}
+      .m-band p{color:rgba(251,239,226,.8);margin:12px auto 0;max-width:48ch}
+      .m-band .m-cta{justify-content:center;margin-top:26px}
+      .m-band .m-btn.solid{background:linear-gradient(180deg,var(--amber),#D97E2B);box-shadow:0 10px 26px rgba(0,0,0,.3)}
+
+      /* footer */
+      .m-foot{border-top:1px solid var(--line);padding:34px 0;color:var(--ink-2);font-size:13.5px}
+      .m-foot .row{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+      .m-foot .m-brand{font-size:15px}
+    </style>
+  </head>
+  <body class="m">
+    <header class="m-nav"><div class="m-in row">
+      <a class="m-brand" href="/">
+        <svg viewBox="0 0 512 512" aria-hidden="true"><use href="#dlmark"/></svg>
+        <span><span class="d">Dynamic</span> <b>Loyalty</b></span>
+      </a>
+      <nav class="m-links">
+        <a href="#features"><%= t("landing.nav_features") %></a>
+        <a href="#how"><%= t("landing.nav_how") %></a>
+        <a href="#pricing"><%= t("landing.nav_pricing") %></a>
+      </nav>
+      <div class="m-actions">
+        <span class="m-lang">
+          <%= link_to "VI", set_locale_path(:vi), class: ("on" if I18n.locale == :vi), data: { turbo: false } %>
+          <%= link_to "EN", set_locale_path(:en), class: ("on" if I18n.locale == :en), data: { turbo: false } %>
+        </span>
+        <a class="m-btn ghost" href="/merchant/login"><%= t("landing.nav_login") %></a>
+        <a class="m-btn solid" href="/merchant/signup"><%= t("landing.nav_signup") %></a>
+      </div>
+    </div></header>
+
+    <%# shared logo symbol %>
+    <svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+      <linearGradient id="tile" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#7C3F27"/><stop offset="1" stop-color="#EA9A3E"/></linearGradient>
+      <g id="dlmark">
+        <rect width="512" height="512" rx="120" fill="url(#tile)"/>
+        <circle cx="256" cy="256" r="150" fill="none" stroke="#fff" stroke-opacity=".34" stroke-width="7"/>
+        <circle cx="362" cy="150" r="19" fill="#F4C752"/>
+        <path d="M256 124 C267 220 292 245 388 256 C292 267 267 292 256 388 C245 292 220 267 124 256 C220 245 245 220 256 124 Z" fill="#fff"/>
+      </g>
+    </defs></svg>
+
+    <%= yield %>
+
+    <footer class="m-foot"><div class="m-in row">
+      <a class="m-brand" href="/"><svg viewBox="0 0 512 512" width="26" height="26" aria-hidden="true"><use href="#dlmark"/></svg><span><span class="d">Dynamic</span> <b>Loyalty</b></span></a>
+      <span style="margin-left:auto"><%= t("landing.footer_tagline") %></span>
+      <span>© <%= Date.current.year %> Dynamic Loyalty · <%= t("landing.footer_rights") %></span>
+    </div></footer>
+  </body>
+</html>

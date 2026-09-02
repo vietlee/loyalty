@@ -2,8 +2,8 @@ module Customer
   class HomeController < BaseController
     def show
       if current_workspace.nil?
-        @workspaces = Workspace.order(:name).to_a
-        render "customer/home/launcher", layout: "launcher"
+        # Apex host (no shop resolved) → marketing landing page.
+        render "customer/home/landing", layout: "marketing"
       elsif !member_signed_in? || current_member&.workspace_id != current_workspace.id
         redirect_to member_login_path
       else
