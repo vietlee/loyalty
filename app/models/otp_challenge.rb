@@ -10,13 +10,18 @@ class OtpChallenge < ApplicationRecord
 
   scope :active, -> { where(consumed_at: nil).where("expires_at > ?", Time.current) }
 
-  # Issue (or re-issue) an OTP for a phone. In dev the code is returned to the
-  # caller and logged; a real SMS/Zalo provider swaps in here later.
+  # Issue (or re-issue) an OTP for a phone. Delivers via the configured provider
+  # (Zalo ZNS); when none is configured the code is shown on-screen instead.
   def self.issue!(workspace:, phone:, purpose: "login")
     code = format("%06d", SecureRandom.random_number(1_000_000))
     challenge = create!(workspace: workspace, phone: phone.to_s, purpose: purpose,
                         code: code, expires_at: TTL.from_now)
-    Rails.logger.info("[OTP] workspace=#{workspace.subdomain} phone=#{phone} code=#{code}")
+    if OtpSender.configured?
+      Rails.logger.info("[OTP] workspace=#{workspace.subdomain} phone=#{phone} (sent via provider)")
+      OtpDeliveryJob.perform_later(phone.to_s, code)
+    else
+      Rails.logger.info("[OTP] workspace=#{workspace.subdomain} phone=#{phone} code=#{code} (on-screen)")
+    end
     challenge
   end
 

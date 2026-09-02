@@ -79,7 +79,9 @@ module Customer
     # Show the OTP on-screen while no real SMS/Zalo provider is wired
     # (SHOW_OTP=true), or in any non-production env.
     def show_otp_onscreen?
-      ENV["SHOW_OTP"] == "true" || !Rails.env.production?
+      # Show the code on-screen in dev, when explicitly enabled, or whenever no
+      # real delivery provider (Zalo ZNS) is configured yet.
+      ENV["SHOW_OTP"] == "true" || !Rails.env.production? || !OtpSender.configured?
     end
 
     def latest_dev_code(phone)
