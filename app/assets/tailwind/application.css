@@ -89,9 +89,13 @@ a.l-chip-brand:hover, button.l-chip-brand:hover { background: color-mix(in srgb,
 .l-outlet-hit { position:absolute; inset:0; z-index:1; border-radius:inherit; }
 .l-outlet-actions { position:relative; z-index:2; }
 
-/* larger, more prominent shortcut chips (home) */
-.l-chip-lg { padding:11px 18px; font-size:15px; gap:9px; }
-.l-chip-lg svg { width:20px; height:20px; }
+/* larger, more prominent shortcut chips (home) — white cards so they stand out
+   from the warm page background and read as tappable (like the tiles above). */
+.l-chip-lg { padding:11px 18px; font-size:15px; gap:9px; background:#fff; color:var(--ink);
+  border:1px solid var(--line); box-shadow:var(--shadow); }
+.l-chip-lg svg { width:20px; height:20px; color:var(--primary); }
+a.l-chip-lg:hover, button.l-chip-lg:hover { background:#fff; color:var(--ink);
+  border-color:color-mix(in srgb, var(--primary) 40%, var(--line)); box-shadow:var(--shadow-lg); transform:translateY(-1px); }
 .l-wtabs button { transition: background .15s, color .15s; }
 .l-wtabs button:hover:not(.active) { color: var(--ink); }
 .l-preset { transition: border-color .15s, box-shadow .15s; }
