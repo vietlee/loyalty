@@ -22,7 +22,7 @@
       <% if tier %>
         <div class="tier-badge" style="background:<%= tier.gradient_css %>;"><span class="medal">👑</span><%= t("customer.home.tier_badge", name: tier.name) %></div>
       <% end %>
-      <div class="k" style="<%= 'margin-top:44px;' if tier %>"><%= t("customer.home.points_balance") %></div>
+      <div class="k" style="<%= 'margin-top:22px;' if tier %>"><%= t("customer.home.points_balance") %></div>
       <div style="display:flex; align-items:flex-end; justify-content:space-between; gap:12px;">
         <div class="pts"><%= number_with_delimiter(@member.points_balance) %></div>
         <div style="text-align:right; opacity:.85; font-size:12px; padding-bottom:8px;">
