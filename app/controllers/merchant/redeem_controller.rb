@@ -2,6 +2,13 @@ module Merchant
   class RedeemController < BaseController
     # Step 1 — resolve the voucher from a scanned/typed use code (§6.4).
     def lookup
+      # Staff may scan a member's personal QR here by mistake. Auto-route it to
+      # the earn flow so a single scan "just works".
+      if (member = ScanRouter.member(params[:token], current_workspace))
+        @member = member
+        return render "merchant/earn/lookup"
+      end
+
       token = params[:token].to_s.gsub(/\D/, "")
       @voucher = token.present? ? Voucher.where(redeem_token: token).first : nil
 

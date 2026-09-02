@@ -19,7 +19,8 @@ module MemberQr
     data = verifier.verify(token.to_s.strip)
     return nil unless data && data["w"].to_i == workspace.id
     Member.find_by(id: data["m"])
-  rescue ActiveSupport::MessageVerifier::InvalidSignature, ActiveSupport::MessageVerifier::ExpiredMessage
+  rescue ActiveSupport::MessageVerifier::InvalidSignature
+    # Both a tampered token and an expired one raise InvalidSignature here.
     nil
   end
 end

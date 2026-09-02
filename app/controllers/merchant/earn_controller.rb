@@ -2,6 +2,13 @@ module Merchant
   class EarnController < BaseController
     # Step 1 — resolve the customer (scanned QR token, or manual phone entry).
     def lookup
+      # Staff may scan a reward use-code (numeric voucher token) here by mistake.
+      # Auto-route it to the verify flow so a single scan "just works".
+      if (redirect = ScanRouter.reward_use_code(params[:token], current_workspace))
+        @voucher = redirect
+        return render_voucher_verify
+      end
+
       @member = find_member
       if @member
         render :lookup
@@ -37,7 +44,6 @@ module Merchant
 
     def find_member
       if params[:token].present?
-        log_token_failure(params[:token]) # TEMP diagnostic
         MemberQr.decode(params[:token], workspace: current_workspace)
       elsif params[:email].present?
         Member.find_by(email: params[:email].to_s.strip.downcase)
@@ -46,24 +52,17 @@ module Merchant
       end
     end
 
-    # TEMP diagnostic — categorise why a scanned token fails to resolve.
-    def log_token_failure(raw)
-      tok = raw.to_s.strip
-      reason =
-        begin
-          data = MemberQr.verifier.verify(tok)
-          if data["w"].to_i != current_workspace.id
-            "wrong_workspace(token_w=#{data['w']} current=#{current_workspace.id})"
-          elsif Member.find_by(id: data["m"]).nil?
-            "member_missing(m=#{data['m']})"
-          else
-            "OK"
-          end
-        rescue ActiveSupport::MessageVerifier::ExpiredMessage then "EXPIRED"
-        rescue ActiveSupport::MessageVerifier::InvalidSignature then "BAD_SIGNATURE"
-        rescue => e then "ERR(#{e.class})"
-        end
-      Rails.logger.info("[SCAN-DIAG] len=#{tok.length} head=#{tok[0, 10]} tail=#{tok[-6..]} url?=#{tok.start_with?('http')} reason=#{reason}")
+    # Render the reward-verify result (redeem flow) inside the scan_tool frame,
+    # even though staff started on the "Tích điểm" tab.
+    def render_voucher_verify
+      if @voucher.state == "used"
+        render "merchant/redeem/used"
+      elsif @voucher.redeem_token_expires_at.nil? || @voucher.redeem_token_expires_at < Time.current
+        @error = "Mã sử dụng đã hết hiệu lực. Khách vui lòng tạo lại mã."
+        render "merchant/redeem/search", status: :unprocessable_entity
+      else
+        render "merchant/redeem/confirm"
+      end
     end
   end
 end
