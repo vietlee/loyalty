@@ -53,6 +53,7 @@ module Customer
         # Referral rewards apply ONLY to brand-new members.
         ref_code = session.delete(:ref_code)
         Referrals.attach(referred: member, referrer_code: ref_code) if is_new && ref_code.present?
+        Automations.on_signup(member) if is_new
         session.delete(:otp_email)
         member.remember_me = true          # keep them signed in for a long time
         sign_in(:member, member)

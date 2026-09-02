@@ -74,6 +74,7 @@ Rails.application.routes.draw do
     end
     get   "feedback", to: "feedback#show",   as: :feedback
     patch "feedback", to: "feedback#update"
+    resource :automations, only: [:show, :update], controller: "automations"
     resources :broadcasts, only: [:index, :new, :create]
     resources :campaigns, only: [:index, :new, :create, :show] do
       member { get :qr } # downloadable promo QR (SVG)

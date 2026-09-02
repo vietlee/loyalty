@@ -61,6 +61,9 @@
   <%= link_to merchant_loyalty_program_path, class: "l-nav-item #{'active' if nav == :program}" do %>
     <span>◉</span><span><%= t("merchant.nav.program") %></span>
   <% end %>
+  <%= link_to merchant_automations_path, class: "l-nav-item #{'active' if nav == :automations}" do %>
+    <span>⚡</span><span><%= t("merchant.nav.automations") %></span>
+  <% end %>
   <%= link_to merchant_appearance_path, class: "l-nav-item #{'active' if nav == :appearance}" do %>
     <span>◐</span><span><%= t("merchant.nav.appearance") %></span>
   <% end %>

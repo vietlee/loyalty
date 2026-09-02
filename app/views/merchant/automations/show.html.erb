@@ -1,0 +1,52 @@
+<% content_for :title, "Tự động hoá" %>
+<% content_for :title_en, "AUTOMATIONS" %>
+<% reward_opts = @rewards.map { |r| [r.title, r.id] } %>
+
+<div style="max-width:680px;">
+  <p style="color:var(--ink-2); font-size:14px; margin-bottom:16px;">Cài một lần — hệ thống tự tặng quà và nhắc khách đúng thời điểm. Quà là một ưu đãi bạn đã tạo ở mục <strong>Ưu đãi &amp; quà</strong>.</p>
+
+  <% if @rewards.empty? %>
+    <div class="l-panel" style="background:#F7E0DA; color:#B4402F;">Bạn cần tạo ít nhất 1 ưu đãi ở mục “Ưu đãi &amp; quà” trước khi dùng tự động hoá.</div>
+  <% end %>
+
+  <%= form_with url: merchant_automations_path, method: :patch do %>
+    <% [
+        ["welcome",  "🎁 Chào mừng khách mới", "Tự tặng quà ngay khi khách đăng ký lần đầu."],
+        ["birthday", "🎂 Quà sinh nhật",        "Tự tặng quà vào đúng ngày sinh nhật của khách (cần khách đã nhập ngày sinh)."],
+        ["winback",  "👋 Kéo khách quay lại",   "Tự nhắc (và tặng quà) khách lâu chưa ghé."],
+       ].each do |kind, title, desc| %>
+      <% c = @cfg[kind] || {} %>
+      <div class="l-panel" style="margin-bottom:14px;">
+        <label style="display:flex; align-items:center; gap:10px; cursor:pointer;">
+          <input type="hidden" name="automations[<%= kind %>][enabled]" value="0">
+          <input type="checkbox" name="automations[<%= kind %>][enabled]" value="1" <%= "checked" if c["enabled"] %> style="width:18px;height:18px; accent-color:var(--primary);">
+          <span style="font-weight:700; font-size:16px;"><%= title %></span>
+        </label>
+        <p style="color:var(--ink-2); font-size:13px; margin:6px 0 12px 28px;"><%= desc %></p>
+
+        <div style="margin-left:28px; display:grid; gap:10px;">
+          <div>
+            <label class="l-label"><%= kind == "winback" ? "Quà tặng (không bắt buộc)" : "Quà tặng" %></label>
+            <%= select_tag "automations[#{kind}][reward_id]", options_for_select(reward_opts, c["reward_id"].to_i),
+                  include_blank: (kind == "winback" ? "Không tặng quà — chỉ nhắc" : "— chọn ưu đãi —"), class: "l-field" %>
+          </div>
+
+          <% if kind == "winback" %>
+            <div style="display:grid; grid-template-columns:150px 1fr; gap:10px;">
+              <div>
+                <label class="l-label">Sau (ngày) không ghé</label>
+                <%= number_field_tag "automations[winback][days]", (c["days"].presence || 30), class: "l-field", min: 1 %>
+              </div>
+              <div>
+                <label class="l-label">Lời nhắn</label>
+                <%= text_field_tag "automations[winback][message]", c["message"], class: "l-field", placeholder: "Lâu rồi không gặp bạn! Ghé lại nhận ưu đãi nhé 💛" %>
+              </div>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    <% end %>
+
+    <%= submit_tag "Lưu cấu hình", class: "l-btn l-btn-primary", style: "margin-top:4px;" %>
+  <% end %>
+</div>

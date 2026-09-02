@@ -132,6 +132,9 @@ class Workspace < ApplicationRecord
   # Whether the public customer-facing feedback wall is shown (default on).
   def feedback_public? = settings.fetch("feedback_public", true) != false
 
+  # Automation config lives in settings["automations"][kind] = {enabled, reward_id, ...}
+  def automation(kind) = settings.fetch("automations", {}).fetch(kind.to_s, {})
+
   def access_blocked? = access_blocked_reason.present?
 
   # The next unpaid billing month (starts when the current paid period ends).

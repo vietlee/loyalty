@@ -9,6 +9,7 @@ module Maintenance
 
   def run_all
     { vouchers_expired: expire_vouchers, points_expired: ExpirePoints.run,
+      birthday_rewards: Automations.run_birthday, winback: Automations.run_winback,
       members_recomputed: recompute_members, subscriptions: sync_subscriptions }
   end
 
