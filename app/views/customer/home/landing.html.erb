@@ -32,6 +32,18 @@
   </div>
 </div></section>
 
+<%# ---- Stats / value band ---- %>
+<section class="m-sec alt" style="padding:48px 0;"><div class="m-in">
+  <div class="m-stats">
+    <% [:stat1,:stat2,:stat3,:stat4].each do |s| %>
+      <div class="m-stat">
+        <div class="v"><%= t("landing.#{s}_t") %></div>
+        <div class="l"><%= t("landing.#{s}_d") %></div>
+      </div>
+    <% end %>
+  </div>
+</div></section>
+
 <%# ---- Features ---- %>
 <section class="m-sec" id="features"><div class="m-in">
   <div class="m-head">
@@ -50,8 +62,25 @@
   </div>
 </div></section>
 
+<%# ---- Industries ---- %>
+<section class="m-sec alt"><div class="m-in">
+  <div class="m-head">
+    <div class="eyebrow">Industries</div>
+    <h2><%= t("landing.ind_title") %></h2>
+    <p><%= t("landing.ind_sub") %></p>
+  </div>
+  <div class="m-inds">
+    <% [:ind_fnb,:ind_retail,:ind_service].each do |k| %>
+      <div class="m-ind">
+        <h3><%= t("landing.#{k}_t") %></h3>
+        <p><%= t("landing.#{k}_d") %></p>
+      </div>
+    <% end %>
+  </div>
+</div></section>
+
 <%# ---- How it works ---- %>
-<section class="m-sec alt" id="how"><div class="m-in">
+<section class="m-sec" id="how"><div class="m-in">
   <div class="m-head">
     <div class="eyebrow"><%= t("landing.nav_how") %></div>
     <h2><%= t("landing.how_title") %></h2>
@@ -67,20 +96,47 @@
   </div>
 </div></section>
 
-<%# ---- Pricing teaser ---- %>
-<section class="m-sec" id="pricing"><div class="m-in">
-  <div class="m-head" style="margin-bottom:26px;">
+<%# ---- Pricing ---- %>
+<section class="m-sec alt" id="pricing"><div class="m-in">
+  <div class="m-head">
     <div class="eyebrow"><%= t("landing.nav_pricing") %></div>
     <h2><%= t("landing.pricing_title") %></h2>
     <p><%= t("landing.pricing_sub") %></p>
   </div>
-  <div style="text-align:center;">
-    <a class="m-btn solid lg" href="/merchant/signup"><%= t("landing.pricing_cta") %></a>
+  <div class="m-price">
+    <% @plans.each do |plan| %>
+      <% popular = plan.key == "growth" %>
+      <div class="m-plan <%= 'pop' if popular %>">
+        <% if popular %><span class="tag"><%= t("landing.price_popular") %></span><% end %>
+        <div class="pn"><%= plan.name %></div>
+        <div class="pp"><%= number_with_delimiter(plan.price) %><small><%= t("landing.price_mo") %></small></div>
+        <ul>
+          <% Array(plan.features).each do |feat| %>
+            <li><%= ui_icon(:check, size: 16) %><span><%= feat %></span></li>
+          <% end %>
+        </ul>
+        <a class="m-btn <%= popular ? 'solid' : 'ghost' %>" href="/merchant/signup" style="<%= 'border:1px solid var(--line);' unless popular %>"><%= t("landing.price_choose") %></a>
+      </div>
+    <% end %>
+  </div>
+  <p style="text-align:center;color:var(--ink-2);font-size:13px;margin-top:20px;"><%= t("landing.price_trial") %></p>
+</div></section>
+
+<%# ---- FAQ ---- %>
+<section class="m-sec"><div class="m-in">
+  <div class="m-head"><h2><%= t("landing.faq_title") %></h2></div>
+  <div class="m-faq">
+    <% [:q1,:q2,:q3,:q4].each_with_index do |q, i| %>
+      <details <%= "open" if i.zero? %>>
+        <summary><%= t("landing.#{q}") %></summary>
+        <p><%= t("landing.a#{i + 1}") %></p>
+      </details>
+    <% end %>
   </div>
 </div></section>
 
 <%# ---- Final CTA ---- %>
-<section style="padding:20px 0 80px;"><div class="m-in" style="padding:0;">
+<section style="padding:8px 0 80px;"><div class="m-in" style="padding:0;">
   <div class="m-band">
     <h2><%= t("landing.cta_title") %></h2>
     <p><%= t("landing.cta_sub") %></p>

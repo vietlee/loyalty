@@ -2,7 +2,7 @@ module Merchant
   # Public self-serve merchant registration. Creates a workspace (its own
   # subdomain), an owner, and default loyalty config, then signs the owner in.
   class SignupsController < ApplicationController
-    layout "auth"
+    layout "marketing"
 
     RESERVED = TenantResolver::RESERVED_SUBDOMAINS
 
