@@ -40,9 +40,8 @@ class ApplicationController < ActionController::Base
         merchant_choose_path
       else
         ws = resource.workspaces.order(:created_at).first
-        stored = stored_location_for(:user)
-        path = stored.presence ? URI(stored).request_uri : "/merchant"
-        merchant_url_for(ws, path)
+        # stored_location_for returns a request path already (never a full URL).
+        merchant_url_for(ws, stored_location_for(:user).presence || "/merchant")
       end
     else
       super
