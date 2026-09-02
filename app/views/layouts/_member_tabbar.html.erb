@@ -8,7 +8,7 @@
     <%= ui_icon(:gift, size: 22) %><span><%= t("customer.nav.wallet") %></span>
   <% end %>
   <%= link_to member_scan_path, class: "scan-fab", "aria-label": t("customer.nav.scan") do %>
-    <%= ui_icon(:scan, size: 26) %>
+    <%= ui_icon(:scan, size: 30) %>
   <% end %>
   <%= link_to member_my_code_path, class: ("active" if key == "code") do %>
     <%= ui_icon(:qrcode, size: 22) %><span><%= t("customer.nav.my_code") %></span>

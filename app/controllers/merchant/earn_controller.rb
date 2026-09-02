@@ -37,12 +37,33 @@ module Merchant
 
     def find_member
       if params[:token].present?
+        log_token_failure(params[:token]) # TEMP diagnostic
         MemberQr.decode(params[:token], workspace: current_workspace)
       elsif params[:email].present?
         Member.find_by(email: params[:email].to_s.strip.downcase)
       elsif params[:phone].present?
         Member.find_by(phone: params[:phone].to_s.gsub(/\s+/, ""))
       end
+    end
+
+    # TEMP diagnostic — categorise why a scanned token fails to resolve.
+    def log_token_failure(raw)
+      tok = raw.to_s.strip
+      reason =
+        begin
+          data = MemberQr.verifier.verify(tok)
+          if data["w"].to_i != current_workspace.id
+            "wrong_workspace(token_w=#{data['w']} current=#{current_workspace.id})"
+          elsif Member.find_by(id: data["m"]).nil?
+            "member_missing(m=#{data['m']})"
+          else
+            "OK"
+          end
+        rescue ActiveSupport::MessageVerifier::ExpiredMessage then "EXPIRED"
+        rescue ActiveSupport::MessageVerifier::InvalidSignature then "BAD_SIGNATURE"
+        rescue => e then "ERR(#{e.class})"
+        end
+      Rails.logger.info("[SCAN-DIAG] len=#{tok.length} head=#{tok[0, 10]} tail=#{tok[-6..]} url?=#{tok.start_with?('http')} reason=#{reason}")
     end
   end
 end

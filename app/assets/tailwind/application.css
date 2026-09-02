@@ -164,12 +164,16 @@ a.l-chip-brand:hover, button.l-chip-brand:hover { background: color-mix(in srgb,
 .l-tabbar { position:fixed; bottom:0; left:0; right:0; width:100%; z-index:50;
   background:#fff; border-top:1px solid var(--line);
   padding-bottom: env(safe-area-inset-bottom); box-shadow:0 -2px 12px rgba(40,24,12,.05); }
-.l-tabbar-inner { max-width:480px; margin:0 auto; display:grid; grid-template-columns:repeat(5,1fr); padding:8px 10px; }
+.l-tabbar-inner { max-width:480px; margin:0 auto; display:grid; grid-template-columns:repeat(5,1fr);
+  align-items:center; padding:8px 10px; }
 .l-tabbar a { display:flex; flex-direction:column; align-items:center; gap:3px; padding:6px 0;
   color: var(--ink-2); text-decoration:none; font-size:10.5px; font-weight:600; }
 .l-tabbar a.active { color: var(--primary); }
-.l-tabbar .scan-fab { justify-self:center; margin-top:-26px; background: var(--primary); color: var(--on-primary);
-  width:56px; height:56px; border-radius:18px; display:grid; place-items:center; box-shadow:0 10px 24px color-mix(in srgb,var(--primary) 45%,transparent); }
+/* Scan button sits in-row with the other tabs (no longer a floating FAB), a
+   touch larger so it still reads as the primary action. */
+.l-tabbar .scan-fab { justify-self:center; align-self:center; background: var(--primary); color: var(--on-primary);
+  width:54px; height:54px; border-radius:17px; display:grid; place-items:center;
+  box-shadow:0 6px 16px color-mix(in srgb,var(--primary) 38%,transparent); }
 
 /* ===================== SCROLLBARS (subtle) ===================== */
 * { scrollbar-width: thin; scrollbar-color: rgba(120,120,130,.3) transparent; }

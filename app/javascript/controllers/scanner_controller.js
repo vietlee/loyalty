@@ -40,8 +40,18 @@ export default class extends Controller {
     try {
       const codes = await this.detector.detect(this.videoTarget)
       if (codes.length) {
+        const raw = (codes[0].rawValue || "").trim()
+        if (!raw) return
+        // The lookup response re-renders this frame (a fresh scanner instance),
+        // which would instantly re-detect the same QR still in view — a tight
+        // resubmit loop. Dedupe identical scans across instances for a few
+        // seconds via window state (survives the Turbo frame swap).
+        const now = Date.now()
+        if (raw === window.__lastScan && now - (window.__lastScanAt || 0) < 3500) return
+        window.__lastScan = raw
+        window.__lastScanAt = now
         this.stop()
-        this.tokenTarget.value = (codes[0].rawValue || "").trim()
+        this.tokenTarget.value = raw
         this.formTarget.requestSubmit()
       }
     } catch (e) { /* transient */ }
