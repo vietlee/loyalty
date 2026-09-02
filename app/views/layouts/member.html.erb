@@ -11,9 +11,6 @@
   </head>
   <body class="pwa-app">
     <%= render "layouts/theme_vars", ws: current_workspace %>
-    <% if flash[:notice] || flash[:alert] %>
-      <div class="l-flash" data-controller="flash"><%= flash[:notice] || flash[:alert] %></div>
-    <% end %>
 
     <% pwa = current_workspace ? {
          controller: "pwa",

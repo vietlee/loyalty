@@ -3,6 +3,7 @@ class ApplicationController < ActionController::Base
 
   layout :layout_by_resource
   before_action :set_locale
+  after_action :stash_toast_cookie
 
   rescue_from Pundit::NotAuthorizedError, with: :user_not_authorized
 
@@ -85,6 +86,14 @@ class ApplicationController < ActionController::Base
     else
       I18n.default_locale
     end
+  end
+
+  # Hand flash messages to the client as a short-lived, JS-readable cookie so the
+  # toast can be built after Turbo's final render (see app/javascript/toast.js).
+  def stash_toast_cookie
+    data = { notice: flash[:notice], alert: flash[:alert] }.compact
+    return if data.empty?
+    cookies[:toast] = { value: data.to_json, path: "/", httponly: false, same_site: :lax }
   end
 
   def user_not_authorized
