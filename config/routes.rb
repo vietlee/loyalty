@@ -69,7 +69,9 @@ Rails.application.routes.draw do
     post  "billing/repay/:id",  to: "payments#repay",  as: :billing_repay
     get   "billing/return",     to: "payments#return", as: :billing_return
     patch "billing/auto_renew", to: "payments#auto_renew", as: :billing_auto_renew
-    resources :customers, only: [:index]
+    resources :customers, only: [:index, :show] do
+      member { post :adjust }
+    end
     resources :broadcasts, only: [:index, :new, :create]
     resources :campaigns, only: [:index, :new, :create, :show] do
       member { get :qr } # downloadable promo QR (SVG)

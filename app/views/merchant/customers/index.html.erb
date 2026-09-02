@@ -28,13 +28,13 @@
     </tr></thead>
     <tbody>
       <% @members.each do |m| %>
-        <tr style="border-top:1px solid var(--line);">
-          <td style="padding:12px 8px; font-weight:600;"><%= m.display_name %></td>
+        <tr style="border-top:1px solid var(--line); cursor:pointer;">
+          <td style="padding:12px 8px; font-weight:600;"><%= link_to m.display_name, merchant_customer_path(m), style: "color:var(--primary-ink); text-decoration:none;" %></td>
           <td class="l-mono"><%= m.email.presence || m.phone %></td>
           <td><%= number_with_delimiter(m.points_balance) %></td>
           <td><%= (m.tier_key.presence || m.tier&.key)&.capitalize || "—" %></td>
           <td style="color:var(--ink-2);"><%= m.birthday ? l(m.birthday, format: :short) : "—" %></td>
-          <td style="color:var(--ink-2);"><%= l(m.created_at.to_date, format: :short) %></td>
+          <td style="color:var(--ink-2); display:flex; align-items:center; gap:8px;"><%= l(m.created_at.to_date, format: :short) %> <%= link_to "Xem →", merchant_customer_path(m), class: "l-chip", style: "font-size:11px;" %></td>
         </tr>
       <% end %>
       <% if @members.empty? %><tr><td colspan="6" style="padding:20px; text-align:center; color:var(--ink-2);">Không có khách trong nhóm này.</td></tr><% end %>
