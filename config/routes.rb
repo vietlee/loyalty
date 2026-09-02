@@ -47,6 +47,7 @@ Rails.application.routes.draw do
   namespace :merchant do
     root "dashboard#show"
     get  "choose",            to: "choose#show",              as: :choose
+    resource :account, only: [:show, :update], controller: "account"
     get  "checkin_qr",        to: "dashboard#checkin_qr",     as: :checkin_qr
     post "checkin_qr/rotate", to: "dashboard#rotate_checkin", as: :rotate_checkin
     # First-run onboarding wizard
@@ -86,7 +87,7 @@ Rails.application.routes.draw do
     # Gamification management
     get   "gamification",      to: "gamification#show"
     patch "gamification/wheel", to: "gamification#update_wheel", as: :wheel_config
-    resources :stamp_cards, only: [:create, :destroy]
+    resources :stamp_cards, only: [:create, :update, :destroy]
     resources :missions,    only: [:create, :destroy]
   end
 
@@ -130,7 +131,8 @@ Rails.application.routes.draw do
     post "notifications/read_all", to: "notifications#read_all", as: :read_all_notifications
     get  "refer",        to: "referrals#show", as: :refer
     get  "join/:code",   to: "sessions#join",  as: :join
-    get "me",      to: "profile#show",  as: :profile
+    get   "me", to: "profile#show",   as: :profile
+    patch "me", to: "profile#update"
   end
 
   # Health check

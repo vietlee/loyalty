@@ -6,7 +6,7 @@
     <% if @outlets.empty? %>
       <div class="l-panel" style="text-align:center; padding:40px; color:var(--ink-2);">Chưa có chi nhánh nào.</div>
     <% else %>
-      <div style="display:grid; grid-template-columns:repeat(auto-fill,minmax(240px,1fr)); gap:14px;">
+      <div style="display:grid; grid-template-columns:repeat(auto-fill,minmax(340px,1fr)); gap:16px;">
         <% @outlets.each do |o| %>
           <div class="l-outlet-card" style="<%= 'opacity:.55;' unless o.active? %>">
             <%= link_to "", merchant_outlet_path(o), class: "l-outlet-hit", "aria-label": "Xem #{o.name}" %>

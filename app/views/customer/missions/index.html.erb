@@ -22,13 +22,15 @@
               <% if m.mission_type == "spend" %><%= number_with_delimiter(mp.progress) %>/<%= number_with_delimiter(m.goal) %>đ<% else %><%= mp.progress %>/<%= m.goal %><% end %> · <%= t("customer.common.points_plus", n: m.reward_points) %>
             </div>
           </div>
-          <div>
+          <div style="flex:none; text-align:right;">
             <% if mp.completed? %>
               <span class="l-chip" style="background:var(--good-soft,#DEEBE1); color:var(--good);"><%= t("customer.missions.done") %></span>
             <% elsif m.mission_type == "checkin" %>
-              <%= link_to t("customer.common.checkin"), member_scan_path, class: "l-btn l-btn-primary", style: "padding:8px 14px; font-size:13px;" %>
+              <%= link_to t("customer.common.checkin"), member_scan_path, class: "l-btn l-btn-primary", style: "padding:8px 14px; font-size:13px; white-space:nowrap;" %>
+            <% elsif m.mission_type == "refer" %>
+              <%= link_to "Mời bạn", member_refer_path, class: "l-btn l-btn-primary", style: "padding:8px 14px; font-size:13px; white-space:nowrap;" %>
             <% else %>
-              <span class="l-chip"><%= t("customer.missions.in_progress") %></span>
+              <span class="l-chip" style="font-size:11px;">Tự động khi mua hàng</span>
             <% end %>
           </div>
         </div>

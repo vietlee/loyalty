@@ -1,0 +1,40 @@
+<% content_for :title, "Tài khoản" %>
+<% content_for :title_en, "ACCOUNT" %>
+
+<div style="max-width:560px;">
+  <% if @user.errors.any? %>
+    <div style="background:#F7E0DA; color:#B4402F; border-radius:12px; padding:11px 14px; font-size:14px; margin-bottom:16px;">
+      <%= @user.errors.full_messages.to_sentence %>
+    </div>
+  <% end %>
+
+  <div class="l-panel" style="margin-bottom:16px;">
+    <h3 class="l-display" style="font-size:18px; margin-bottom:4px;">Thông tin</h3>
+    <p style="color:var(--ink-2); font-size:13px; margin-bottom:16px;">Email: <strong><%= @user.email %></strong> · Vai trò: <%= current_membership&.label %></p>
+    <%= form_with model: @user, url: merchant_account_path, method: :patch do |f| %>
+      <label class="l-label">Tên hiển thị</label>
+      <%= f.text_field :name, class: "l-field", placeholder: "Tên của bạn" %>
+      <%= f.submit "Lưu tên", class: "l-btn l-btn-primary", style: "margin-top:14px;" %>
+    <% end %>
+  </div>
+
+  <div class="l-panel">
+    <h3 class="l-display" style="font-size:18px; margin-bottom:4px;">Đổi mật khẩu</h3>
+    <p style="color:var(--ink-2); font-size:13px; margin-bottom:16px;">Nhập mật khẩu hiện tại để xác nhận.</p>
+    <%= form_with model: @user, url: merchant_account_path, method: :patch, html: { autocomplete: "off" } do |f| %>
+      <div class="m-field">
+        <label class="l-label">Mật khẩu hiện tại</label>
+        <%= f.password_field :current_password, class: "l-field", autocomplete: "current-password" %>
+      </div>
+      <div class="m-field">
+        <label class="l-label">Mật khẩu mới</label>
+        <%= f.password_field :password, class: "l-field", autocomplete: "new-password", placeholder: "tối thiểu 6 ký tự" %>
+      </div>
+      <div class="m-field">
+        <label class="l-label">Nhập lại mật khẩu mới</label>
+        <%= f.password_field :password_confirmation, class: "l-field", autocomplete: "new-password" %>
+      </div>
+      <%= f.submit "Đổi mật khẩu", class: "l-btn l-btn-primary", style: "margin-top:6px;" %>
+    <% end %>
+  </div>
+</div>

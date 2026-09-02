@@ -68,6 +68,7 @@ export default class extends Controller {
   }
 
   go(value) {
+    value = (value || "").trim()
     try {
       const u = new URL(value)
       if (u.origin === location.origin) { window.location.href = value; return }

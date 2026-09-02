@@ -153,11 +153,11 @@
     <div class="l-panel">
       <h3 class="l-display" style="font-size:18px; margin-bottom:4px;">Mã check-in tại quầy</h3>
       <div style="display:flex; gap:14px; align-items:center; margin-top:10px;">
-        <div style="background:#fff; padding:10px; border:1px solid var(--line); border-radius:14px; flex:none;">
-          <%= qr_svg(@checkin_url, size: 104) %>
-        </div>
+        <%= render "merchant/shared/qr_zoom", url: @checkin_url, size: 104,
+              title: "Mã check-in tại quầy",
+              note: "Đưa mã này cho khách quét để check-in nhận điểm — 1 lần/ngày." %>
         <p style="color:var(--ink-2); font-size:12.5px;">
-          In &amp; dán tại quầy. Khách quét để check-in nhận điểm — 1 lần/ngày.
+          In &amp; dán tại quầy — hoặc <strong>nhấn vào mã</strong> để phóng to cho khách quét. Check-in 1 lần/ngày.
         </p>
       </div>
       <div style="display:flex; gap:8px; flex-wrap:wrap; margin-top:12px;">

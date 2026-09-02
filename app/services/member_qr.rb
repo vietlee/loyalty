@@ -16,7 +16,7 @@ module MemberQr
   # Returns the member if the token is valid, unexpired, and matches the given
   # workspace (tenant isolation). Nil otherwise.
   def self.decode(token, workspace:)
-    data = verifier.verify(token.to_s)
+    data = verifier.verify(token.to_s.strip)
     return nil unless data && data["w"].to_i == workspace.id
     Member.find_by(id: data["m"])
   rescue ActiveSupport::MessageVerifier::InvalidSignature, ActiveSupport::MessageVerifier::ExpiredMessage

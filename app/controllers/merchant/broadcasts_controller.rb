@@ -15,12 +15,18 @@ module Merchant
     def create
       @segment = MemberSegments::PRESETS.key?(params[:broadcast][:segment_key]) ? params[:broadcast][:segment_key] : "all"
       @broadcast = current_workspace.broadcasts.new(broadcast_params.merge(segment_key: @segment, created_by: current_user))
+      members = MemberSegments.resolve(@segment).to_a
+      @count  = members.size
+
+      if members.empty?
+        @broadcast.errors.add(:base, "Nhóm khách này chưa có ai — không thể gửi.")
+        return render :new, status: :unprocessable_entity
+      end
+
       if @broadcast.save
-        members = MemberSegments.resolve(@segment).to_a
         @broadcast.deliver!(members)
         redirect_to merchant_broadcasts_path, notice: "Đã gửi tới #{@broadcast.sent_count} khách."
       else
-        @count = MemberSegments.resolve(@segment).count
         render :new, status: :unprocessable_entity
       end
     end

@@ -73,11 +73,13 @@
   <% end %>
 
   <div class="foot">
-    <div class="av"><%= current_user&.initials %></div>
-    <div style="min-width:0;">
-      <div style="font-size:13px; font-weight:600;"><%= current_user&.name %></div>
-      <div style="font-size:11px; opacity:.6;"><%= current_membership&.label %></div>
-    </div>
+    <%= link_to merchant_account_path, style: "display:flex; align-items:center; gap:10px; flex:1; min-width:0; text-decoration:none; color:inherit;", title: "Tài khoản" do %>
+      <div class="av"><%= current_user&.initials %></div>
+      <div style="min-width:0;">
+        <div style="font-size:13px; font-weight:600;"><%= current_user&.name %></div>
+        <div style="font-size:11px; opacity:.6;"><%= current_membership&.label %></div>
+      </div>
+    <% end %>
     <%= button_to "⎋", destroy_user_session_path, method: :delete,
           form: { data: { turbo_confirm: "Đăng xuất khỏi tài khoản?" } },
           style: "margin-left:auto;background:none;border:none;color:inherit;cursor:pointer;font-size:16px;" %>

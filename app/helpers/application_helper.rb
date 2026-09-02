@@ -1,9 +1,24 @@
 module ApplicationHelper
+  # Workspace resolved purely from the request host — safe to call from Devise
+  # controllers (login / password reset) where no tenant is set. Display-only.
+  def host_workspace
+    return @host_workspace if defined?(@host_workspace)
+    sub = request.subdomains.first
+    ws  = Workspace.find_by(subdomain: sub) if sub.present? &&
+          !TenantResolver::RESERVED_SUBDOMAINS.include?(sub)
+    @host_workspace = ws || Workspace.find_by(custom_domain: request.host)
+  rescue StandardError
+    @host_workspace = nil
+  end
   # Icon/favicon URL for a workspace: the uploaded logo when present, else the
   # platform default. Root-relative so it works on any shop host.
   def workspace_icon_url(ws)
     if ws&.logo&.attached?
-      rails_blob_path(ws.logo, only_path: true)
+      # Proxy (not redirect): a stable, cacheable URL that streams the bytes
+      # through the app. The redirect variant hands back a short-lived signed
+      # disk URL that expires (~5 min) — once the browser/PWA caches that 302,
+      # the favicon/logo later 404s and shows a broken "?" image.
+      rails_storage_proxy_path(ws.logo, only_path: true)
     else
       "/icon.png"
     end
@@ -13,7 +28,7 @@ module ApplicationHelper
   # if present, otherwise the initials. Pass extra style for the box.
   def workspace_avatar(ws, klass: "avatar", style: nil)
     if ws&.logo&.attached?
-      content_tag(:div, image_tag(url_for(ws.logo), style: "width:100%;height:100%;object-fit:cover;"),
+      content_tag(:div, image_tag(rails_storage_proxy_path(ws.logo, only_path: true), style: "width:100%;height:100%;object-fit:cover;"),
                   class: klass, style: ["overflow:hidden", style].compact.join(";"))
     else
       content_tag(:div, ws&.logo_initials, class: klass, style: style)

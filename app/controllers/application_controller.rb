@@ -48,6 +48,17 @@ class ApplicationController < ActionController::Base
     end
   end
 
+  # Send each scope back to its OWN login after logout: a merchant lands on the
+  # merchant login, super admin on the admin login. (Members log out via a
+  # custom controller that redirects to the shop login.)
+  def after_sign_out_path_for(resource_or_scope)
+    case resource_or_scope
+    when :admin_user then new_admin_user_session_path
+    when :user       then new_user_session_path
+    else root_path
+    end
+  end
+
   # Whether to emit absolute subdomain URLs. Only in production, where the
   # wildcard cert + shared session cookie make cross-subdomain hops seamless;
   # dev/test stay on a single host via /w/:slug and /merchant paths.

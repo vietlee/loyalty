@@ -11,6 +11,15 @@ module Merchant
       end
     end
 
+    def update
+      card = current_workspace.stamp_cards.find(params[:id])
+      if card.update(card_params)
+        redirect_to merchant_gamification_path, notice: "Đã cập nhật thẻ tem “#{card.title}”."
+      else
+        redirect_to merchant_gamification_path, alert: card.errors.full_messages.to_sentence
+      end
+    end
+
     def destroy
       current_workspace.stamp_cards.find(params[:id]).destroy
       redirect_to merchant_gamification_path, notice: "Đã xoá thẻ tem."

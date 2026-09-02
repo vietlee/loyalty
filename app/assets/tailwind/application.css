@@ -344,3 +344,15 @@ input[type="range"], input[type="checkbox"], input[type="radio"], progress { acc
 .l-launch { max-width:1000px; margin:0 auto; padding:48px 20px; }
 .l-launch h1 { font-family:var(--font-display); font-size:34px; }
 .l-launch .grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(240px,1fr)); gap:16px; margin-top:24px; }
+
+/* Fullscreen QR zoom modal (check-in codes) */
+.l-qrmodal { position:fixed; inset:0; z-index:1000; display:none; place-items:center; padding:24px;
+  background:rgba(20,15,12,.62); -webkit-backdrop-filter:blur(3px); backdrop-filter:blur(3px); }
+.l-qrmodal.is-open { display:grid; }
+.l-qrmodal-card { position:relative; background:#fff; border-radius:24px; padding:34px 30px;
+  width:100%; max-width:min(92vw,460px); box-shadow:var(--shadow-lg); }
+.l-qrmodal-qr { display:grid; place-items:center; }
+.l-qrmodal-qr svg { width:100%; height:auto; max-width:400px; }
+.l-qrmodal-close { position:absolute; top:14px; right:14px; width:36px; height:36px; border-radius:50%;
+  border:1px solid var(--line); background:var(--surface-2); color:var(--ink); font-size:15px; line-height:1;
+  cursor:pointer; display:grid; place-items:center; }

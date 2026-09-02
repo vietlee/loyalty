@@ -1,6 +1,9 @@
 class User < ApplicationRecord
   # Merchant staff / owner. Belongs to workspaces via memberships.
-  devise :database_authenticatable, :registerable,
+  # No :registerable — signup is our own custom flow (Merchant::SignupsController),
+  # and Devise's shared views reference new_user_registration_path (a route we
+  # skip), which 500s the password/reset pages if registerable is on.
+  devise :database_authenticatable,
          :recoverable, :rememberable, :validatable, :trackable
 
   LOCALES = %w[vi en].freeze

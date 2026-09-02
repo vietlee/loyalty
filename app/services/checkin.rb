@@ -18,7 +18,7 @@ module Checkin
 
   # Returns [valid?, outlet_id] — valid only for this workspace AND current nonce.
   def decode(token, workspace:)
-    data = verifier.verify(token.to_s)
+    data = verifier.verify(token.to_s.strip)
     ok = data.is_a?(Hash) && data["w"].to_i == workspace.id && data["n"].to_s == workspace.checkin_nonce.to_s
     [ok, (ok ? data["o"] : nil)]
   rescue ActiveSupport::MessageVerifier::InvalidSignature

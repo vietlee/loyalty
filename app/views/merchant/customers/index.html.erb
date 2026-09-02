@@ -32,7 +32,7 @@
           <td style="padding:12px 8px; font-weight:600;"><%= m.display_name %></td>
           <td class="l-mono"><%= m.email.presence || m.phone %></td>
           <td><%= number_with_delimiter(m.points_balance) %></td>
-          <td><%= m.tier_key&.capitalize || "—" %></td>
+          <td><%= (m.tier_key.presence || m.tier&.key)&.capitalize || "—" %></td>
           <td style="color:var(--ink-2);"><%= m.birthday ? l(m.birthday, format: :short) : "—" %></td>
           <td style="color:var(--ink-2);"><%= l(m.created_at.to_date, format: :short) %></td>
         </tr>

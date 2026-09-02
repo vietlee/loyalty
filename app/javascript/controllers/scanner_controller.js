@@ -41,7 +41,7 @@ export default class extends Controller {
       const codes = await this.detector.detect(this.videoTarget)
       if (codes.length) {
         this.stop()
-        this.tokenTarget.value = codes[0].rawValue
+        this.tokenTarget.value = (codes[0].rawValue || "").trim()
         this.formTarget.requestSubmit()
       }
     } catch (e) { /* transient */ }
