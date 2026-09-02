@@ -1,22 +1,23 @@
-<% content_for :title, "Tổng quan" %>
+<% content_for :title, t("merchant.nav.dashboard") %>
 <% content_for :title_en, "DASHBOARD" %>
+<% d = ->(k, **o) { t("merchant.dashboard.#{k}", **o) } %>
 
 <% if @branch %>
   <%# ---- Branch-scoped dashboard ---- %>
   <div class="l-panel" style="margin-bottom:16px;">
-    <div class="l-eyebrow">Chi nhánh</div>
+    <div class="l-eyebrow"><%= d.(:branch) %></div>
     <div class="l-display" style="font-size:22px;"><%= @branch.name %></div>
-    <p style="color:var(--ink-2); font-size:13px;">Bạn đang xem số liệu của chi nhánh mình.</p>
+    <p style="color:var(--ink-2); font-size:13px;"><%= d.(:branch_note) %></p>
   </div>
   <div class="l-kpis">
-    <div class="l-kpi"><div class="k">Doanh thu</div><div class="v"><%= number_with_delimiter(@revenue) %>đ</div><div class="d"><%= @purchases_count %> giao dịch</div></div>
-    <div class="l-kpi"><div class="k">Điểm đã phát</div><div class="v"><%= number_with_delimiter(@points_issued) %></div></div>
-    <div class="l-kpi"><div class="k">Khách đã ghé</div><div class="v"><%= number_with_delimiter(@members_count) %></div></div>
-    <div class="l-kpi"><div class="k">Ưu đãi đã dùng</div><div class="v"><%= number_with_delimiter(@vouchers_used) %></div></div>
+    <div class="l-kpi"><div class="k"><%= d.(:revenue) %></div><div class="v"><%= number_with_delimiter(@revenue) %>đ</div><div class="d"><%= d.(:transactions, n: @purchases_count) %></div></div>
+    <div class="l-kpi"><div class="k"><%= d.(:points_issued) %></div><div class="v"><%= number_with_delimiter(@points_issued) %></div></div>
+    <div class="l-kpi"><div class="k"><%= d.(:visited) %></div><div class="v"><%= number_with_delimiter(@members_count) %></div></div>
+    <div class="l-kpi"><div class="k"><%= d.(:vouchers_used) %></div><div class="v"><%= number_with_delimiter(@vouchers_used) %></div></div>
   </div>
   <div style="margin-top:18px; display:flex; gap:10px; flex-wrap:wrap;">
-    <%= link_to merchant_scanner_path, class: "l-btn l-btn-primary" do %><%= ui_icon(:scan, size: 16) %> Máy quét tại quầy<% end %>
-    <%= link_to merchant_customers_path, class: "l-btn l-btn-soft" do %><%= ui_icon(:users, size: 16) %> Khách hàng<% end %>
+    <%= link_to merchant_scanner_path, class: "l-btn l-btn-primary" do %><%= ui_icon(:scan, size: 16) %> <%= t("merchant.nav.scanner") %><% end %>
+    <%= link_to merchant_customers_path, class: "l-btn l-btn-soft" do %><%= ui_icon(:users, size: 16) %> <%= t("merchant.nav.customers") %><% end %>
   </div>
 <% else %>
 
@@ -24,27 +25,21 @@
   <% w = @sub_warning %>
   <div class="l-subwarn <%= w[:level] %>">
     <div style="flex:1;">
-      <strong><%= { expired: "Thuê bao đã hết hạn", expiring: "Thuê bao sắp hết hạn", inactive: "Chưa kích hoạt thuê bao" }[w[:kind]] %></strong>
+      <strong><%= d.("warn_#{w[:kind]}") %></strong>
       <div style="font-size:13px; opacity:.9; margin-top:2px; max-width:760px;">
-        <% if w[:kind] == :expired %>
-          Vui lòng thanh toán trong <strong><%= w[:days] %> ngày</strong> tới. Quá <strong>10 ngày</strong> kể từ ngày hết hạn mà chưa thanh toán, cửa hàng sẽ <strong>tự động ngưng hoạt động (inactive)</strong> và không thể sử dụng dịch vụ cho đến khi thanh toán.
-        <% elsif w[:kind] == :expiring %>
-          Còn <strong><%= w[:days] %> ngày</strong> là đến hạn — gia hạn sớm để không gián đoạn. Nếu để quá <strong>10 ngày</strong> sau khi hết hạn mà chưa thanh toán, cửa hàng sẽ tự động ngưng hoạt động.
-        <% else %>
-          Vui lòng thanh toán để kích hoạt đầy đủ dịch vụ. Trong vòng <strong>10 ngày</strong> kể từ ngày hết hạn, nếu chưa thanh toán cửa hàng sẽ <strong>tự động ngưng hoạt động (inactive)</strong> và không thể sử dụng dịch vụ.
-        <% end %>
+        <%= d.("warn_#{w[:kind]}_body", days: w[:days]) %>
       </div>
     </div>
-    <%= link_to "Thanh toán ngay", merchant_billing_path, class: "l-btn l-btn-primary", style: "flex:none;" %>
+    <%= link_to d.(:pay_now), merchant_billing_path, class: "l-btn l-btn-primary", style: "flex:none;" %>
   </div>
 <% end %>
 
 <%# ---- KPI strip ---- %>
 <div class="l-kpis">
-  <div class="l-kpi"><div class="k">Thành viên</div><div class="v"><%= number_with_delimiter(@members_count) %></div><div class="d"><%= number_with_delimiter(@active_members) %> đang hoạt động</div></div>
-  <div class="l-kpi"><div class="k">Điểm đã phát</div><div class="v"><%= number_with_delimiter(@points_issued) %></div><div class="d"><%= @purchases_count %> giao dịch</div></div>
-  <div class="l-kpi"><div class="k">Điểm đã đổi</div><div class="v"><%= number_with_delimiter(@points_redeemed) %></div><div class="d">tỷ lệ đổi <%= @redemption_rate %>%</div></div>
-  <div class="l-kpi"><div class="k">Điểm chưa dùng</div><div class="v"><%= number_with_delimiter(@points_outstanding) %></div><div class="d">khách đang giữ (nợ điểm)</div></div>
+  <div class="l-kpi"><div class="k"><%= d.(:members) %></div><div class="v"><%= number_with_delimiter(@members_count) %></div><div class="d"><%= d.(:active_suffix, n: number_with_delimiter(@active_members)) %></div></div>
+  <div class="l-kpi"><div class="k"><%= d.(:points_issued) %></div><div class="v"><%= number_with_delimiter(@points_issued) %></div><div class="d"><%= d.(:transactions, n: @purchases_count) %></div></div>
+  <div class="l-kpi"><div class="k"><%= d.(:points_redeemed) %></div><div class="v"><%= number_with_delimiter(@points_redeemed) %></div><div class="d"><%= d.(:redemption_rate_suffix, n: @redemption_rate) %></div></div>
+  <div class="l-kpi"><div class="k"><%= d.(:outstanding) %></div><div class="v"><%= number_with_delimiter(@points_outstanding) %></div><div class="d"><%= d.(:outstanding_note) %></div></div>
 </div>
 
 <%# ---- Growth chart + loyalty snapshot ---- %>
@@ -52,12 +47,12 @@
   <div class="l-panel">
     <div style="display:flex; align-items:flex-start; justify-content:space-between; gap:12px; margin-bottom:6px;">
       <div>
-        <h3 class="l-display" style="font-size:18px;">Khách hàng mới theo tháng</h3>
-        <p style="color:var(--ink-2); font-size:13px;">6 tháng gần nhất</p>
+        <h3 class="l-display" style="font-size:18px;"><%= d.(:new_members_by_month) %></h3>
+        <p style="color:var(--ink-2); font-size:13px;"><%= d.(:last_6_months) %></p>
       </div>
       <div style="text-align:right;">
         <div class="l-num" style="font-size:24px;"><%= number_with_delimiter(@members_count) %></div>
-        <div style="color:var(--ink-2); font-size:12px;">tổng thành viên</div>
+        <div style="color:var(--ink-2); font-size:12px;"><%= d.(:total_members) %></div>
       </div>
     </div>
     <div style="color:var(--primary); margin-top:10px;">
@@ -66,7 +61,7 @@
   </div>
 
   <div class="l-panel">
-    <h3 class="l-display" style="font-size:18px; margin-bottom:12px;">Bức tranh loyalty</h3>
+    <h3 class="l-display" style="font-size:18px; margin-bottom:12px;"><%= d.(:loyalty_snapshot) %></h3>
     <% total_tiered = @tier_counts.sum { |_, c| c } %>
     <% if total_tiered.positive? %>
       <div style="display:flex; flex-direction:column; gap:12px;">
@@ -84,11 +79,11 @@
         <% end %>
       </div>
     <% else %>
-      <p style="color:var(--ink-2); font-size:13px;">Chưa có dữ liệu hạng thành viên.</p>
+      <p style="color:var(--ink-2); font-size:13px;"><%= d.(:no_tier_data) %></p>
     <% end %>
     <div style="display:flex; gap:10px; margin-top:16px; padding-top:14px; border-top:1px solid var(--line);">
-      <div style="flex:1;"><div class="l-num" style="font-size:20px;"><%= @redemption_rate %>%</div><div style="font-size:11px; color:var(--ink-2);">Tỷ lệ đổi điểm</div></div>
-      <div style="flex:1;"><div class="l-num" style="font-size:20px;"><%= @members_count.positive? ? number_with_delimiter((@points_issued / @members_count)) : 0 %></div><div style="font-size:11px; color:var(--ink-2);">Điểm TB/khách</div></div>
+      <div style="flex:1;"><div class="l-num" style="font-size:20px;"><%= @redemption_rate %>%</div><div style="font-size:11px; color:var(--ink-2);"><%= d.(:redemption_rate) %></div></div>
+      <div style="flex:1;"><div class="l-num" style="font-size:20px;"><%= @members_count.positive? ? number_with_delimiter((@points_issued / @members_count)) : 0 %></div><div style="font-size:11px; color:var(--ink-2);"><%= d.(:avg_points_per_member) %></div></div>
     </div>
   </div>
 </div>
@@ -97,17 +92,17 @@
 <% if @outlet_stats&.any? %>
   <% max_rev = [@outlet_stats.map { |r| r[:revenue] }.max, 1].max %>
   <div class="l-panel" style="margin-top:16px;">
-    <h3 class="l-display" style="font-size:18px; margin-bottom:4px;">Hiệu suất theo chi nhánh</h3>
-    <p style="color:var(--ink-2); font-size:13px; margin-bottom:14px;">Doanh thu ghi nhận qua tích điểm, xếp theo chi nhánh.</p>
+    <h3 class="l-display" style="font-size:18px; margin-bottom:4px;"><%= d.(:branch_performance) %></h3>
+    <p style="color:var(--ink-2); font-size:13px; margin-bottom:14px;"><%= d.(:branch_performance_note) %></p>
     <div style="overflow-x:auto;">
       <table style="width:100%; border-collapse:collapse; font-size:13.5px; min-width:560px;">
         <thead><tr style="text-align:left; color:var(--ink-2); font-size:11px; text-transform:uppercase; letter-spacing:.06em;">
-          <th style="padding:8px 10px;">Chi nhánh</th>
-          <th style="text-align:right;">Doanh thu</th>
-          <th style="text-align:right;">Điểm phát</th>
-          <th style="text-align:right;">Giao dịch</th>
-          <th style="text-align:right;">Khách</th>
-          <th style="text-align:right;">Ưu đãi dùng</th>
+          <th style="padding:8px 10px;"><%= d.(:th_branch) %></th>
+          <th style="text-align:right;"><%= d.(:th_revenue) %></th>
+          <th style="text-align:right;"><%= d.(:th_points) %></th>
+          <th style="text-align:right;"><%= d.(:th_txns) %></th>
+          <th style="text-align:right;"><%= d.(:th_customers) %></th>
+          <th style="text-align:right;"><%= d.(:th_vouchers) %></th>
         </tr></thead>
         <tbody>
           <% @outlet_stats.each do |r| %>
@@ -136,50 +131,47 @@
 <%# ---- Program mechanisms + check-in QR ---- %>
 <div style="display:grid; grid-template-columns:1.5fr 1fr; gap:16px; margin-top:16px;">
   <div class="l-panel">
-    <h3 class="l-display" style="font-size:18px; margin-bottom:4px;">Chương trình loyalty</h3>
-    <p style="color:var(--ink-2); font-size:14px; margin-bottom:16px;">Cơ chế đang bật cho workspace này.</p>
+    <h3 class="l-display" style="font-size:18px; margin-bottom:4px;"><%= d.(:loyalty_program) %></h3>
+    <p style="color:var(--ink-2); font-size:14px; margin-bottom:16px;"><%= d.(:mechanisms_on) %></p>
     <% if @program %>
       <div style="display:flex; gap:8px; flex-wrap:wrap;">
         <% { "Points" => @program.points_enabled, "Tiers" => @program.tiers_enabled, "Stamp" => @program.stamps_enabled, "Gamification" => @program.gamification_enabled }.each do |label, on| %>
           <span class="l-chip <%= 'l-chip-brand' if on %>"><%= on ? "●" : "○" %> <%= label %></span>
         <% end %>
       </div>
-      <p style="margin-top:16px; color:var(--ink-2);">Tỷ lệ tích điểm: <strong><%= @program.earn_rate_label %></strong></p>
-      <%= link_to "Cấu hình chương trình →", merchant_loyalty_program_path, class: "l-btn l-btn-soft", style: "margin-top:16px;" %>
+      <p style="margin-top:16px; color:var(--ink-2);"><%= d.(:earn_rate) %> <strong><%= @program.earn_rate_label %></strong></p>
+      <%= link_to d.(:configure_program), merchant_loyalty_program_path, class: "l-btn l-btn-soft", style: "margin-top:16px;" %>
     <% end %>
   </div>
 
   <% if @has_checkin %>
     <div class="l-panel">
-      <h3 class="l-display" style="font-size:18px; margin-bottom:4px;">Mã check-in tại quầy</h3>
+      <h3 class="l-display" style="font-size:18px; margin-bottom:4px;"><%= d.(:checkin_title) %></h3>
       <div style="display:flex; gap:14px; align-items:center; margin-top:10px;">
         <%= render "merchant/shared/qr_zoom", url: @checkin_url, size: 104,
-              title: "Mã check-in tại quầy",
-              note: "Đưa mã này cho khách quét để check-in nhận điểm — 1 lần/ngày." %>
-        <p style="color:var(--ink-2); font-size:12.5px;">
-          In &amp; dán tại quầy — hoặc <strong>nhấn vào mã</strong> để phóng to cho khách quét. Check-in 1 lần/ngày.
-        </p>
+              title: d.(:checkin_title), note: d.(:checkin_note) %>
+        <p style="color:var(--ink-2); font-size:12.5px;"><%= d.(:checkin_desc) %></p>
       </div>
       <div style="display:flex; gap:8px; flex-wrap:wrap; margin-top:12px;">
         <%= link_to merchant_checkin_qr_path, class: "l-btn l-btn-soft" do %>
-          <%= ui_icon(:launch, size: 16) %> Tải mã để in
+          <%= ui_icon(:launch, size: 16) %> <%= d.(:download_code) %>
         <% end %>
         <% if current_membership&.can_manage? %>
           <%= button_to merchant_rotate_checkin_path, method: :post, class: "l-btn l-btn-ghost",
-                form: { data: { turbo_confirm: "Làm mới mã sẽ khiến mã đã in trước đó ngừng hoạt động. Tiếp tục?" } } do %>
-            <%= ui_icon(:history, size: 16) %> Làm mới mã
+                form: { data: { turbo_confirm: d.(:refresh_confirm) } } do %>
+            <%= ui_icon(:history, size: 16) %> <%= d.(:refresh_code) %>
           <% end %>
         <% end %>
       </div>
     </div>
   <% else %>
     <div class="l-panel">
-      <h3 class="l-display" style="font-size:18px; margin-bottom:10px;">Hạng thành viên</h3>
+      <h3 class="l-display" style="font-size:18px; margin-bottom:10px;"><%= d.(:tiers) %></h3>
       <% @tiers.each do |t| %>
         <div style="display:flex; align-items:center; gap:10px; padding:8px 0; border-bottom:1px solid var(--line);">
           <span style="width:26px; height:26px; border-radius:8px; background:<%= t.gradient_css %>;"></span>
           <strong><%= t.name %></strong>
-          <span style="margin-left:auto; color:var(--ink-2);"><%= number_with_delimiter(t.threshold_points) %> điểm</span>
+          <span style="margin-left:auto; color:var(--ink-2);"><%= d.(:points_n, n: number_with_delimiter(t.threshold_points)) %></span>
         </div>
       <% end %>
     </div>
