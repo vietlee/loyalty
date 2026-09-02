@@ -129,6 +129,9 @@ class Workspace < ApplicationRecord
     update!(status: "suspended", settings: settings.merge("auto_suspended" => true))
   end
 
+  # Whether the public customer-facing feedback wall is shown (default on).
+  def feedback_public? = settings.fetch("feedback_public", true) != false
+
   def access_blocked? = access_blocked_reason.present?
 
   # The next unpaid billing month (starts when the current paid period ends).

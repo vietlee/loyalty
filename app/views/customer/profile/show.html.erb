@@ -47,6 +47,14 @@
     <%= link_to member_refer_path, class: "l-toggle-row", style: "text-decoration:none; color:var(--ink);" do %>
       <span><%= t("customer.profile.refer") %></span><span style="color:var(--ink-2);">›</span>
     <% end %>
+    <%= link_to member_new_review_path, class: "l-toggle-row", style: "text-decoration:none; color:var(--ink);" do %>
+      <span>⭐ Đánh giá quán</span><span style="color:var(--ink-2);">›</span>
+    <% end %>
+    <% if current_workspace.feedback_public? %>
+      <%= link_to member_shop_about_path, class: "l-toggle-row", style: "text-decoration:none; color:var(--ink);" do %>
+        <span>🏬 Về quán &amp; đánh giá</span><span style="color:var(--ink-2);">›</span>
+      <% end %>
+    <% end %>
   </div>
 
   <div class="l-tile" style="margin-bottom:14px;">

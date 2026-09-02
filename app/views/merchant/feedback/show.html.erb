@@ -1,0 +1,58 @@
+<% content_for :title, "Đánh giá" %>
+<% content_for :title_en, "FEEDBACK" %>
+<% stars = ->(n) { "★" * n.round + "☆" * (5 - n.round) } %>
+
+<div style="max-width:820px;">
+  <%# ---- Public toggle ---- %>
+  <div class="l-panel" style="display:flex; align-items:center; gap:14px; flex-wrap:wrap;">
+    <div style="flex:1; min-width:220px;">
+      <h3 class="l-display" style="font-size:17px; margin-bottom:2px;">Trang đánh giá công khai</h3>
+      <p style="color:var(--ink-2); font-size:13px;">Cho phép khách xem thông tin quán, chi nhánh và đánh giá của mọi khách trên app.</p>
+    </div>
+    <%= form_with url: merchant_feedback_path, method: :patch do %>
+      <input type="hidden" name="feedback_public" value="0">
+      <label style="display:inline-flex; align-items:center; gap:8px; font-size:14px; font-weight:600; cursor:pointer;">
+        <input type="checkbox" name="feedback_public" value="1" <%= "checked" if current_workspace.feedback_public? %> onchange="this.form.requestSubmit()" style="width:18px;height:18px; accent-color:var(--primary);">
+        <%= current_workspace.feedback_public? ? "Đang hiển thị" : "Đang ẩn" %>
+      </label>
+    <% end %>
+  </div>
+
+  <%# ---- Summary ---- %>
+  <div style="display:grid; grid-template-columns:200px 1fr; gap:16px; margin-top:16px; align-items:start;">
+    <div class="l-panel" style="text-align:center;">
+      <div class="l-num" style="font-size:44px; line-height:1;"><%= @avg %></div>
+      <div style="color:var(--primary-2,#E08A3C); font-size:18px; letter-spacing:2px;"><%= stars.call(@avg) %></div>
+      <div style="color:var(--ink-2); font-size:13px; margin-top:4px;"><%= @count %> đánh giá</div>
+    </div>
+    <div class="l-panel">
+      <% (5).downto(1) do |s| %>
+        <% n = @dist[s] || 0; pct = @count.zero? ? 0 : (n.to_f / @count * 100).round %>
+        <div style="display:flex; align-items:center; gap:10px; padding:4px 0;">
+          <span style="width:34px; font-size:13px; color:var(--ink-2);"><%= s %> ★</span>
+          <div style="flex:1; height:8px; border-radius:999px; background:var(--surface-2); overflow:hidden;"><span style="display:block; height:100%; width:<%= pct %>%; background:var(--primary-2,#E08A3C);"></span></div>
+          <span style="width:30px; text-align:right; font-size:12px; color:var(--ink-2);"><%= n %></span>
+        </div>
+      <% end %>
+    </div>
+  </div>
+
+  <%# ---- All feedback ---- %>
+  <div class="l-panel" style="margin-top:16px;">
+    <h3 class="l-display" style="font-size:17px; margin-bottom:10px;">Tất cả đánh giá</h3>
+    <% if @ratings.empty? %>
+      <p style="color:var(--ink-2); font-size:13px;">Chưa có đánh giá nào từ khách.</p>
+    <% else %>
+      <% @ratings.each do |r| %>
+        <div style="padding:12px 0; border-bottom:1px solid var(--line);">
+          <div style="display:flex; align-items:center; gap:10px;">
+            <div style="font-weight:600;"><%= r.member&.display_name %></div>
+            <div style="color:var(--primary-2,#E08A3C); font-size:13px; letter-spacing:1px;"><%= stars.call(r.stars) %></div>
+            <div style="margin-left:auto; font-size:12px; color:var(--ink-2);"><%= l(r.created_at, format: :short) %></div>
+          </div>
+          <% if r.comment.present? %><div style="font-size:14px; margin-top:6px;"><%= r.comment %></div><% end %>
+        </div>
+      <% end %>
+    <% end %>
+  </div>
+</div>

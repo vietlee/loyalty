@@ -72,6 +72,8 @@ Rails.application.routes.draw do
     resources :customers, only: [:index, :show] do
       member { post :adjust }
     end
+    get   "feedback", to: "feedback#show",   as: :feedback
+    patch "feedback", to: "feedback#update"
     resources :broadcasts, only: [:index, :new, :create]
     resources :campaigns, only: [:index, :new, :create, :show] do
       member { get :qr } # downloadable promo QR (SVG)
@@ -136,6 +138,10 @@ Rails.application.routes.draw do
     get  "join/:code",   to: "sessions#join",  as: :join
     get   "me", to: "profile#show",   as: :profile
     patch "me", to: "profile#update"
+    # Public shop / feedback page + submit-your-own-review
+    get  "shop",   to: "reviews#index",  as: :shop_about
+    get  "review", to: "reviews#new",    as: :new_review
+    post "review", to: "reviews#create"
   end
 
   # Health check

@@ -1,0 +1,62 @@
+<% content_for :title, "Về quán" %>
+<% content_for :tab, "" %>
+<% stars = ->(n) { "★" * n.round + "☆" * (5 - n.round) } %>
+<header class="l-appbar" style="padding-left:0;">
+  <%= link_to "←", member_root_path, style: "font-size:22px; text-decoration:none; color:var(--ink);" %>
+  <div class="nm l-display" style="font-size:22px;">Về quán</div>
+</header>
+
+<div class="l-screen">
+  <%# ---- Shop info ---- %>
+  <div class="l-tile" style="display:flex; gap:14px; align-items:center; margin-bottom:14px;">
+    <%= workspace_avatar(current_workspace, klass: "avatar", style: "width:56px;height:56px;border-radius:16px;font-size:20px;flex:none;") %>
+    <div style="min-width:0;">
+      <div style="font-weight:700; font-size:18px;"><%= current_workspace.name %></div>
+      <% if current_workspace.branding_value("tagline").present? %>
+        <div style="color:var(--ink-2); font-size:13px;"><%= current_workspace.branding_value("tagline") %></div>
+      <% end %>
+    </div>
+  </div>
+
+  <%# ---- Rating summary ---- %>
+  <div class="l-tile" style="text-align:center; margin-bottom:14px;">
+    <div class="l-num" style="font-size:44px; line-height:1;"><%= @avg %></div>
+    <div style="color:var(--primary-2,#E08A3C); font-size:20px; letter-spacing:2px;"><%= stars.call(@avg) %></div>
+    <div style="color:var(--ink-2); font-size:13px; margin-top:4px;"><%= @count %> đánh giá</div>
+    <%= link_to (@my ? "Sửa đánh giá của bạn" : "Viết đánh giá"), member_new_review_path, class: "l-btn l-btn-primary", style: "margin-top:14px; display:inline-flex;" %>
+  </div>
+
+  <%# ---- Branches ---- %>
+  <% if @outlets.any? %>
+    <div class="l-section-h"><h3>Chi nhánh</h3></div>
+    <div class="l-tile" style="margin-bottom:14px; padding:6px 16px;">
+      <% @outlets.each do |o| %>
+        <div style="padding:10px 0; border-bottom:1px solid var(--line);">
+          <div style="font-weight:600;">🏬 <%= o.name %></div>
+          <% if o.address.present? %><div style="font-size:13px; color:var(--ink-2); margin-top:2px;"><%= o.address %></div><% end %>
+          <% if o.phone.present? %><div style="font-size:13px; color:var(--ink-2);">📞 <%= o.phone %></div><% end %>
+        </div>
+      <% end %>
+    </div>
+  <% end %>
+
+  <%# ---- Feedback wall ---- %>
+  <div class="l-section-h"><h3>Đánh giá của khách</h3></div>
+  <% if @ratings.empty? %>
+    <div class="l-tile" style="text-align:center; padding:30px 20px; color:var(--ink-2);">Chưa có đánh giá nào — hãy là người đầu tiên!</div>
+  <% else %>
+    <% @ratings.each do |r| %>
+      <div class="l-tile" style="margin-bottom:10px;">
+        <div style="display:flex; align-items:center; gap:10px;">
+          <div class="avatar" style="width:36px;height:36px;border-radius:11px;background:var(--surface-2);color:var(--ink);display:grid;place-items:center;font-weight:700;font-size:13px;flex:none;"><%= r.member&.initials %></div>
+          <div style="flex:1; min-width:0;">
+            <div style="font-weight:600; font-size:14px;"><%= r.member&.display_name %></div>
+            <div style="color:var(--primary-2,#E08A3C); font-size:13px; letter-spacing:1px;"><%= stars.call(r.stars) %></div>
+          </div>
+          <div style="font-size:11px; color:var(--ink-2);"><%= l(r.created_at.to_date, format: :short) %></div>
+        </div>
+        <% if r.comment.present? %><div style="font-size:14px; margin-top:8px;"><%= r.comment %></div><% end %>
+      </div>
+    <% end %>
+  <% end %>
+</div>

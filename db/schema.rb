@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2026_09_02_104918) do
+ActiveRecord::Schema[7.2].define(version: 2026_09_03_010000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -430,6 +430,20 @@ ActiveRecord::Schema[7.2].define(version: 2026_09_02_104918) do
     t.index ["workspace_id"], name: "index_push_subscriptions_on_workspace_id"
   end
 
+  create_table "ratings", force: :cascade do |t|
+    t.bigint "workspace_id", null: false
+    t.bigint "member_id", null: false
+    t.bigint "outlet_id"
+    t.integer "stars", default: 5, null: false
+    t.text "comment"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["member_id"], name: "index_ratings_on_member_id"
+    t.index ["outlet_id"], name: "index_ratings_on_outlet_id"
+    t.index ["workspace_id", "member_id"], name: "index_ratings_on_workspace_id_and_member_id", unique: true
+    t.index ["workspace_id"], name: "index_ratings_on_workspace_id"
+  end
+
   create_table "referrals", force: :cascade do |t|
     t.bigint "workspace_id", null: false
     t.bigint "referrer_id", null: false
@@ -663,6 +677,9 @@ ActiveRecord::Schema[7.2].define(version: 2026_09_02_104918) do
   add_foreign_key "purchases", "workspaces"
   add_foreign_key "push_subscriptions", "members"
   add_foreign_key "push_subscriptions", "workspaces"
+  add_foreign_key "ratings", "members"
+  add_foreign_key "ratings", "outlets"
+  add_foreign_key "ratings", "workspaces"
   add_foreign_key "referrals", "members", column: "referred_id"
   add_foreign_key "referrals", "members", column: "referrer_id"
   add_foreign_key "referrals", "workspaces"

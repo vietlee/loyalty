@@ -53,6 +53,9 @@
   <%= link_to merchant_gamification_path, class: "l-nav-item #{'active' if nav == :gamification}" do %>
     <span>🎯</span><span><%= t("merchant.nav.gamification") %></span>
   <% end %>
+  <%= link_to merchant_feedback_path, class: "l-nav-item #{'active' if nav == :feedback}" do %>
+    <span>⭐</span><span><%= t("merchant.nav.feedback") %></span>
+  <% end %>
 
   <div class="l-navgrp"><%= t("merchant.nav.group_config") %></div>
   <%= link_to merchant_loyalty_program_path, class: "l-nav-item #{'active' if nav == :program}" do %>
