@@ -1,7 +1,7 @@
 module Merchant
   class OutletsController < BaseController
     before_action :require_manager!, except: [:index]
-    before_action :set_outlet, only: [:show, :edit, :update, :destroy]
+    before_action :set_outlet, only: [:show, :edit, :update, :destroy, :checkin_qr]
 
     def index
       @outlets = current_workspace.outlets.order(:name)
@@ -18,6 +18,15 @@ module Merchant
       @vouchers  = Voucher.where(used_outlet_id: oid, state: "used").count
       @recent    = PointTransaction.where(outlet_id: oid).includes(:member).order(created_at: :desc).limit(15).to_a
       @staff     = current_workspace.memberships.where(outlet_id: oid).includes(:user).to_a
+      @has_checkin = current_workspace.missions.active.exists?(mission_type: "checkin")
+      @checkin_url = helpers.customer_scan_url(current_workspace, checkin: Checkin.encode(current_workspace, @outlet)) if @has_checkin
+    end
+
+    # Printable per-branch check-in QR (attributes check-ins to this outlet).
+    def checkin_qr
+      url = helpers.customer_scan_url(current_workspace, checkin: Checkin.encode(current_workspace, @outlet))
+      send_data helpers.qr_svg(url, size: 720), type: "image/svg+xml",
+                disposition: "attachment", filename: "checkin-#{@outlet.name.parameterize.presence || @outlet.id}.svg"
     end
 
     def create

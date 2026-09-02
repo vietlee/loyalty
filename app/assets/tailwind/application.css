@@ -82,6 +82,13 @@ a.l-chip-brand:hover, button.l-chip-brand:hover { background: color-mix(in srgb,
 .l-upload:hover { border-color:var(--primary); color:var(--primary); background:color-mix(in srgb, var(--primary) 6%, var(--surface)); }
 .l-upload svg { flex:none; }
 
+/* clickable outlet cards (whole card is a link; actions sit above it) */
+.l-outlet-card { position:relative; background:#fff; border:1px solid var(--line); border-radius:16px; padding:16px 18px;
+  transition:box-shadow .15s, transform .15s, border-color .15s; }
+.l-outlet-card:hover { box-shadow:var(--shadow-lg); transform:translateY(-3px); border-color:color-mix(in srgb, var(--primary) 45%, var(--line)); cursor:pointer; }
+.l-outlet-hit { position:absolute; inset:0; z-index:1; border-radius:inherit; }
+.l-outlet-actions { position:relative; z-index:2; }
+
 /* larger, more prominent shortcut chips (home) */
 .l-chip-lg { padding:11px 18px; font-size:15px; gap:9px; }
 .l-chip-lg svg { width:20px; height:20px; }

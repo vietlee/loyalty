@@ -6,19 +6,23 @@
     <% if @outlets.empty? %>
       <div class="l-panel" style="text-align:center; padding:40px; color:var(--ink-2);">Chưa có chi nhánh nào.</div>
     <% else %>
-      <div style="display:grid; grid-template-columns:repeat(auto-fill,minmax(220px,1fr)); gap:14px;">
+      <div style="display:grid; grid-template-columns:repeat(auto-fill,minmax(240px,1fr)); gap:14px;">
         <% @outlets.each do |o| %>
-          <div class="l-panel" style="padding:16px; <%= 'opacity:.5;' unless o.active? %>">
-            <div style="display:flex; align-items:center; gap:8px;">
-              <span style="font-size:20px;">🏪</span>
-              <strong style="flex:1;"><%= link_to o.name, merchant_outlet_path(o), style: "color:var(--ink); text-decoration:none;" %></strong>
-              <% if o.code %><span class="l-chip"><%= o.code %></span><% end %>
+          <div class="l-outlet-card" style="<%= 'opacity:.55;' unless o.active? %>">
+            <%= link_to "", merchant_outlet_path(o), class: "l-outlet-hit", "aria-label": "Xem #{o.name}" %>
+            <div style="display:flex; align-items:flex-start; gap:10px;">
+              <span style="width:38px; height:38px; border-radius:11px; background:var(--surface-2); display:grid; place-items:center; font-size:19px; flex:none;">🏬</span>
+              <strong style="flex:1; font-size:15px; line-height:1.3;"><%= o.name %></strong>
+              <% if o.code.present? %><span class="l-chip"><%= o.code %></span><% end %>
             </div>
-            <div style="font-size:13px; color:var(--ink-2); margin-top:8px;"><%= o.address %></div>
-            <% if o.phone %><div style="font-size:13px; color:var(--ink-2);">📞 <%= o.phone %></div><% end %>
-            <div style="display:flex; gap:8px; margin-top:12px;">
+            <div style="font-size:13px; color:var(--ink-2); margin-top:10px; min-height:20px;">
+              <% if o.address.present? %><div><%= o.address %></div><% end %>
+              <% if o.phone.present? %><div style="margin-top:2px;">📞 <%= o.phone %></div><% end %>
+            </div>
+            <div class="l-outlet-actions" style="display:flex; gap:8px; margin-top:14px; padding-top:12px; border-top:1px solid var(--line);">
+              <%= link_to "Xem", merchant_outlet_path(o), class: "l-btn l-btn-soft", style: "padding:6px 12px; font-size:13px;" %>
               <%= link_to "Sửa", edit_merchant_outlet_path(o), class: "l-btn l-btn-ghost", style: "padding:6px 12px; font-size:13px;" %>
-              <%= button_to "Xoá", merchant_outlet_path(o), method: :delete, class: "l-btn l-btn-ghost", style: "padding:6px 12px; font-size:13px; color:var(--warn);", form: { data: { turbo_confirm: "Xoá chi nhánh?" } } %>
+              <%= button_to "Xoá", merchant_outlet_path(o), method: :delete, class: "l-btn l-btn-ghost", style: "padding:6px 12px; font-size:13px; color:var(--warn);", form: { data: { turbo_confirm: "Xoá chi nhánh?" }, style: "display:inline;" } %>
             </div>
           </div>
         <% end %>

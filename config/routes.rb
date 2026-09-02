@@ -56,7 +56,9 @@ Rails.application.routes.draw do
     post "switch_workspace/:id", to: "workspaces#switch", as: :switch_workspace
     resource :loyalty_program, only: [:show, :update], path: "program"
     resource :appearance,      only: [:show, :update], path: "appearance"
-    resources :outlets
+    resources :outlets do
+      member { get :checkin_qr }
+    end
     resources :staff, only: [:index, :create, :update, :destroy]
     resource  :domain, only: [:show, :update], controller: "domains" do
       post :verify

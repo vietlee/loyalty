@@ -22,6 +22,28 @@ module Merchant
 
     def branch_scoped? = scoped_outlet.present?
 
+    # The outlet a counter transaction is attributed to. Non-manager staff with a
+    # fixed branch are locked to it; owners/managers pick the active branch on the
+    # scanner (stored in the session), defaulting to their own membership outlet.
+    def current_outlet
+      return @current_outlet if defined?(@current_outlet)
+      m = current_membership
+      # Staff with a fixed branch are locked to it.
+      return @current_outlet = m.outlet if m && !m.can_manage? && m.outlet_id
+      id = session[:active_outlet_id]
+      # Owner/manager: session choice → their own branch → else the main (first) branch.
+      @current_outlet = (id.present? && current_workspace.outlets.find_by(id: id)) ||
+                        m&.outlet ||
+                        current_workspace.outlets.order(:created_at).first
+    end
+
+    # Branches the current user may choose between on the scanner ([] = locked).
+    def selectable_outlets
+      return [] if current_membership && !current_membership.can_manage? && current_membership.outlet_id
+      current_workspace.outlets.order(:name).to_a
+    end
+    helper_method :current_outlet, :selectable_outlets
+
     private
 
     def accessible_workspaces

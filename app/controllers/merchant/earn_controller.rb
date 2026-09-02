@@ -26,7 +26,7 @@ module Merchant
 
       @result = EarnPoints.new(
         member: @member, amount: amount,
-        outlet: current_membership&.outlet, staff: current_user, source: "staff_scan"
+        outlet: current_outlet, staff: current_user, source: "staff_scan"
       ).call
       render :create
     end

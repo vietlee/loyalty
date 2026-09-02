@@ -2,6 +2,20 @@
 <% content_for :title_en, "COUNTER SCANNER" %>
 
 <div style="max-width:560px; margin:0 auto;">
+  <% if selectable_outlets.size > 1 %>
+    <%= form_with url: merchant_scanner_path, method: :get, data: { turbo: false } do %>
+      <input type="hidden" name="tab" value="<%= @tab %>">
+      <label class="l-label">Chi nhánh đang bán</label>
+      <select name="outlet" class="l-field" style="margin-bottom:16px;" onchange="this.form.requestSubmit()">
+        <% selectable_outlets.each do |o| %>
+          <option value="<%= o.id %>" <%= "selected" if current_outlet&.id == o.id %>><%= o.name %></option>
+        <% end %>
+      </select>
+    <% end %>
+  <% elsif current_outlet %>
+    <div style="margin-bottom:14px; font-size:13px; color:var(--ink-2);">Chi nhánh: <strong style="color:var(--ink);"><%= current_outlet.name %></strong></div>
+  <% end %>
+
   <div style="display:flex; gap:8px; margin-bottom:16px;">
     <%= link_to "① Tích điểm", merchant_scanner_path(tab: "earn"),
           class: "l-chip #{'l-chip-brand' if @tab == 'earn'}", data: { turbo_frame: "scan_tool" } %>

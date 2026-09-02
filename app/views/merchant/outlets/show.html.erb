@@ -54,4 +54,19 @@
       <% end %>
     </div>
   </div>
+
+  <% if @has_checkin %>
+    <div class="l-panel" style="margin-top:16px; display:flex; gap:18px; align-items:center; flex-wrap:wrap;">
+      <div style="background:#fff; padding:10px; border:1px solid var(--line); border-radius:14px; flex:none;">
+        <%= qr_svg(@checkin_url, size: 120) %>
+      </div>
+      <div style="flex:1; min-width:220px;">
+        <h3 class="l-display" style="font-size:17px; margin-bottom:4px;">Mã check-in của chi nhánh này</h3>
+        <p style="color:var(--ink-2); font-size:13px; margin-bottom:12px;">In &amp; dán tại <strong><%= @outlet.name %></strong>. Khách quét sẽ được ghi nhận check-in đúng chi nhánh này.</p>
+        <%= link_to checkin_qr_merchant_outlet_path(@outlet), class: "l-btn l-btn-soft" do %>
+          <%= ui_icon(:launch, size: 16) %> Tải mã để in
+        <% end %>
+      </div>
+    </div>
+  <% end %>
 </div>

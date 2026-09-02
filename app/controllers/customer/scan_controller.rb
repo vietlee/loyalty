@@ -28,8 +28,10 @@ module Customer
 
     # ---- Store check-in (scan the on-site QR) ----
     def handle_checkin(token)
-      return invalid! unless Checkin.valid?(token, workspace: current_workspace)
-      status, points = Checkin.check_in!(current_member, current_workspace)
+      ok, outlet_id = Checkin.decode(token, workspace: current_workspace)
+      return invalid! unless ok
+      outlet = outlet_id.present? ? current_workspace.outlets.find_by(id: outlet_id) : nil
+      status, points = Checkin.check_in!(current_member, current_workspace, outlet)
       @points = points
       case status
       when :done    then render :checkin_success

@@ -27,7 +27,7 @@ module Merchant
       elsif @voucher.state == "used"
         render :used
       else
-        @voucher.mark_used!(outlet: current_membership&.outlet, staff: current_user)
+        @voucher.mark_used!(outlet: current_outlet, staff: current_user)
         render :success
       end
     end

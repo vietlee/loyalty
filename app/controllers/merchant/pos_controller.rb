@@ -8,7 +8,7 @@ module Merchant
         return render :search, status: :unprocessable_entity
       end
       @charge = current_workspace.pos_charges.create!(
-        amount: amount, outlet: current_membership&.outlet, staff: current_user
+        amount: amount, outlet: current_outlet, staff: current_user
       )
       @charge_url = helpers.customer_scan_url(current_workspace, pos: @charge.token)
       render :show

@@ -12,22 +12,22 @@ class MissionProgress < ApplicationRecord
   def pct        = mission.goal.to_i.zero? ? 0 : [(progress.to_f / mission.goal * 100).round, 100].min
 
   # Advance progress; award points once when the goal is reached.
-  def advance!(by = 1)
+  def advance!(by = 1, outlet: nil)
     return if completed?
     self.progress += by
     if progress >= mission.goal
       self.completed_at = Time.current
       save!
-      claim!
+      claim!(outlet: outlet)
     else
       save!
     end
   end
 
-  def claim!
+  def claim!(outlet: nil)
     return if claimed?
     PointTransaction.create!(workspace: workspace, member: member, kind: "mission",
-                             amount: mission.reward_points, source: mission, note: mission.title)
+                             amount: mission.reward_points, source: mission, note: mission.title, outlet: outlet)
     update!(claimed_at: Time.current)
     member.recompute_points!
   end
