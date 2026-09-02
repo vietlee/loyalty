@@ -1,7 +1,7 @@
 <% content_for :title, t("customer.profile.title") %>
 <% content_for :tab, "me" %>
 <header class="l-appbar">
-  <div class="avatar"><%= @member.initials %></div>
+  <%= member_avatar(@member, klass: "avatar") %>
   <div><div class="nm"><%= @member.display_name %></div><div class="hi"><%= @member.email.presence || @member.phone %></div></div>
 </header>
 <div class="l-screen">
@@ -12,6 +12,14 @@
   <div class="l-tile" style="margin-bottom:14px;">
     <div class="l-display" style="font-size:16px; margin-bottom:12px;"><%= t("customer.profile.account") %></div>
     <%= form_with model: @member, url: member_profile_path, method: :patch, data: { turbo: false } do |f| %>
+      <div style="display:flex; align-items:center; gap:14px; margin-bottom:16px;">
+        <%= member_avatar(@member, klass: "avatar", style: "width:64px;height:64px;border-radius:18px;font-size:22px;flex:none;") %>
+        <label class="l-btn l-btn-ghost" style="cursor:pointer;">
+          📷 Đổi ảnh đại diện
+          <%= f.file_field :avatar, accept: "image/*", style: "position:absolute; width:1px; height:1px; opacity:0; pointer-events:none;" %>
+        </label>
+      </div>
+
       <label class="l-label"><%= t("customer.profile.name") %></label>
       <%= f.text_field :name, class: "l-field", placeholder: t("customer.profile.name") %>
 

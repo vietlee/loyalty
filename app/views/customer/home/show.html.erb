@@ -73,19 +73,15 @@
     end
     chips << [member_refer_path, :users, t("customer.home.chip_refer")] if prog.referral_enabled && !used.include?(:refer)
   %>
-  <% if chips.any? %>
+  <% show_about = current_workspace.feedback_public? %>
+  <% if chips.any? || show_about %>
     <div style="display:flex; gap:8px; margin-top:12px; justify-content:center; flex-wrap:wrap;">
       <% chips.each do |path, icon, label| %>
         <%= link_to path, class: "l-chip l-chip-lg", style: "flex:none;" do %><%= ui_icon(icon, size: 20) %> <%= label %><% end %>
       <% end %>
-    </div>
-  <% end %>
-
-  <%# ---- About the shop & reviews (when the merchant keeps it public) ---- %>
-  <% if current_workspace.feedback_public? %>
-    <div style="display:flex; gap:8px; margin-top:12px; justify-content:center; flex-wrap:wrap;">
-      <%= link_to member_shop_about_path, class: "l-chip l-chip-lg", style: "flex:none;" do %>🏬 Về quán &amp; đánh giá<% end %>
-      <%= link_to member_new_review_path, class: "l-chip l-chip-lg", style: "flex:none;" do %>⭐ Đánh giá quán<% end %>
+      <% if show_about %>
+        <%= link_to member_shop_about_path, class: "l-chip l-chip-lg", style: "flex:none;" do %>🏬 Về quán &amp; đánh giá<% end %>
+      <% end %>
     </div>
   <% end %>
 

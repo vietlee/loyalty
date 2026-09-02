@@ -3,6 +3,8 @@ class Member < ApplicationRecord
   # Devise; the password column is unused in dev). Tenant-scoped by workspace.
   acts_as_tenant(:workspace)
 
+  has_one_attached :avatar
+
   devise :database_authenticatable, :rememberable, :trackable
 
   LOCALES = %w[vi en].freeze

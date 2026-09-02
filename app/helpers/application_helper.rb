@@ -35,6 +35,16 @@ module ApplicationHelper
     end
   end
 
+  # Member avatar: uploaded image (cover-cropped) if present, else initials.
+  def member_avatar(member, klass: "avatar", style: nil)
+    if member&.avatar&.attached?
+      content_tag(:div, image_tag(rails_storage_proxy_path(member.avatar, only_path: true), style: "width:100%;height:100%;object-fit:cover;"),
+                  class: klass, style: ["overflow:hidden", style].compact.join(";"))
+    else
+      content_tag(:div, member&.initials, class: klass, style: style)
+    end
+  end
+
   # Builds the customer-app scan-resolve URL for a workspace (what promo / POS
   # QR codes encode). Dev uses the /w/:slug path form on the current host; a
   # custom domain / subdomain is used when configured.

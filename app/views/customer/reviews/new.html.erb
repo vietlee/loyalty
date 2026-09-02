@@ -1,7 +1,7 @@
 <% content_for :title, "Đánh giá quán" %>
 <% content_for :tab, "" %>
 <header class="l-appbar">
-  <%= link_to "←", (current_workspace.feedback_public? ? member_shop_about_path : member_profile_path), style: "font-size:22px; text-decoration:none; color:var(--ink);" %>
+  <%= link_to "←", (current_workspace.feedback_public? ? member_shop_about_path : member_profile_path), data: { controller: "goback", action: "goback#back" }, style: "font-size:22px; text-decoration:none; color:var(--ink);" %>
   <div class="nm l-display" style="font-size:22px;">Viết đánh giá</div>
 </header>
 

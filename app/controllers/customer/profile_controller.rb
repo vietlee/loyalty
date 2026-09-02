@@ -28,7 +28,7 @@ module Customer
     private
 
     def profile_params
-      p = params.require(:member).permit(:name, :email, :birthday)
+      p = params.require(:member).permit(:name, :email, :birthday, :avatar)
       p[:birthday] = parse_dmy(p[:birthday]) if p.key?(:birthday)
       p
     end

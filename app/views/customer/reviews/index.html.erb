@@ -2,7 +2,7 @@
 <% content_for :tab, "" %>
 <% stars = ->(n) { "★" * n.round + "☆" * (5 - n.round) } %>
 <header class="l-appbar">
-  <%= link_to "←", member_root_path, style: "font-size:22px; text-decoration:none; color:var(--ink);" %>
+  <%= link_to "←", member_root_path, data: { controller: "goback", action: "goback#back" }, style: "font-size:22px; text-decoration:none; color:var(--ink);" %>
   <div class="nm l-display" style="font-size:22px;">Về quán</div>
 </header>
 
@@ -10,7 +10,7 @@
 <% review_row = ->(r) do %>
   <div class="l-tile" style="margin-bottom:10px;">
     <div style="display:flex; align-items:center; gap:10px;">
-      <div class="avatar" style="width:36px;height:36px;border-radius:11px;background:var(--surface-2);color:var(--ink);display:grid;place-items:center;font-weight:700;font-size:13px;flex:none;"><%= r.member&.initials %></div>
+      <%= member_avatar(r.member, klass: "avatar", style: "width:36px;height:36px;border-radius:11px;background:var(--surface-2);color:var(--ink);display:grid;place-items:center;font-weight:700;font-size:13px;flex:none;") %>
       <div style="flex:1; min-width:0;">
         <div style="font-weight:600; font-size:14px;"><%= r.member&.display_name %><% if r.member_id == current_member.id %> <span style="color:var(--ink-2); font-weight:400;">· bạn</span><% end %></div>
         <div style="color:var(--primary-2,#E08A3C); font-size:13px; letter-spacing:1px;"><%= stars.call(r.stars) %></div>
@@ -59,6 +59,7 @@
 
   <%# ---- Feedback wall with All / Yours filter ---- %>
   <div class="l-section-h"><h3>Đánh giá của khách</h3></div>
+  <%= link_to "＋ Viết đánh giá", member_new_review_path, class: "l-btn l-btn-primary l-btn-block", style: "margin-bottom:12px;" %>
   <div class="l-wtabs" style="margin-bottom:12px;">
     <button data-tabs-target="tab" data-name="all"  data-action="tabs#select">Tất cả · <%= @count %></button>
     <button data-tabs-target="tab" data-name="mine" data-action="tabs#select">Của bạn · <%= @my_count %></button>
