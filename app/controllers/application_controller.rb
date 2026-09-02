@@ -34,11 +34,15 @@ class ApplicationController < ActionController::Base
     when AdminUser
       admin_root_path
     when User
-      ws = resource.workspaces.find_by(id: session[:workspace_id]) ||
-           resource.workspaces.order(:created_at).first
-      stored = stored_location_for(:user)
-      path = stored.presence ? URI(stored).request_uri : "/merchant"
-      merchant_url_for(ws, path)
+      # More than one shop → let the owner pick which to open.
+      if resource.workspaces.count > 1
+        merchant_choose_path
+      else
+        ws = resource.workspaces.order(:created_at).first
+        stored = stored_location_for(:user)
+        path = stored.presence ? URI(stored).request_uri : "/merchant"
+        merchant_url_for(ws, path)
+      end
     else
       super
     end

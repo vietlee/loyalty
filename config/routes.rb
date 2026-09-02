@@ -46,6 +46,7 @@ Rails.application.routes.draw do
   # ---- Merchant dashboard : /merchant ------------------------------------
   namespace :merchant do
     root "dashboard#show"
+    get  "choose",            to: "choose#show",              as: :choose
     get  "checkin_qr",        to: "dashboard#checkin_qr",     as: :checkin_qr
     post "checkin_qr/rotate", to: "dashboard#rotate_checkin", as: :rotate_checkin
     # First-run onboarding wizard
