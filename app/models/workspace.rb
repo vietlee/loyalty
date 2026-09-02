@@ -106,10 +106,27 @@ class Workspace < ApplicationRecord
   #   :suspended — an operator suspended it → contact support to reopen
   #   :unpaid    — subscription expired more than GRACE_DAYS ago → pay to reopen
   def access_blocked_reason
-    return :suspended if status == "suspended"
+    if status == "suspended"
+      # A shop auto-suspended for non-payment can reopen by paying (":unpaid" →
+      # billing stays reachable); an operator suspend needs support.
+      return auto_suspended? ? :unpaid : :suspended
+    end
     d = subscription_overdue_days
     return :unpaid if d && d > GRACE_DAYS
     nil
+  end
+
+  # The billing owner (falls back to any linked user) + their email.
+  def owner = memberships.find_by(role: "owner")&.user || users.first
+  def billing_email = owner&.email
+
+  # Auto-suspend bookkeeping (kept in settings so no migration is needed).
+  def auto_suspended? = status == "suspended" && settings["auto_suspended"] == true
+
+  # Flip an unpaid, past-grace shop to "suspended" (Tạm ngưng). Flagged so a
+  # later payment can reopen it (unlike an operator suspend).
+  def auto_suspend_for_nonpayment!
+    update!(status: "suspended", settings: settings.merge("auto_suspended" => true))
   end
 
   def access_blocked? = access_blocked_reason.present?

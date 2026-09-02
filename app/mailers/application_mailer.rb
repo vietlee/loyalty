@@ -1,4 +1,4 @@
 class ApplicationMailer < ActionMailer::Base
-  default from: "from@example.com"
+  default from: %(Dynamic Loyalty <#{ENV.fetch("MAIL_FROM", "no-reply@loyalty.czin.net")}>)
   layout "mailer"
 end

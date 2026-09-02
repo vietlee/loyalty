@@ -27,8 +27,12 @@ class Invoice < ApplicationRecord
     Invoice.transaction do
       update!(status: "paid", paid_at: Time.current, gateway_response: gateway_response)
       base = [workspace.paid_until, Time.current].compact.max
+      # Paying reopens a shop unless an operator deliberately suspended it (a
+      # non-payment auto-suspend is cleared here).
+      keep_suspended = workspace.status == "suspended" && !workspace.auto_suspended?
       workspace.update!(paid_until: [base, period_end.end_of_day].max,
-                        status: (workspace.status == "suspended" ? "suspended" : "active"))
+                        status: keep_suspended ? "suspended" : "active",
+                        settings: workspace.settings.merge("auto_suspended" => false))
     end
   end
 
