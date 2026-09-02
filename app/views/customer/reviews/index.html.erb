@@ -6,7 +6,25 @@
   <div class="nm l-display" style="font-size:22px;">Về quán</div>
 </header>
 
-<div class="l-screen">
+<%# Renders one review row; shows an edit affordance when it's the member's own. %>
+<% review_row = ->(r) do %>
+  <div class="l-tile" style="margin-bottom:10px;">
+    <div style="display:flex; align-items:center; gap:10px;">
+      <div class="avatar" style="width:36px;height:36px;border-radius:11px;background:var(--surface-2);color:var(--ink);display:grid;place-items:center;font-weight:700;font-size:13px;flex:none;"><%= r.member&.initials %></div>
+      <div style="flex:1; min-width:0;">
+        <div style="font-weight:600; font-size:14px;"><%= r.member&.display_name %><% if r.member_id == current_member.id %> <span style="color:var(--ink-2); font-weight:400;">· bạn</span><% end %></div>
+        <div style="color:var(--primary-2,#E08A3C); font-size:13px; letter-spacing:1px;"><%= stars.call(r.stars) %></div>
+      </div>
+      <% if r.member_id == current_member.id %>
+        <%= link_to member_edit_review_path(r), style: "flex:none; color:var(--primary-ink); text-decoration:none; font-size:16px;", title: "Sửa" do %>✎<% end %>
+      <% end %>
+      <div style="font-size:11px; color:var(--ink-2);"><%= l(r.created_at.to_date, format: :short) %></div>
+    </div>
+    <% if r.comment.present? %><div style="font-size:14px; margin-top:8px;"><%= r.comment %></div><% end %>
+  </div>
+<% end %>
+
+<div class="l-screen" data-controller="tabs" data-tabs-active-value="all">
   <%# ---- Shop info ---- %>
   <div class="l-tile" style="display:flex; gap:14px; align-items:center; margin-bottom:14px;">
     <%= workspace_avatar(current_workspace, klass: "avatar", style: "width:56px;height:56px;border-radius:16px;font-size:20px;flex:none;") %>
@@ -23,7 +41,6 @@
     <div class="l-num" style="font-size:44px; line-height:1;"><%= @avg %></div>
     <div style="color:var(--primary-2,#E08A3C); font-size:20px; letter-spacing:2px;"><%= stars.call(@avg) %></div>
     <div style="color:var(--ink-2); font-size:13px; margin-top:4px;"><%= @count %> đánh giá</div>
-    <%= link_to (@my ? "Sửa đánh giá của bạn" : "Viết đánh giá"), member_new_review_path, class: "l-btn l-btn-primary", style: "margin-top:14px; display:inline-flex;" %>
   </div>
 
   <%# ---- Branches ---- %>
@@ -40,23 +57,29 @@
     </div>
   <% end %>
 
-  <%# ---- Feedback wall ---- %>
+  <%# ---- Feedback wall with All / Yours filter ---- %>
   <div class="l-section-h"><h3>Đánh giá của khách</h3></div>
-  <% if @ratings.empty? %>
-    <div class="l-tile" style="text-align:center; padding:30px 20px; color:var(--ink-2);">Chưa có đánh giá nào — hãy là người đầu tiên!</div>
-  <% else %>
-    <% @ratings.each do |r| %>
-      <div class="l-tile" style="margin-bottom:10px;">
-        <div style="display:flex; align-items:center; gap:10px;">
-          <div class="avatar" style="width:36px;height:36px;border-radius:11px;background:var(--surface-2);color:var(--ink);display:grid;place-items:center;font-weight:700;font-size:13px;flex:none;"><%= r.member&.initials %></div>
-          <div style="flex:1; min-width:0;">
-            <div style="font-weight:600; font-size:14px;"><%= r.member&.display_name %></div>
-            <div style="color:var(--primary-2,#E08A3C); font-size:13px; letter-spacing:1px;"><%= stars.call(r.stars) %></div>
-          </div>
-          <div style="font-size:11px; color:var(--ink-2);"><%= l(r.created_at.to_date, format: :short) %></div>
-        </div>
-        <% if r.comment.present? %><div style="font-size:14px; margin-top:8px;"><%= r.comment %></div><% end %>
-      </div>
+  <div class="l-wtabs" style="margin-bottom:12px;">
+    <button data-tabs-target="tab" data-name="all"  data-action="tabs#select">Tất cả · <%= @count %></button>
+    <button data-tabs-target="tab" data-name="mine" data-action="tabs#select">Của bạn · <%= @my_count %></button>
+  </div>
+
+  <div data-tabs-target="panel" data-name="all">
+    <% if @ratings.empty? %>
+      <div class="l-tile" style="text-align:center; padding:30px 20px; color:var(--ink-2);">Chưa có đánh giá nào — hãy là người đầu tiên!</div>
+    <% else %>
+      <% @ratings.each { |r| review_row.call(r) } %>
     <% end %>
-  <% end %>
+  </div>
+
+  <div data-tabs-target="panel" data-name="mine" hidden>
+    <% if @mine.empty? %>
+      <div class="l-tile" style="text-align:center; padding:24px 20px; color:var(--ink-2);">
+        Bạn chưa có đánh giá nào.<br>
+        <%= link_to "Viết đánh giá", member_new_review_path, class: "l-btn l-btn-primary", style: "margin-top:12px; display:inline-flex;" %>
+      </div>
+    <% else %>
+      <% @mine.each { |r| review_row.call(r) } %>
+    <% end %>
+  </div>
 </div>

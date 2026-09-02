@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2026_09_03_020000) do
+ActiveRecord::Schema[7.2].define(version: 2026_09_03_030000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -441,7 +441,7 @@ ActiveRecord::Schema[7.2].define(version: 2026_09_03_020000) do
     t.datetime "updated_at", null: false
     t.index ["member_id"], name: "index_ratings_on_member_id"
     t.index ["outlet_id"], name: "index_ratings_on_outlet_id"
-    t.index ["workspace_id", "member_id"], name: "index_ratings_on_workspace_id_and_member_id", unique: true
+    t.index ["workspace_id", "member_id"], name: "index_ratings_on_workspace_id_and_member_id"
     t.index ["workspace_id"], name: "index_ratings_on_workspace_id"
   end
 

@@ -139,10 +139,12 @@ Rails.application.routes.draw do
     get  "join/:code",   to: "sessions#join",  as: :join
     get   "me", to: "profile#show",   as: :profile
     patch "me", to: "profile#update"
-    # Public shop / feedback page + submit-your-own-review
-    get  "shop",   to: "reviews#index",  as: :shop_about
-    get  "review", to: "reviews#new",    as: :new_review
-    post "review", to: "reviews#create"
+    # Public shop / feedback page + reviews (members can leave many, edit own)
+    get   "shop",            to: "reviews#index",  as: :shop_about
+    get   "review",          to: "reviews#new",    as: :new_review
+    post  "review",          to: "reviews#create", as: :reviews
+    get   "review/:id/edit", to: "reviews#edit",   as: :edit_review
+    patch "review/:id",      to: "reviews#update",  as: :review
   end
 
   # Health check

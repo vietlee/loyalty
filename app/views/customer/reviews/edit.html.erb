@@ -1,0 +1,10 @@
+<% content_for :title, "Sửa đánh giá" %>
+<% content_for :tab, "" %>
+<header class="l-appbar">
+  <%= link_to "←", member_shop_about_path, style: "font-size:22px; text-decoration:none; color:var(--ink);" %>
+  <div class="nm l-display" style="font-size:22px;">Sửa đánh giá</div>
+</header>
+
+<div class="l-screen">
+  <%= render "form", rating: @rating, url: member_review_path(@rating), method: :patch, submit_label: "Cập nhật đánh giá" %>
+</div>
