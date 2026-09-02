@@ -28,7 +28,7 @@ module Customer
     # Save just the avatar (separate from the name/email/birthday form).
     def avatar
       file = params.dig(:member, :avatar)
-      if file.present?
+      if file.respond_to?(:original_filename) # a real uploaded file, not a string
         current_member.avatar.attach(file)
         redirect_to member_profile_path, notice: "Đã cập nhật ảnh đại diện."
       else
