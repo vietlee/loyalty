@@ -3,6 +3,7 @@ class ApplicationController < ActionController::Base
 
   layout :layout_by_resource
   before_action :set_locale
+  before_action :no_cache_auth_pages
   after_action :stash_toast_cookie
 
   rescue_from Pundit::NotAuthorizedError, with: :user_not_authorized
@@ -90,6 +91,13 @@ class ApplicationController < ActionController::Base
     else
       I18n.default_locale
     end
+  end
+
+  # Never cache Devise auth pages (login/logout), so a fresh login form (with the
+  # up-to-date behaviour) is always fetched — avoids stale cached forms breaking
+  # login after a deploy.
+  def no_cache_auth_pages
+    no_browser_cache if devise_controller?
   end
 
   # Prevent the browser back/forward cache (and any shared cache) from restoring
