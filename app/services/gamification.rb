@@ -18,8 +18,23 @@ module Gamification
   def advance_stamps(member, ws)
     ws.stamp_cards.active.each do |card|
       next unless card.running?
-      card.membership_for(member).add_stamp!
+      result = card.membership_for(member).add_stamp!
+      notify_stamp_reward(member, ws, card, result[:voucher]) if result[:completed] && result[:voucher]
     end
+  end
+
+  # Let the customer know a stamp card completed and a reward landed in their
+  # wallet (in-app inbox + push) — otherwise the voucher appears silently.
+  def notify_stamp_reward(member, ws, card, voucher)
+    reward_name = voucher.reward&.title
+    title = "Bạn vừa nhận quà! 🎁"
+    body  = "Thẻ tem “#{card.title}” đã hoàn thành — #{reward_name} đã vào ví của bạn."
+    Notification.create!(workspace: ws, member: member, kind: "reward",
+                         title: title, body: body, icon: "🎁",
+                         deep_link: "/vouchers/#{voucher.id}")
+    PushJob.perform_later(ws.id, [member.id], title, body, "/vouchers/#{voucher.id}") if PushSender.configured?
+  rescue => e
+    Rails.logger.error("[Gamification] notify_stamp_reward: #{e.class} #{e.message}")
   end
 
   def advance_missions(member, ws, purchase)
