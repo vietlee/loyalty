@@ -34,6 +34,14 @@
     </div>
   <% end %>
 
+  <%# ---- Points expiring soon (only when expiry is configured) ---- %>
+  <% exp_amt, exp_date = current_workspace.program.points_expire? ? @member.points_expiring_soon(within: 30.days) : [0, nil] %>
+  <% if exp_amt.to_i > 0 %>
+    <%= link_to member_wallet_path(tab: "rewards"), style: "display:flex; align-items:center; gap:8px; margin-top:12px; padding:11px 14px; border-radius:14px; background:#F7E0DA; color:#B4402F; text-decoration:none; font-size:13px; font-weight:600;" do %>
+      ⏳ <span><strong><%= number_with_delimiter(exp_amt) %></strong> điểm sẽ hết hạn <%= "vào #{l(exp_date.to_date, format: :short)}" if exp_date %> — đổi ngay ›</span>
+    <% end %>
+  <% end %>
+
   <%# ---- Quick actions — engaging shortcuts (My code + Scan already live in the
         tab bar, so we promote reward/progress/game features here instead). ---- %>
   <% prog = current_workspace.program %>
@@ -70,6 +78,14 @@
       <% chips.each do |path, icon, label| %>
         <%= link_to path, class: "l-chip l-chip-lg", style: "flex:none;" do %><%= ui_icon(icon, size: 20) %> <%= label %><% end %>
       <% end %>
+    </div>
+  <% end %>
+
+  <%# ---- About the shop & reviews (when the merchant keeps it public) ---- %>
+  <% if current_workspace.feedback_public? %>
+    <div style="display:flex; gap:8px; margin-top:12px; justify-content:center; flex-wrap:wrap;">
+      <%= link_to member_shop_about_path, class: "l-chip l-chip-lg", style: "flex:none;" do %>🏬 Về quán &amp; đánh giá<% end %>
+      <%= link_to member_new_review_path, class: "l-chip l-chip-lg", style: "flex:none;" do %>⭐ Đánh giá quán<% end %>
     </div>
   <% end %>
 

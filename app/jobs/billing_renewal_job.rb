@@ -53,7 +53,7 @@ class BillingRenewalJob < ApplicationJob
   end
 
   def auto_suspend_if_overdue(ws)
-    return unless ws.status == "active"
+    return unless %w[active past_due].include?(ws.status)
     d = ws.subscription_overdue_days
     return unless d && d > Workspace::GRACE_DAYS
 

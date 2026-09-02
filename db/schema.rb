@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2026_09_03_010000) do
+ActiveRecord::Schema[7.2].define(version: 2026_09_03_020000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -161,6 +161,7 @@ ActiveRecord::Schema[7.2].define(version: 2026_09_03_010000) do
     t.datetime "updated_at", null: false
     t.boolean "referral_enabled", default: true, null: false
     t.integer "referral_points", default: 100, null: false
+    t.integer "points_expiry_months", default: 0, null: false
     t.index ["workspace_id"], name: "index_loyalty_programs_on_workspace_id", unique: true
   end
 

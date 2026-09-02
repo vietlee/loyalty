@@ -84,6 +84,38 @@ class Member < ApplicationRecord
     save!(validate: false)
   end
 
+  # FIFO points expiry: debits (redeem/expire) consume the oldest credit lots
+  # first; a lot with an expires_at in the past that hasn't been consumed is
+  # expirable. Idempotent (previous expire debits are counted as consumption).
+  def expirable_points(now: Time.current)
+    total = 0
+    each_unconsumed_lot { |left, exp| total += left if exp && exp <= now }
+    total
+  end
+
+  # [amount, nearest_date] of unconsumed points expiring within `within`.
+  def points_expiring_soon(within: 30.days, now: Time.current)
+    amt = 0; date = nil
+    each_unconsumed_lot do |left, exp|
+      next unless exp && exp > now && exp <= now + within
+      amt += left
+      date = exp if date.nil? || exp < date
+    end
+    [amt, date]
+  end
+
+  # Yields [unconsumed_amount, expires_at] for each credit lot, oldest first,
+  # after applying all debits FIFO.
+  def each_unconsumed_lot
+    remaining_debit = point_transactions.debits.sum(:amount).abs
+    point_transactions.credits.order(:created_at).pluck(:amount, :expires_at).each do |amount, exp|
+      consume = [amount, remaining_debit].min
+      remaining_debit -= consume
+      left = amount - consume
+      yield(left, exp) if left.positive?
+    end
+  end
+
   def display_name
     name.presence || "Thành viên"
   end

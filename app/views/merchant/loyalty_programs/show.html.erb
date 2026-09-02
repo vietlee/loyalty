@@ -24,6 +24,12 @@
         <%= f.text_field :currency, class: "l-field", style: "max-width:80px;" %>
       </div>
 
+      <label class="l-label">Điểm hết hạn sau (tháng)</label>
+      <div style="display:flex; gap:8px; align-items:center; margin-bottom:14px;">
+        <%= f.number_field :points_expiry_months, class: "l-field", style: "max-width:100px;", min: 0 %>
+        <span style="color:var(--ink-2); font-size:13px;">tháng · để <strong>0</strong> nếu điểm không hết hạn</span>
+      </div>
+
       <label class="l-label">Chế độ tích điểm tại quầy</label>
       <%= f.select :scan_mode,
             [["Nhân viên quét mã khách", "staff_scans_member"],

@@ -1,7 +1,7 @@
 <% content_for :title, "Về quán" %>
 <% content_for :tab, "" %>
 <% stars = ->(n) { "★" * n.round + "☆" * (5 - n.round) } %>
-<header class="l-appbar" style="padding-left:0;">
+<header class="l-appbar">
   <%= link_to "←", member_root_path, style: "font-size:22px; text-decoration:none; color:var(--ink);" %>
   <div class="nm l-display" style="font-size:22px;">Về quán</div>
 </header>

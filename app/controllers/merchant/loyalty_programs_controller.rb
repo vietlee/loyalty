@@ -24,7 +24,8 @@ module Merchant
     def program_params
       attrs = params.require(:loyalty_program).permit(
         :points_enabled, :tiers_enabled, :stamps_enabled, :gamification_enabled,
-        :earn_points, :earn_per_amount, :currency, :scan_mode, :tier_cycle_months
+        :earn_points, :earn_per_amount, :currency, :scan_mode, :tier_cycle_months,
+        :points_expiry_months
       )
       # Enforce plan gates — can't enable what the plan doesn't allow.
       attrs[:stamps_enabled] = false unless current_workspace.plan_allows?(:stamps)

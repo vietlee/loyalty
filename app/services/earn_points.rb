@@ -29,7 +29,8 @@ class EarnPoints
         if points.positive?
           PointTransaction.create!(
             workspace: @member.workspace, member: @member, kind: "earn",
-            amount: points, source: purchase, outlet: @outlet, staff: @staff
+            amount: points, source: purchase, outlet: @outlet, staff: @staff,
+            expires_at: @program.points_expire_at(purchase.created_at)
           )
         end
         @member.recompute_points!

@@ -8,8 +8,8 @@ module Maintenance
   GRACE_DAYS = 10
 
   def run_all
-    { vouchers_expired: expire_vouchers, members_recomputed: recompute_members,
-      subscriptions: sync_subscriptions }
+    { vouchers_expired: expire_vouchers, points_expired: ExpirePoints.run,
+      members_recomputed: recompute_members, subscriptions: sync_subscriptions }
   end
 
   # Billing lifecycle: an active workspace whose subscription lapsed moves to
