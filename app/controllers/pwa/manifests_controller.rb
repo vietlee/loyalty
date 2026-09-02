@@ -24,7 +24,9 @@ module Pwa
       end
       {
         name: name,
-        short_name: (ws&.logo_initials || name)[0, 12],
+        # Home-screen label = the shop name (Android uses short_name for the
+        # icon caption; keep it reasonably short).
+        short_name: name.to_s[0, 30],
         description: ws&.branding_value("tagline") || "Chương trình tri ân khách hàng",
         start_url: start,
         scope: start,

@@ -1,6 +1,10 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
+<% if respond_to?(:current_workspace) && current_workspace %>
+  <%# iOS "Add to Home Screen" uses this for the icon label (not the manifest). %>
+  <meta name="apple-mobile-web-app-title" content="<%= current_workspace.name %>">
+<% end %>
 <title><%= content_for?(:title) ? yield(:title) : "Dynamic Loyalty" %></title>
 <%= csrf_meta_tags %>
 <%= csp_meta_tag %>
