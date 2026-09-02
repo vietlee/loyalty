@@ -6,11 +6,45 @@ export default class extends Controller {
   static targets = ["video", "status", "overlay"]
   static values = { resolveUrl: String }
 
-  connect() {
-    // If the camera was granted before, hide the "Bật camera" overlay immediately
-    // (no flash while the stream warms up); otherwise keep it as a fallback.
-    if (this.cameraSeen() && this.hasOverlayTarget) this.overlayTarget.style.display = "none"
-    this.start()
+  async connect() {
+    // Ask the browser what the real camera-permission state is. When it's
+    // already "granted" we auto-start with no prompt; when it's "prompt" we
+    // keep the overlay so getUserMedia fires on the user's tap (fewer surprise
+    // prompts, and iOS is happier). "denied" shows how to re-enable. When the
+    // Permissions API can't answer (Safari/iOS often can't for camera) we fall
+    // back to the localStorage heuristic.
+    const state = await this.cameraState()
+    if (state === "granted") {
+      if (this.hasOverlayTarget) this.overlayTarget.style.display = "none"
+      this.start()
+    } else if (state === "denied") {
+      if (this.hasOverlayTarget) this.overlayTarget.style.display = ""
+      this.statusTarget.textContent = "Camera đang bị chặn — hãy bật lại quyền camera trong cài đặt trình duyệt, hoặc nhập mã bên dưới."
+    } else if (state === "prompt") {
+      if (this.hasOverlayTarget) this.overlayTarget.style.display = ""
+    } else {
+      if (this.cameraSeen() && this.hasOverlayTarget) this.overlayTarget.style.display = "none"
+      this.start()
+    }
+    this.watchPermission()
+  }
+
+  async cameraState() {
+    try {
+      if (navigator.permissions?.query) {
+        this._perm = await navigator.permissions.query({ name: "camera" })
+        return this._perm.state // "granted" | "prompt" | "denied"
+      }
+    } catch (e) { /* camera not a queryable name (iOS/Safari) */ }
+    return null
+  }
+
+  // Auto-start the moment the user grants access from the browser UI.
+  watchPermission() {
+    if (!this._perm) return
+    this._perm.onchange = () => {
+      if (this._perm.state === "granted" && !this.stream) { this.start() }
+    }
   }
 
   cameraSeen() { try { return localStorage.getItem("qrnavCameraOk") === "1" } catch (e) { return false } }

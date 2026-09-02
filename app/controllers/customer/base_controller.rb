@@ -5,6 +5,7 @@ module Customer
     layout "member"
 
     before_action :set_current_workspace
+    before_action :canonical_customer_host
     before_action :enforce_workspace_access
     before_action -> { no_browser_cache if member_signed_in? }
     around_action :scope_tenant
@@ -14,6 +15,23 @@ module Customer
 
     def set_current_workspace
       @current_workspace = resolve_workspace
+    end
+
+    # In production, keep the customer app on the shop's own subdomain so camera
+    # permission + PWA/localStorage state aren't split between the main-domain
+    # path form (loyalty.czin.net/w/:slug) and the subdomain. Redirects the
+    # former to the latter; leaves custom domains and dev untouched.
+    def canonical_customer_host
+      return unless Rails.env.production? && request.get?
+      ws = @current_workspace
+      return if ws&.subdomain.blank?
+      return if ws.custom_domain.present? && request.host == ws.custom_domain
+      target = "#{ws.subdomain}.#{PLATFORM_HOST}"
+      return if request.host == target
+      # Only act on our own platform hosts, never on a domain we don't control.
+      return unless request.host == PLATFORM_HOST || request.host.end_with?(".#{PLATFORM_HOST}")
+      path = request.fullpath.sub(%r{\A/w/[^/]+}, "").presence || "/"
+      redirect_to "https://#{target}#{path}", allow_other_host: true
     end
 
     def scope_tenant

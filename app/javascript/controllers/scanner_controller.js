@@ -6,10 +6,40 @@ import { Controller } from "@hotwired/stimulus"
 export default class extends Controller {
   static targets = ["video", "token", "form", "status", "overlay"]
 
-  connect() {
-    // Auto-start; hide the "Bật camera" button immediately if granted before.
-    if (this.cameraSeen() && this.hasOverlayTarget) this.overlayTarget.style.display = "none"
-    this.start()
+  async connect() {
+    // Prefer the real permission state (auto-start only when already granted);
+    // fall back to the localStorage heuristic when the browser can't answer.
+    const state = await this.cameraState()
+    if (state === "granted") {
+      if (this.hasOverlayTarget) this.overlayTarget.style.display = "none"
+      this.start()
+    } else if (state === "denied") {
+      if (this.hasOverlayTarget) this.overlayTarget.style.display = ""
+      this.statusTarget.textContent = "Camera đang bị chặn — bật lại quyền trong cài đặt trình duyệt, hoặc nhập mã thủ công."
+    } else if (state === "prompt") {
+      if (this.hasOverlayTarget) this.overlayTarget.style.display = ""
+    } else {
+      if (this.cameraSeen() && this.hasOverlayTarget) this.overlayTarget.style.display = "none"
+      this.start()
+    }
+    this.watchPermission()
+  }
+
+  async cameraState() {
+    try {
+      if (navigator.permissions?.query) {
+        this._perm = await navigator.permissions.query({ name: "camera" })
+        return this._perm.state
+      }
+    } catch (e) { /* not queryable */ }
+    return null
+  }
+
+  watchPermission() {
+    if (!this._perm) return
+    this._perm.onchange = () => {
+      if (this._perm.state === "granted" && !this.stream) this.start()
+    }
   }
 
   cameraSeen() { try { return localStorage.getItem("scannerCameraOk") === "1" } catch (e) { return false } }
