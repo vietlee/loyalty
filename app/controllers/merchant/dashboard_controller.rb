@@ -16,6 +16,7 @@ module Merchant
         @active_members  = Member.where("lifetime_points > 0").count
         @member_growth   = monthly_member_growth
         @tier_counts     = @tiers.map { |t| [t, Member.where(tier_key: t.key).count] }
+        @outlet_stats    = build_outlet_stats
         @has_checkin     = current_workspace.missions.active.exists?(mission_type: "checkin")
         @checkin_url     = helpers.customer_scan_url(current_workspace, checkin: Checkin.encode(current_workspace)) if @has_checkin
         @sub_warning     = subscription_warning(current_workspace)
@@ -68,6 +69,28 @@ module Merchant
         running += added
         { label: I18n.l(m, format: "%m/%y"), value: added, total: running }
       end
+    end
+
+    # Per-branch performance. Purchases and used vouchers are already tagged with
+    # the outlet the staff belongs to, so we just group by outlet.
+    def build_outlet_stats
+      outlets   = current_workspace.outlets.order(:name).to_a
+      purchases = Purchase.group(:outlet_id).count
+      revenue   = Purchase.group(:outlet_id).sum(:amount)
+      points    = Purchase.group(:outlet_id).sum(:points_earned)
+      customers = Purchase.distinct.group(:outlet_id).count(:member_id)
+      vouchers  = Voucher.where(state: "used").group(:used_outlet_id).count
+
+      row = lambda do |id, name|
+        { name: name, revenue: revenue[id].to_i, points: points[id].to_i,
+          purchases: purchases[id].to_i, customers: customers[id].to_i, vouchers: vouchers[id].to_i }
+      end
+      rows = outlets.map { |o| row.call(o.id, o.name) }
+      # Activity tagged to no outlet (staff without a branch, member self-scan).
+      if purchases[nil].to_i.positive? || vouchers[nil].to_i.positive?
+        rows << row.call(nil, "Chưa gán chi nhánh")
+      end
+      rows.sort_by { |r| -r[:revenue] }
     end
 
     def nav_key = :dashboard

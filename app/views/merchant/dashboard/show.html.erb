@@ -74,6 +74,44 @@
   </div>
 </div>
 
+<%# ---- Per-branch performance ---- %>
+<% if @outlet_stats&.any? %>
+  <% max_rev = [@outlet_stats.map { |r| r[:revenue] }.max, 1].max %>
+  <div class="l-panel" style="margin-top:16px;">
+    <h3 class="l-display" style="font-size:18px; margin-bottom:4px;">Hiệu suất theo chi nhánh</h3>
+    <p style="color:var(--ink-2); font-size:13px; margin-bottom:14px;">Doanh thu ghi nhận qua tích điểm, xếp theo chi nhánh.</p>
+    <div style="overflow-x:auto;">
+      <table style="width:100%; border-collapse:collapse; font-size:13.5px; min-width:560px;">
+        <thead><tr style="text-align:left; color:var(--ink-2); font-size:11px; text-transform:uppercase; letter-spacing:.06em;">
+          <th style="padding:8px 10px;">Chi nhánh</th>
+          <th style="text-align:right;">Doanh thu</th>
+          <th style="text-align:right;">Điểm phát</th>
+          <th style="text-align:right;">Giao dịch</th>
+          <th style="text-align:right;">Khách</th>
+          <th style="text-align:right;">Ưu đãi dùng</th>
+        </tr></thead>
+        <tbody>
+          <% @outlet_stats.each do |r| %>
+            <tr style="border-top:1px solid var(--line);">
+              <td style="padding:11px 10px; min-width:180px;">
+                <div style="font-weight:600;"><%= r[:name] %></div>
+                <div style="height:6px; border-radius:999px; background:var(--surface-2); overflow:hidden; margin-top:5px;">
+                  <div style="height:100%; width:<%= (r[:revenue].to_f / max_rev * 100).round %>%; background:var(--primary); border-radius:999px;"></div>
+                </div>
+              </td>
+              <td style="text-align:right; font-weight:700; font-variant-numeric:tabular-nums;"><%= number_with_delimiter(r[:revenue]) %>đ</td>
+              <td style="text-align:right; font-variant-numeric:tabular-nums;"><%= number_with_delimiter(r[:points]) %></td>
+              <td style="text-align:right; font-variant-numeric:tabular-nums;"><%= number_with_delimiter(r[:purchases]) %></td>
+              <td style="text-align:right; font-variant-numeric:tabular-nums;"><%= number_with_delimiter(r[:customers]) %></td>
+              <td style="text-align:right; font-variant-numeric:tabular-nums;"><%= number_with_delimiter(r[:vouchers]) %></td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+<% end %>
+
 <%# ---- Program mechanisms + check-in QR ---- %>
 <div style="display:grid; grid-template-columns:1.5fr 1fr; gap:16px; margin-top:16px;">
   <div class="l-panel">
