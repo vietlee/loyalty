@@ -226,6 +226,10 @@ en:
       install_later: "Later"
       got_it: "Got it"
       ios_hint: "On iPhone: tap the Share button ⎋ then “Add to Home Screen”."
+      push_prompt_title: "Turn on notifications 🔔"
+      push_prompt_sub: "Get offers, gifts and news from %{shop} the moment they drop — don't miss out!"
+      push_prompt_enable: "Enable"
+      push_prompt_later: "Later"
     checkin:
       success_title: "Check-in"
       success_heading: "Checked in!"

@@ -28,6 +28,7 @@
       <% if current_workspace && member_signed_in? && !content_for?(:no_tabbar) %>
         <%= render "layouts/member_tabbar" %>
         <%= render "layouts/pwa_install" %>
+        <%= render "layouts/pwa_push" %>
       <% end %>
     </div>
   </body>

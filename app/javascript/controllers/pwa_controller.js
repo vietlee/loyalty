@@ -4,10 +4,10 @@ import { Controller } from "@hotwired/stimulus"
 // subscription (opt-in), and drives the "Add to Home Screen" banner.
 export default class extends Controller {
   static values = { vapid: String, subscribeUrl: String, unsubscribeUrl: String }
-  static targets = ["installBanner", "installButton", "laterButton", "iosHint", "pushToggle", "pushLabel"]
+  static targets = ["installBanner", "installButton", "laterButton", "iosHint", "pushToggle", "pushLabel", "pushBanner"]
 
   connect() {
-    this.registerSW().then(() => this.reflectPush())
+    this.registerSW().then(() => { this.reflectPush(); this.setupPushPrompt() })
     this.setupInstall()
   }
 
@@ -92,6 +92,46 @@ export default class extends Controller {
     const pad = "=".repeat((4 - (base64.length % 4)) % 4)
     const raw = atob((base64 + pad).replace(/-/g, "+").replace(/_/g, "/"))
     return Uint8Array.from([...raw].map((c) => c.charCodeAt(0)))
+  }
+
+  // ---------- Encourage enabling notifications ----------
+  static PUSH_SNOOZE_MS = 7 * 24 * 60 * 60 * 1000
+
+  setupPushPrompt() {
+    if (!this.hasPushBannerTarget) return
+    if (!this.supported()) return
+    if (Notification.permission !== "default") return // already granted/denied
+    if (this.pushSnoozed()) return
+    const standalone = window.matchMedia("(display-mode: standalone)").matches || window.navigator.standalone
+    const isIos = /iphone|ipad|ipod/i.test(navigator.userAgent)
+    // iOS only supports Web Push from the installed (home-screen) PWA — in
+    // Safari the install banner nudges that first, so skip the push prompt.
+    if (isIos && !standalone) return
+    setTimeout(async () => {
+      if (await this.currentSub()) return
+      // Don't stack on top of the install banner.
+      if (this.hasInstallBannerTarget && !this.installBannerTarget.hidden) return
+      this.pushBannerTarget.hidden = false
+    }, 4500)
+  }
+
+  async enablePush() {
+    this.pushBannerTarget.hidden = true
+    this.pushSnooze()
+    await this.subscribe()
+  }
+
+  dismissPush() {
+    this.pushSnooze()
+    if (this.hasPushBannerTarget) this.pushBannerTarget.hidden = true
+  }
+
+  pushSnoozed() {
+    try { return Date.now() < parseInt(localStorage.getItem("push_snooze") || "0", 10) } catch (e) { return false }
+  }
+
+  pushSnooze() {
+    try { localStorage.setItem("push_snooze", String(Date.now() + this.constructor.PUSH_SNOOZE_MS)) } catch (e) {}
   }
 
   // ---------- Add to Home Screen (popup, shown at most once / 7 days) ----------

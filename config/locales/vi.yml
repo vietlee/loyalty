@@ -291,6 +291,10 @@ vi:
       install_later: "Để sau"
       got_it: "Đã hiểu"
       ios_hint: "Trên iPhone: bấm nút Chia sẻ ⎋ rồi chọn “Thêm vào MH chính”."
+      push_prompt_title: "Bật thông báo 🔔"
+      push_prompt_sub: "Nhận ngay ưu đãi, quà tặng và tin mới từ %{shop} — đừng bỏ lỡ!"
+      push_prompt_enable: "Bật thông báo"
+      push_prompt_later: "Để sau"
     checkin:
       success_title: "Check-in"
       success_heading: "Check-in thành công"
