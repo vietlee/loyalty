@@ -73,16 +73,26 @@
     </div>
   <% end %>
 
-  <%# ---- Offers carousel (demo content; wired in later phases) ---- %>
-  <div class="l-section-h"><h3><%= t("customer.home.offers_title", term: current_workspace.branding_value("customer_term")) %></h3><%= link_to t("customer.common.all"), member_wallet_path %></div>
-  <div data-controller="carousel">
-    <div class="l-carousel" data-carousel-target="track">
-      <div class="l-offer"><div class="l-eyebrow" style="color:#fff; opacity:.85;"><%= t("customer.home.offer_gold_eyebrow") %></div><div class="big"><%= t("customer.home.offer_gold_big") %></div><div style="font-size:12.5px; opacity:.9;"><%= t("customer.home.offer_gold_sub") %></div></div>
-      <div class="l-offer" style="background:linear-gradient(135deg,#3F7A57,#2C5A3E);"><div class="l-eyebrow" style="color:#fff; opacity:.85;"><%= t("customer.home.offer_bday_eyebrow") %></div><div class="big"><%= t("customer.home.offer_bday_big") %></div><div style="font-size:12.5px; opacity:.9;"><%= t("customer.home.offer_bday_sub") %></div></div>
-      <div class="l-offer" style="background:linear-gradient(135deg,#4B9FE1,#3574B0);"><div class="l-eyebrow" style="color:#fff; opacity:.85;"><%= t("customer.home.offer_refer_eyebrow") %></div><div class="big"><%= t("customer.home.offer_refer_big") %></div><div style="font-size:12.5px; opacity:.9;"><%= t("customer.home.offer_refer_sub") %></div></div>
+  <%# ---- Offers carousel (real redeemable rewards; each card opens the reward) ---- %>
+  <% if @offers.present? %>
+    <% grads = ["linear-gradient(135deg,#8C4A2F,#E08A3C)", "linear-gradient(135deg,#3F7A57,#2C5A3E)",
+                "linear-gradient(135deg,#4B9FE1,#3574B0)", "linear-gradient(135deg,#7A5C3A,#B08D57)"] %>
+    <div class="l-section-h"><h3><%= t("customer.home.offers_title", term: current_workspace.branding_value("customer_term")) %></h3><%= link_to t("customer.common.all"), member_wallet_path(tab: "rewards") %></div>
+    <div data-controller="carousel">
+      <div class="l-carousel" data-carousel-target="track">
+        <% @offers.each_with_index do |r, i| %>
+          <%= link_to member_reward_path(r), class: "l-offer", style: "text-decoration:none; color:#fff; background:#{grads[i % grads.size]};" do %>
+            <div class="l-eyebrow" style="color:#fff; opacity:.85;"><%= r.display_icon %> <%= r.value_label %></div>
+            <div class="big"><%= r.title %></div>
+            <div style="font-size:12.5px; opacity:.9;">
+              <% if r.cost_points %><%= t("customer.common.points_count", n: number_with_delimiter(r.cost_points)) %> · <% end %><%= t("customer.reward.redeem_cta", default: "Đổi ngay") %> ›
+            </div>
+          <% end %>
+        <% end %>
+      </div>
+      <div class="l-dots" data-carousel-target="dots"></div>
     </div>
-    <div class="l-dots" data-carousel-target="dots"></div>
-  </div>
+  <% end %>
 
   <%# ---- Today's missions ---- %>
   <% if @missions&.any? %>

@@ -12,6 +12,7 @@ module Customer
         @member = current_member
         @tier   = @member.tier
         @unread = @member.notifications.unread.count
+        @offers = current_workspace.rewards.redeemable.ordered.to_a.select(&:available?).first(6)
         prog = current_workspace.program
         if prog.gamification_enabled
           @missions = current_workspace.missions.active.ordered.where(period: "daily").limit(3).to_a
