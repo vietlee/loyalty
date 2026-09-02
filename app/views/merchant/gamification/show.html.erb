@@ -14,7 +14,7 @@
   <div class="l-panel">
     <h3 class="l-display" style="font-size:18px; margin-bottom:10px;">🎟️ Thẻ tem</h3>
     <% @stamp_cards.each do |c| %>
-      <details style="border-bottom:1px solid var(--line);">
+      <details class="l-editrow">
         <summary style="display:flex; align-items:center; gap:10px; padding:8px 0; cursor:pointer; list-style:none;">
           <span style="font-size:20px;"><%= c.display_icon %></span>
           <div style="flex:1;"><strong><%= c.title %></strong><div style="font-size:12px; color:var(--ink-2);">Mua <%= c.target_count %> · thưởng <%= c.reward&.title || "—" %></div></div>

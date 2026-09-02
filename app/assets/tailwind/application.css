@@ -360,3 +360,9 @@ input[type="range"], input[type="checkbox"], input[type="radio"], progress { acc
 .l-qrmodal-close { position:absolute; top:14px; right:14px; width:36px; height:36px; border-radius:50%;
   border:1px solid var(--line); background:var(--surface-2); color:var(--ink); font-size:15px; line-height:1;
   cursor:pointer; display:grid; place-items:center; }
+
+/* Editable list rows (stamp cards): highlight the row currently being edited */
+.l-editrow { border-bottom:1px solid var(--line); border-radius:12px; margin:0 -12px; padding:0 12px; transition:background .15s ease; }
+.l-editrow[open] { background: color-mix(in srgb, var(--primary) 7%, transparent);
+  box-shadow: inset 3px 0 0 var(--primary); padding-bottom:6px; }
+.l-editrow[open] > summary .l-chip { background: var(--primary); color: var(--on-primary); }
