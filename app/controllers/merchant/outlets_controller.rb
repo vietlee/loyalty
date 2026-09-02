@@ -1,11 +1,23 @@
 module Merchant
   class OutletsController < BaseController
     before_action :require_manager!, except: [:index]
-    before_action :set_outlet, only: [:edit, :update, :destroy]
+    before_action :set_outlet, only: [:show, :edit, :update, :destroy]
 
     def index
       @outlets = current_workspace.outlets.order(:name)
       @outlet  = Outlet.new(active: true)
+    end
+
+    # Branch detail: this outlet's performance, staff and recent activity.
+    def show
+      oid = @outlet.id
+      @revenue   = Purchase.where(outlet_id: oid).sum(:amount)
+      @points    = Purchase.where(outlet_id: oid).sum(:points_earned)
+      @purchases = Purchase.where(outlet_id: oid).count
+      @customers = Purchase.where(outlet_id: oid).distinct.count(:member_id)
+      @vouchers  = Voucher.where(used_outlet_id: oid, state: "used").count
+      @recent    = PointTransaction.where(outlet_id: oid).includes(:member).order(created_at: :desc).limit(15).to_a
+      @staff     = current_workspace.memberships.where(outlet_id: oid).includes(:user).to_a
     end
 
     def create

@@ -27,7 +27,7 @@
 
 <%= form_with url: merchant_earn_lookup_path, method: :post do %>
   <div style="display:flex; gap:8px;">
-    <input name="phone" inputmode="numeric" class="l-field" placeholder="Số điện thoại khách" autocomplete="off">
+    <input name="email" type="email" class="l-field" placeholder="Email khách" autocomplete="off">
     <%= submit_tag "Tìm khách", class: "l-btn l-btn-primary", style: "white-space:nowrap;" %>
   </div>
 <% end %>

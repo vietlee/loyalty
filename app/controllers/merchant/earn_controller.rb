@@ -38,6 +38,8 @@ module Merchant
     def find_member
       if params[:token].present?
         MemberQr.decode(params[:token], workspace: current_workspace)
+      elsif params[:email].present?
+        Member.find_by(email: params[:email].to_s.strip.downcase)
       elsif params[:phone].present?
         Member.find_by(phone: params[:phone].to_s.gsub(/\s+/, ""))
       end

@@ -11,7 +11,7 @@
     </div>
     <div style="flex:1; min-width:0;">
       <div style="font-weight:700; font-size:17px;"><%= @member.display_name %></div>
-      <div style="color:var(--ink-2); font-size:13px;"><%= @member.phone %></div>
+      <div style="color:var(--ink-2); font-size:13px;"><%= @member.email.presence || @member.phone %></div>
     </div>
     <div style="text-align:right;">
       <div class="l-chip l-chip-brand"><%= @member.tier&.name || "—" %></div>

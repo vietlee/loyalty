@@ -113,7 +113,9 @@
           <% @outlet_stats.each do |r| %>
             <tr style="border-top:1px solid var(--line);">
               <td style="padding:11px 10px; min-width:180px;">
-                <div style="font-weight:600;"><%= r[:name] %></div>
+                <div style="font-weight:600;">
+                  <% if r[:id] %><%= link_to r[:name], merchant_outlet_path(r[:id]), style: "color:var(--ink); text-decoration:none;" %><% else %><%= r[:name] %><% end %>
+                </div>
                 <div style="height:6px; border-radius:999px; background:var(--surface-2); overflow:hidden; margin-top:5px;">
                   <div style="height:100%; width:<%= (r[:revenue].to_f / max_rev * 100).round %>%; background:var(--primary); border-radius:999px;"></div>
                 </div>

@@ -29,6 +29,11 @@
   <%= link_to merchant_root_path, class: "l-nav-item #{'active' if nav == :dashboard}" do %>
     <span>▣</span><span>Tổng quan<span class="en">Dashboard</span></span>
   <% end %>
+  <% if current_membership&.can_manage? %>
+    <%= link_to merchant_outlets_path, class: "l-nav-item #{'active' if nav == :outlets}" do %>
+      <span>⌂</span><span>Chi nhánh<span class="en">Outlets</span></span>
+    <% end %>
+  <% end %>
   <%= link_to merchant_scanner_path, class: "l-nav-item #{'active' if nav == :scanner}" do %>
     <span>⧉</span><span>Máy quét tại quầy<span class="en">Counter scanner</span></span>
   <% end %>
@@ -55,9 +60,6 @@
   <% end %>
   <%= link_to merchant_appearance_path, class: "l-nav-item #{'active' if nav == :appearance}" do %>
     <span>◐</span><span>Thương hiệu &amp; Theme<span class="en">Branding</span></span>
-  <% end %>
-  <%= link_to merchant_outlets_path, class: "l-nav-item #{'active' if nav == :outlets}" do %>
-    <span>⌂</span><span>Chi nhánh<span class="en">Outlets</span></span>
   <% end %>
   <%= link_to merchant_staff_index_path, class: "l-nav-item #{'active' if nav == :staff}" do %>
     <span>☻</span><span>Nhân viên<span class="en">Staff</span></span>

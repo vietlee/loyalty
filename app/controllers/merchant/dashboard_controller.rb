@@ -95,7 +95,7 @@ module Merchant
       vouchers  = Voucher.where(state: "used").group(:used_outlet_id).count
 
       row = lambda do |id, name|
-        { name: name, revenue: revenue[id].to_i, points: points[id].to_i,
+        { id: id, name: name, revenue: revenue[id].to_i, points: points[id].to_i,
           purchases: purchases[id].to_i, customers: customers[id].to_i, vouchers: vouchers[id].to_i }
       end
       rows = outlets.map { |o| row.call(o.id, o.name) }

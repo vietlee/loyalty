@@ -24,13 +24,13 @@
   </div>
   <table style="width:100%; border-collapse:collapse;">
     <thead><tr style="text-align:left; color:var(--ink-2); font-size:12px; text-transform:uppercase; letter-spacing:.08em;">
-      <th style="padding:10px 8px;">Tên</th><th>SĐT</th><th>Điểm</th><th>Hạng</th><th>Sinh nhật</th><th>Tham gia</th>
+      <th style="padding:10px 8px;">Tên</th><th>Email</th><th>Điểm</th><th>Hạng</th><th>Sinh nhật</th><th>Tham gia</th>
     </tr></thead>
     <tbody>
       <% @members.each do |m| %>
         <tr style="border-top:1px solid var(--line);">
           <td style="padding:12px 8px; font-weight:600;"><%= m.display_name %></td>
-          <td class="l-mono"><%= m.phone %></td>
+          <td class="l-mono"><%= m.email.presence || m.phone %></td>
           <td><%= number_with_delimiter(m.points_balance) %></td>
           <td><%= m.tier_key&.capitalize || "—" %></td>
           <td style="color:var(--ink-2);"><%= m.birthday ? l(m.birthday, format: :short) : "—" %></td>

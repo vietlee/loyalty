@@ -11,7 +11,7 @@
           <div class="l-panel" style="padding:16px; <%= 'opacity:.5;' unless o.active? %>">
             <div style="display:flex; align-items:center; gap:8px;">
               <span style="font-size:20px;">🏪</span>
-              <strong style="flex:1;"><%= o.name %></strong>
+              <strong style="flex:1;"><%= link_to o.name, merchant_outlet_path(o), style: "color:var(--ink); text-decoration:none;" %></strong>
               <% if o.code %><span class="l-chip"><%= o.code %></span><% end %>
             </div>
             <div style="font-size:13px; color:var(--ink-2); margin-top:8px;"><%= o.address %></div>

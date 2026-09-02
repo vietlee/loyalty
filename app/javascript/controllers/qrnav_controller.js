@@ -7,11 +7,14 @@ export default class extends Controller {
   static values = { resolveUrl: String }
 
   connect() {
-    // Auto-start the camera so users don't tap "Bật camera" every time. If the
-    // browser needs a gesture / denies access, start() leaves the overlay button
-    // visible as a fallback.
+    // If the camera was granted before, hide the "Bật camera" overlay immediately
+    // (no flash while the stream warms up); otherwise keep it as a fallback.
+    if (this.cameraSeen() && this.hasOverlayTarget) this.overlayTarget.style.display = "none"
     this.start()
   }
+
+  cameraSeen() { try { return localStorage.getItem("qrnavCameraOk") === "1" } catch (e) { return false } }
+  rememberCamera(ok) { try { ok ? localStorage.setItem("qrnavCameraOk", "1") : localStorage.removeItem("qrnavCameraOk") } catch (e) {} }
 
   async start() {
     if (!navigator.mediaDevices?.getUserMedia) {
@@ -24,6 +27,7 @@ export default class extends Controller {
       this.videoTarget.setAttribute("playsinline", "true")
       await this.videoTarget.play()
       if (this.hasOverlayTarget) this.overlayTarget.style.display = "none"
+      this.rememberCamera(true)
 
       if ("BarcodeDetector" in window) {
         this.mode = "native"
@@ -37,6 +41,9 @@ export default class extends Controller {
       this.statusTarget.textContent = "Đang quét…"
       this.timer = setInterval(() => this.tick(), this.mode === "jsqr" ? 250 : 400)
     } catch (e) {
+      // Access failed/denied — restore the overlay button so the user can retry.
+      this.rememberCamera(false)
+      if (this.hasOverlayTarget) this.overlayTarget.style.display = ""
       this.statusTarget.textContent = "Không truy cập được camera — hãy nhập mã bên dưới."
     }
   }
