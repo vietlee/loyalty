@@ -8,6 +8,18 @@ class ApplicationController < ActionController::Base
 
   helper_method :merchant_url_for, :customer_url_for, :workspace_host
 
+  # Turbo expects a 303 See Other after a form submission. With a plain 302,
+  # Turbo re-requests the redirect target as a separate GET, which drops the
+  # one-shot flash — so success/notice toasts never render. Default mutating
+  # redirects to 303 so the flash survives into the rendered page.
+  def redirect_to(options = {}, response_options = {})
+    if response_options[:status].blank? &&
+       %w[POST PUT PATCH DELETE].include?(request.request_method)
+      response_options[:status] = :see_other
+    end
+    super
+  end
+
   # Base platform host (no subdomain), e.g. "loyalty.czin.net".
   PLATFORM_HOST = ENV.fetch("PLATFORM_HOST", "loyalty.czin.net")
 
