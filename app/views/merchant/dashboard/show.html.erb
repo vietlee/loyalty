@@ -44,7 +44,7 @@
   <div class="l-kpi"><div class="k">Thành viên</div><div class="v"><%= number_with_delimiter(@members_count) %></div><div class="d"><%= number_with_delimiter(@active_members) %> đang hoạt động</div></div>
   <div class="l-kpi"><div class="k">Điểm đã phát</div><div class="v"><%= number_with_delimiter(@points_issued) %></div><div class="d"><%= @purchases_count %> giao dịch</div></div>
   <div class="l-kpi"><div class="k">Điểm đã đổi</div><div class="v"><%= number_with_delimiter(@points_redeemed) %></div><div class="d">tỷ lệ đổi <%= @redemption_rate %>%</div></div>
-  <div class="l-kpi"><div class="k">Chi nhánh</div><div class="v"><%= @outlets_count %></div><div class="d">outlets</div></div>
+  <div class="l-kpi"><div class="k">Điểm chưa dùng</div><div class="v"><%= number_with_delimiter(@points_outstanding) %></div><div class="d">khách đang giữ (nợ điểm)</div></div>
 </div>
 
 <%# ---- Growth chart + loyalty snapshot ---- %>

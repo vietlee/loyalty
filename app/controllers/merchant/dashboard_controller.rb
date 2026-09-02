@@ -12,6 +12,7 @@ module Merchant
       if current_workspace
         @points_issued   = PointTransaction.credits.sum(:amount)
         @points_redeemed = PointTransaction.debits.sum(:amount).abs
+        @points_outstanding = [Member.sum(:points_balance), 0].max # unredeemed = a liability
         @purchases_count = Purchase.count
         @redemption_rate = @points_issued.zero? ? 0 : (@points_redeemed.to_f / @points_issued * 100).round
         @active_members  = Member.where("lifetime_points > 0").count

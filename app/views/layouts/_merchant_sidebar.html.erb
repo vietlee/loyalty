@@ -75,17 +75,6 @@
   <% end %>
   <% end %>
 
-  <div style="margin-top:14px; padding:0 4px;">
-    <div class="l-navgrp" style="margin-bottom:6px;"><%= t("merchant.nav.language") %></div>
-    <span style="display:inline-flex; border:1px solid rgba(255,255,255,.16); border-radius:999px; overflow:hidden;">
-      <% [["VI", :vi], ["EN", :en]].each do |lbl, loc| %>
-        <% on = I18n.locale == loc %>
-        <%= link_to lbl, set_locale_path(loc),
-              style: "padding:5px 14px; font-size:12px; font-weight:700; text-decoration:none; #{on ? 'background:var(--primary); color:var(--on-primary);' : 'color:#EDE4D8; opacity:.7;'}" %>
-      <% end %>
-    </span>
-  </div>
-
   <div class="foot">
     <%= link_to merchant_account_path, style: "display:flex; align-items:center; gap:10px; flex:1; min-width:0; text-decoration:none; color:inherit; border-radius:10px; padding:4px 6px; #{'background:rgba(255,255,255,.1);' if nav == :account}", title: t("merchant.nav.account") do %>
       <div class="av"><%= current_user&.initials %></div>

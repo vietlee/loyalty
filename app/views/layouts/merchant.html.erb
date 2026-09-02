@@ -15,9 +15,14 @@
             <%= content_for?(:title) ? yield(:title) : "Tổng quan" %>
             <span class="en"><%= content_for?(:title_en) ? yield(:title_en) : "OVERVIEW" %></span>
           </div>
-          <div style="margin-left:auto; display:flex; gap:8px; align-items:center;">
-            <%= link_to "VI", set_locale_path(:vi), class: "l-chip #{'l-chip-brand' if I18n.locale == :vi}" %>
-            <%= link_to "EN", set_locale_path(:en), class: "l-chip #{'l-chip-brand' if I18n.locale == :en}" %>
+          <div style="margin-left:auto;">
+            <span style="display:inline-flex; border:1px solid var(--line); border-radius:999px; overflow:hidden;">
+              <% [["VI", :vi], ["EN", :en]].each do |lbl, loc| %>
+                <% on = I18n.locale == loc %>
+                <%= link_to lbl, set_locale_path(loc),
+                      style: "padding:6px 16px; font-size:12px; font-weight:700; text-decoration:none; #{on ? 'background:var(--primary); color:var(--on-primary);' : 'color:var(--ink-2);'}" %>
+              <% end %>
+            </span>
           </div>
         </header>
         <div class="l-content"><%= yield %></div>
