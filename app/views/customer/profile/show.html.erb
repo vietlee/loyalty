@@ -19,8 +19,11 @@
       <%= f.email_field :email, class: "l-field", autocomplete: "email", placeholder: "ban@vidu.com" %>
 
       <label class="l-label" style="margin-top:12px;"><%= t("customer.profile.birthday") %></label>
-      <%# lang forces the native picker to display DD/MM/YYYY; the submitted value stays ISO. %>
-      <%= f.date_field :birthday, class: "l-field", max: Date.current.iso8601, lang: "vi-VN" %>
+      <%# Masked text field guarantees DD/MM/YYYY on every browser (native date
+          inputs render in the OS locale and can't be forced). %>
+      <%= f.text_field :birthday, value: @member.birthday&.strftime("%d/%m/%Y"),
+            class: "l-field", inputmode: "numeric", maxlength: 10, placeholder: "DD/MM/YYYY",
+            autocomplete: "bday", data: { controller: "datemask", action: "input->datemask#format" } %>
       <div style="font-size:12px; color:var(--ink-2); margin-top:6px;"><%= t("customer.profile.birthday_hint") %></div>
 
       <%= f.submit t("customer.profile.save"), class: "l-btn l-btn-primary l-btn-block", style: "margin-top:16px;" %>

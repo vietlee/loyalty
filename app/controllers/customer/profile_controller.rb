@@ -9,7 +9,16 @@ module Customer
 
     def update
       @member = current_member
-      if @member.update(profile_params)
+      attrs = profile_params
+      raw_bday = params.dig(:member, :birthday).to_s.strip
+
+      if raw_bday.present? && attrs[:birthday].nil?
+        @member.assign_attributes(attrs.except(:birthday))
+        @member.errors.add(:birthday, "không hợp lệ — nhập theo DD/MM/YYYY")
+        return render :show, status: :unprocessable_entity
+      end
+
+      if @member.update(attrs)
         redirect_to member_profile_path, notice: t("customer.profile.updated")
       else
         render :show, status: :unprocessable_entity
@@ -19,7 +28,19 @@ module Customer
     private
 
     def profile_params
-      params.require(:member).permit(:name, :email, :birthday)
+      p = params.require(:member).permit(:name, :email, :birthday)
+      p[:birthday] = parse_dmy(p[:birthday]) if p.key?(:birthday)
+      p
+    end
+
+    # "01/03/1994" (or 1/3/1994, with - or .) → Date; nil if unparseable/blank.
+    def parse_dmy(str)
+      s = str.to_s.strip
+      return nil if s.blank?
+      d, m, y = s.split(%r{[/\-.]}).map { |x| x.to_i }
+      Date.new(y, m, d)
+    rescue ArgumentError, TypeError
+      nil
     end
   end
 end
