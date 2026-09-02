@@ -2,7 +2,7 @@
 <h1><%= admin ? "Super Admin" : "Merchant" %></h1>
 <p class="sub"><%= admin ? "Đăng nhập vận hành nền tảng" : "Đăng nhập cửa hàng của bạn" %></p>
 
-<%= form_for(resource, as: resource_name, url: session_path(resource_name)) do |f| %>
+<%= form_for(resource, as: resource_name, url: session_path(resource_name), html: { data: { turbo: false } }) do |f| %>
   <div class="field">
     <%= f.label :email, "Email", class: "l-label" %>
     <%= f.email_field :email, autofocus: true, autocomplete: "email", class: "l-field", placeholder: "you@example.com" %>
