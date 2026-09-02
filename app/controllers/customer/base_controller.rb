@@ -61,6 +61,9 @@ module Customer
 
     def require_member!
       return if member_signed_in? && current_member&.workspace_id == current_workspace&.id
+      # Remember where they were headed (e.g. a scanned promo QR) so we can
+      # resume it right after login — otherwise a first-time scan is lost.
+      session[:return_to] = request.fullpath if request.get?
       redirect_to member_login_path
     end
 

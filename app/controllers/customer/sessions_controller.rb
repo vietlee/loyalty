@@ -56,7 +56,11 @@ module Customer
         session.delete(:otp_email)
         member.remember_me = true          # keep them signed in for a long time
         sign_in(:member, member)
-        redirect_to member_root_path, notice: "#{current_workspace.name} chào mừng bạn 👋"
+        # Resume a stashed target (e.g. the promo QR they scanned) so the reward
+        # is claimed right after login; otherwise land on home.
+        target = session.delete(:return_to).presence || member_root_path
+        welcome = is_new ? "Chào mừng bạn đến với #{current_workspace.name} 👋" : "#{current_workspace.name} chào mừng bạn 👋"
+        redirect_to target, notice: welcome
       else
         @dev_code = latest_dev_code(@email) if show_otp_onscreen?
         flash.now[:alert] = otp_error_message(result)

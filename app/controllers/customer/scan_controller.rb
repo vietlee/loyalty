@@ -47,10 +47,22 @@ module Customer
       @promo.register_scan!
       @voucher, err = @promo.claim!(current_member)
       case err
-      when nil      then render :claim_success
+      when nil      then notify_claim(@voucher); render :claim_success
       when :already then render :claim_already
       else render :claim_unavailable, status: :unprocessable_entity
       end
+    end
+
+    # Drop a persistent inbox notification so the claimed reward isn't only on
+    # the one-time success screen (also nudges the wallet "Khả dụng" badge).
+    def notify_claim(voucher)
+      return unless voucher
+      Notification.create!(workspace: current_workspace, member: current_member, kind: "reward",
+        title: "Bạn vừa nhận ưu đãi! 🎁",
+        body: "#{voucher.reward&.title} đã vào ví của bạn — xem trong mục Khả dụng.",
+        icon: "🎁", deep_link: "/vouchers/#{voucher.id}")
+    rescue => e
+      Rails.logger.error("[Scan] notify_claim: #{e.class} #{e.message}")
     end
 
     # ---- POS self-scan earn (§6.2) ----
