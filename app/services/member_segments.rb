@@ -11,7 +11,7 @@ module MemberSegments
     "birthday" => { label: "Sinh nhật tháng này",  icon: "🎂" }
   }.freeze
 
-  def label(key) = PRESETS.dig(key, :label) || "Tất cả khách"
+  def label(key) = I18n.t("merchant.segments.#{key}", default: (PRESETS.dig(key, :label) || "Tất cả khách"))
   def icon(key)  = PRESETS.dig(key, :icon) || "👥"
 
   def resolve(key)

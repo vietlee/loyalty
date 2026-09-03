@@ -530,6 +530,44 @@ vi:
       preview_label: "Xem trước · Customer app"
       pv_points: "Điểm hiện có"
       pv_redeem: "Đổi thưởng ngay"
+    campaign_types:
+      promo_voucher: "Phát voucher (QR)"
+      double_points: "Nhân đôi điểm"
+      happy_hour: "Giờ vàng"
+      event: "Sự kiện"
+      flash_mission: "Nhiệm vụ chớp nhoáng"
+    campaign_audiences:
+      all: "Tất cả khách"
+      vip: "Khách VIP"
+      new: "Khách mới"
+      at_risk: "Sắp rời bỏ"
+      birthday: "Sinh nhật"
+    campaign_statuses:
+      draft: "Nháp"
+      scheduled: "Đã lên lịch"
+      running: "Đang chạy"
+      paused: "Tạm dừng"
+      ended: "Đã kết thúc"
+    segments:
+      all: "Tất cả khách"
+      vip: "Khách VIP"
+      at_risk: "Sắp rời bỏ (>30 ngày)"
+      new: "Khách mới trong tuần"
+      birthday: "Sinh nhật tháng này"
+    plans:
+      starter:
+        features: ["1 chi nhánh", "Points + Tiers + Stamp", "Tối đa 500 khách", "Máy quét tại quầy"]
+      growth:
+        features: ["5 chi nhánh", "Đủ 4 cơ chế loyalty", "Không giới hạn khách", "Campaign + mã QR phát hành", "CRM & thông báo"]
+      scale:
+        features: ["Không giới hạn chi nhánh", "Tên miền riêng", "A/B testing", "Ưu tiên hỗ trợ"]
+    reward_units:
+      vnd_label: "Giá trị (đ)"
+      percent_label: "Giá trị (%)"
+      item_label: "Số lượng"
+      vnd_ph: "VD: 50000"
+      percent_ph: "VD: 10"
+      item_ph: "VD: 1"
   date:
     formats:
       short: "%d/%m/%Y"

@@ -10,11 +10,11 @@
       <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-top:12px;">
         <div>
           <label class="l-label"><%= t("merchant.campaigns.kind") %></label>
-          <%= f.select :campaign_type, Campaign::TYPE_LABELS.map { |k, v| [v, k] }, {}, class: "l-field" %>
+          <%= f.select :campaign_type, Campaign::TYPE_LABELS.keys.map { |k| [t("merchant.campaign_types.#{k}"), k] }, {}, class: "l-field" %>
         </div>
         <div>
           <label class="l-label"><%= t("merchant.campaigns.audience") %></label>
-          <%= f.select :audience, Campaign::AUDIENCE_LABELS.map { |k, v| [v, k] }, {}, class: "l-field" %>
+          <%= f.select :audience, Campaign::AUDIENCE_LABELS.keys.map { |k| [t("merchant.campaign_audiences.#{k}"), k] }, {}, class: "l-field" %>
         </div>
       </div>
     </div>

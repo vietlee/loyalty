@@ -525,6 +525,44 @@ en:
       preview_label: "Preview · Customer app"
       pv_points: "Points balance"
       pv_redeem: "Redeem now"
+    campaign_types:
+      promo_voucher: "Voucher drop (QR)"
+      double_points: "Double points"
+      happy_hour: "Happy hour"
+      event: "Event"
+      flash_mission: "Flash mission"
+    campaign_audiences:
+      all: "All customers"
+      vip: "VIP customers"
+      new: "New customers"
+      at_risk: "At risk"
+      birthday: "Birthday"
+    campaign_statuses:
+      draft: "Draft"
+      scheduled: "Scheduled"
+      running: "Running"
+      paused: "Paused"
+      ended: "Ended"
+    segments:
+      all: "All customers"
+      vip: "VIP customers"
+      at_risk: "At risk (>30 days)"
+      new: "New this week"
+      birthday: "Birthday this month"
+    plans:
+      starter:
+        features: ["1 branch", "Points + Tiers + Stamp", "Up to 500 customers", "Counter scanner"]
+      growth:
+        features: ["5 branches", "All 4 loyalty mechanics", "Unlimited customers", "Campaigns + claim QR", "CRM & notifications"]
+      scale:
+        features: ["Unlimited branches", "Custom domain", "A/B testing", "Priority support"]
+    reward_units:
+      vnd_label: "Value (đ)"
+      percent_label: "Value (%)"
+      item_label: "Quantity"
+      vnd_ph: "e.g. 50000"
+      percent_ph: "e.g. 10"
+      item_ph: "e.g. 1"
   date:
     formats:
       short: "%b %d, %Y"

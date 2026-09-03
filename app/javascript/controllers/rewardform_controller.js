@@ -4,6 +4,10 @@ import { Controller } from "@hotwired/stimulus"
 // a % discount can't be entered as a VND amount by mistake.
 export default class extends Controller {
   static targets = ["kind", "unit", "value", "valueLabel"]
+  static values = {
+    vndLabel: String, percentLabel: String, itemLabel: String,
+    vndPh: String, percentPh: String, itemPh: String,
+  }
 
   connect() { this.syncLabel() }
 
@@ -17,12 +21,12 @@ export default class extends Controller {
 
   syncLabel() {
     const map = {
-      vnd:     ["Giá trị (đ)", "VD: 50000"],
-      percent: ["Giá trị (%)", "VD: 10"],
-      item:    ["Số lượng",    "VD: 1"],
+      vnd:     [this.vndLabelValue, this.vndPhValue],
+      percent: [this.percentLabelValue, this.percentPhValue],
+      item:    [this.itemLabelValue, this.itemPhValue],
     }
-    const [label, ph] = map[this.unitTarget.value] || ["Giá trị", ""]
-    if (this.hasValueLabelTarget) this.valueLabelTarget.textContent = label
-    if (this.hasValueTarget) this.valueTarget.placeholder = ph
+    const [label, ph] = map[this.unitTarget.value] || [this.vndLabelValue, ""]
+    if (label && this.hasValueLabelTarget) this.valueLabelTarget.textContent = label
+    if (this.hasValueTarget) this.valueTarget.placeholder = ph || ""
   }
 }

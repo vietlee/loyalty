@@ -22,8 +22,5 @@ class Membership < ApplicationRecord
     true # every role can operate the counter scanner
   end
 
-  def label
-    { "owner" => "Chủ cửa hàng", "manager" => "Quản lý",
-      "staff" => "Nhân viên", "cashier" => "Thu ngân" }[role]
-  end
+  def label = I18n.t("merchant.roles.#{role}", default: role)
 end

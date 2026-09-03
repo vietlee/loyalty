@@ -1,4 +1,10 @@
-<%= form_with model: reward, url: url, method: method, data: { controller: "rewardform" } do |f| %>
+<%= form_with model: reward, url: url, method: method, data: { controller: "rewardform",
+      rewardform_vnd_label_value: t("merchant.reward_units.vnd_label"),
+      rewardform_percent_label_value: t("merchant.reward_units.percent_label"),
+      rewardform_item_label_value: t("merchant.reward_units.item_label"),
+      rewardform_vnd_ph_value: t("merchant.reward_units.vnd_ph"),
+      rewardform_percent_ph_value: t("merchant.reward_units.percent_ph"),
+      rewardform_item_ph_value: t("merchant.reward_units.item_ph") } do |f| %>
   <% if reward.errors.any? %>
     <div class="l-chip" style="background:#F3DDD7; color:#B4402F; margin-bottom:12px;"><%= reward.errors.full_messages.to_sentence %></div>
   <% end %>

@@ -37,4 +37,10 @@ class Plan < ApplicationRecord
   def unlimited_outlets? = max_outlets.nil?
   def unlimited_members? = max_members.nil?
   def price_label = "#{ActiveSupport::NumberHelper.number_to_delimited(price)}đ"
+
+  # Localized feature list (falls back to the stored VN features).
+  def localized_features
+    vals = I18n.t("merchant.plans.#{key}.features", default: nil)
+    vals.is_a?(Array) ? vals : features
+  end
 end

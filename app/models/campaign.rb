@@ -24,8 +24,8 @@ class Campaign < ApplicationRecord
     "at_risk" => "Sắp rời bỏ", "birthday" => "Sinh nhật"
   }.freeze
 
-  def type_label     = TYPE_LABELS[campaign_type]
-  def audience_label = AUDIENCE_LABELS[audience]
+  def type_label     = I18n.t("merchant.campaign_types.#{campaign_type}", default: TYPE_LABELS[campaign_type])
+  def audience_label = I18n.t("merchant.campaign_audiences.#{audience}", default: AUDIENCE_LABELS[audience])
   def content_value(key) = content.presence&.dig(key.to_s)
 
   def live?
@@ -34,8 +34,5 @@ class Campaign < ApplicationRecord
       (ends_at.nil? || ends_at >= Time.current)
   end
 
-  def status_label
-    { "draft" => "Nháp", "scheduled" => "Đã lên lịch", "running" => "Đang chạy",
-      "paused" => "Tạm dừng", "ended" => "Đã kết thúc" }[status]
-  end
+  def status_label = I18n.t("merchant.campaign_statuses.#{status}", default: status)
 end
