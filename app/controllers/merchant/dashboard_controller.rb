@@ -4,16 +4,17 @@ module Merchant
 
     def show
       return redirect_to merchant_onboarding_path if current_workspace && !current_workspace.onboarded?
+      @range = resolve_range
       return load_branch_dashboard if current_workspace && branch_scoped?
       @members_count   = current_workspace ? Member.count : 0
       @outlets_count   = current_workspace ? Outlet.count : 0
       @program         = current_program
       @tiers           = current_workspace ? current_workspace.tiers.ordered.to_a : []
       if current_workspace
-        @points_issued   = PointTransaction.credits.sum(:amount)
-        @points_redeemed = PointTransaction.debits.sum(:amount).abs
-        @points_outstanding = [Member.sum(:points_balance), 0].max # unredeemed = a liability
-        @purchases_count = Purchase.count
+        @points_issued   = in_range(PointTransaction.credits).sum(:amount)
+        @points_redeemed = in_range(PointTransaction.debits).sum(:amount).abs
+        @points_outstanding = [Member.sum(:points_balance), 0].max # unredeemed = a liability (state, not range)
+        @purchases_count = in_range(Purchase).count
         @redemption_rate = @points_issued.zero? ? 0 : (@points_redeemed.to_f / @points_issued * 100).round
         @active_members  = Member.where("lifetime_points > 0").count
         @member_growth   = monthly_member_growth
@@ -46,6 +47,46 @@ module Merchant
 
     private
 
+    RANGE_PRESETS = %w[7d 30d 90d mtd all].freeze
+
+    # Resolve the active date range from ?range= preset or ?from=/?to= custom dates.
+    # Flow metrics (points earned/redeemed, purchases, branch performance) honour this;
+    # state metrics (member count, outstanding liability, tiers) stay lifetime.
+    def resolve_range
+      from = parse_range_date(params[:from])
+      to   = parse_range_date(params[:to])
+      if from || to
+        f = (from || Date.new(2000, 1, 1)).beginning_of_day
+        t = (to || Date.current).end_of_day
+        f, t = t, f if f > t
+        return { key: "custom", from: f, to: t,
+                 label: "#{f.to_date.strftime('%d/%m/%y')} – #{t.to_date.strftime('%d/%m/%y')}" }
+      end
+      key = params[:range].to_s.presence_in(RANGE_PRESETS) || "30d"
+      now = Time.current
+      spec =
+        case key
+        when "7d"  then { from: 7.days.ago.beginning_of_day, to: now }
+        when "90d" then { from: 90.days.ago.beginning_of_day, to: now }
+        when "mtd" then { from: now.beginning_of_month, to: now }
+        when "all" then { from: nil, to: nil }
+        else            { from: 30.days.ago.beginning_of_day, to: now }
+        end
+      spec.merge(key: key, label: I18n.t("merchant.dashboard.range_#{key}"))
+    end
+
+    def parse_range_date(raw)
+      return nil if raw.blank?
+      Date.iso8601(raw.to_s)
+    rescue ArgumentError, TypeError
+      nil
+    end
+
+    # Scope a relation to the active range (no-op for the "all" preset).
+    def in_range(rel)
+      @range && @range[:from] ? rel.where(created_at: @range[:from]..@range[:to]) : rel
+    end
+
     GRACE_DAYS = 10 # days after expiry before the workspace is locked
 
     # Returns a banner descriptor when the subscription needs attention, else nil.
@@ -77,23 +118,31 @@ module Merchant
     def load_branch_dashboard
       @branch = scoped_outlet
       oid = @branch.id
-      @members_count   = Purchase.where(outlet_id: oid).distinct.count(:member_id)
-      @points_issued   = Purchase.where(outlet_id: oid).sum(:points_earned)
-      @purchases_count = Purchase.where(outlet_id: oid).count
-      @revenue         = Purchase.where(outlet_id: oid).sum(:amount)
-      @vouchers_used   = Voucher.where(used_outlet_id: oid, state: "used").count
+      base = in_range(Purchase.where(outlet_id: oid))
+      @members_count   = base.distinct.count(:member_id)
+      @points_issued   = base.sum(:points_earned)
+      @purchases_count = base.count
+      @revenue         = base.sum(:amount)
+      vouchers = Voucher.where(used_outlet_id: oid, state: "used")
+      @vouchers_used   = used_in_range(vouchers).count
       render :show
+    end
+
+    # Vouchers are dated by used_at, not created_at.
+    def used_in_range(rel)
+      @range && @range[:from] ? rel.where(used_at: @range[:from]..@range[:to]) : rel
     end
 
     # Per-branch performance. Purchases and used vouchers are already tagged with
     # the outlet the staff belongs to, so we just group by outlet.
     def build_outlet_stats
       outlets   = current_workspace.outlets.order(:name).to_a
-      purchases = Purchase.group(:outlet_id).count
-      revenue   = Purchase.group(:outlet_id).sum(:amount)
-      points    = Purchase.group(:outlet_id).sum(:points_earned)
-      customers = Purchase.distinct.group(:outlet_id).count(:member_id)
-      vouchers  = Voucher.where(state: "used").group(:used_outlet_id).count
+      scoped    = in_range(Purchase)
+      purchases = scoped.group(:outlet_id).count
+      revenue   = scoped.group(:outlet_id).sum(:amount)
+      points    = scoped.group(:outlet_id).sum(:points_earned)
+      customers = scoped.distinct.group(:outlet_id).count(:member_id)
+      vouchers  = used_in_range(Voucher.where(state: "used")).group(:used_outlet_id).count
 
       row = lambda do |id, name|
         { id: id, name: name, revenue: revenue[id].to_i, points: points[id].to_i,

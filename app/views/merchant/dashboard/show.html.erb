@@ -2,6 +2,29 @@
 <% content_for :title_en, "DASHBOARD" %>
 <% d = ->(k, **o) { t("merchant.dashboard.#{k}", **o) } %>
 
+<%# ---- Date-range filter (scopes flow metrics) ---- %>
+<% if @range %>
+  <div class="l-panel" style="margin-bottom:16px; display:flex; align-items:center; gap:12px; flex-wrap:wrap;">
+    <span style="font-size:11px; text-transform:uppercase; letter-spacing:.06em; color:var(--ink-2); font-weight:700;"><%= d.(:range_label) %></span>
+    <div style="display:flex; gap:6px; flex-wrap:wrap;">
+      <% %w[7d 30d 90d mtd all].each do |rk| %>
+        <%= link_to d.("range_#{rk}"), merchant_root_path(range: rk),
+              class: "l-chip #{'l-chip-brand' if @range[:key] == rk}" %>
+      <% end %>
+    </div>
+    <%= form_with url: merchant_root_path, method: :get, data: { turbo_frame: "_top" },
+          style: "display:flex; align-items:center; gap:6px; margin-left:auto; flex-wrap:wrap;" do %>
+      <input type="date" name="from" value="<%= @range[:key] == 'custom' ? @range[:from].to_date.iso8601 : '' %>"
+             class="l-field" style="width:auto; padding:6px 10px;" aria-label="<%= d.(:range_from) %>">
+      <span style="color:var(--ink-2);">–</span>
+      <input type="date" name="to" value="<%= @range[:key] == 'custom' ? @range[:to].to_date.iso8601 : '' %>"
+             class="l-field" style="width:auto; padding:6px 10px;" aria-label="<%= d.(:range_to) %>">
+      <button type="submit" class="l-btn l-btn-soft" style="padding:6px 14px;"><%= d.(:range_apply) %></button>
+    <% end %>
+    <div style="flex-basis:100%; font-size:12px; color:var(--ink-2);"><%= d.(:range_note) %> · <strong><%= @range[:label] %></strong></div>
+  </div>
+<% end %>
+
 <% if @branch %>
   <%# ---- Branch-scoped dashboard ---- %>
   <div class="l-panel" style="margin-bottom:16px;">
