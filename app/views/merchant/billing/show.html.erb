@@ -39,12 +39,12 @@
       </div>
       <% if @workspace.trial? %>
         <span class="l-chip l-chip-brand" style="flex:none;">Chọn gói bên dưới để kích hoạt →</span>
-      <% elsif @payos_ready %>
+      <% elsif @workspace.payment_state == :owing && @payos_ready %>
         <%= button_to merchant_billing_pay_path, method: :post, class: "l-btn l-btn-primary",
               style: "flex:none;", form: { target: "_blank", data: { turbo: false } } do %>
           <%= ui_icon(:wallet, size: 18) %> <%= t("merchant.billing.pay", price: @plan.price_label) %>
         <% end %>
-      <% else %>
+      <% elsif @workspace.payment_state == :owing %>
         <span class="l-chip"><%= t("merchant.billing.payos_missing") %></span>
       <% end %>
     </div>
