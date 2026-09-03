@@ -104,7 +104,17 @@
         <% elsif @payos_ready %>
           <%= button_to merchant_billing_pay_path, method: :post, params: { plan: plan.key },
                 class: "l-btn l-btn-primary l-btn-block", form: { target: "_blank", data: { turbo: false } } do %>
-            <%= @workspace.trial? ? "Chọn & thanh toán #{plan.price_label}" : "Chuyển sang gói này" %>
+            <% if @workspace.trial? %>
+              Chọn & thanh toán <%= number_with_delimiter(@workspace.prorated_amount(plan.price)) %>đ
+            <% else %>
+              Chuyển sang gói này
+            <% end %>
+          <% end %>
+          <% if @workspace.trial? %>
+            <% s, e = @workspace.first_billing_period %>
+            <div style="font-size:11px; color:var(--ink-2); margin-top:6px; text-align:center;">
+              Kỳ đầu <%= s.strftime("%d/%m") %>–<%= e.strftime("%d/%m") %> (còn lại của tháng), sau đó <%= plan.price_label %>/tháng
+            </div>
           <% end %>
         <% else %>
           <button class="l-btn l-btn-soft l-btn-block" disabled><%= t("merchant.billing.payos_missing") %></button>

@@ -186,6 +186,27 @@ class Workspace < ApplicationRecord
     [start, start.end_of_month]
   end
 
+  # The FIRST period a converting trial pays for: the remainder of the month in
+  # which the trial ends (prorated). Non-trial shops just get next_billing_period.
+  def first_billing_period
+    return next_billing_period unless trial? && paid_until.present?
+    start = paid_until.to_date + 1.day
+    [start, start.end_of_month]
+  end
+
+  # Amount due for a period given a plan price. A converting trial pays a
+  # day-prorated share of the partial first month (rounded to 1.000đ); everyone
+  # else pays the full plan price.
+  def prorated_amount(price, period = first_billing_period)
+    price = price.to_i
+    return price unless trial?
+    s, e = period
+    covered = (e - s).to_i + 1
+    days_in_month = e.day
+    return price if covered >= days_in_month
+    ((price * covered) / days_in_month.to_f / 1000).round * 1000
+  end
+
   def can_add_outlet?(current = outlets.count)
     outlet_limit.nil? || current < outlet_limit
   end
