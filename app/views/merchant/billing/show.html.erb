@@ -103,9 +103,13 @@
           <span class="l-chip l-chip-brand" style="width:100%; justify-content:center;"><%= t("merchant.billing.using") %></span>
         <% elsif @payos_ready %>
           <% fdata = { turbo: false }
-             unless @workspace.trial?
+             # Only warn when the current plan is already paid & active (switching
+             # wastes remaining paid time). Owing/trial shops just proceed to pay.
+             if @workspace.payment_state == :paid
                fdata[:controller] = "confirmsubmit"
-               fdata[:confirmsubmit_message_value] = t("merchant.billing.switch_confirm", plan: plan.name, price: plan.price_label)
+               fdata[:confirmsubmit_message_value] = t("merchant.billing.switch_confirm",
+                 current: @plan.name, expiry: @workspace.paid_until.to_date.strftime("%d/%m/%Y"),
+                 plan: plan.name, price: plan.price_label)
                fdata[:action] = "submit->confirmsubmit#check"
              end %>
           <%= button_to merchant_billing_pay_path, method: :post, params: { plan: plan.key },

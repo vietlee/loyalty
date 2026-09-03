@@ -448,7 +448,7 @@ vi:
       repay: "Trả tiếp"
       plans: "Các gói"
       using: "Đang dùng"
-      switch_confirm: "Đổi sang gói %{plan} (%{price}/tháng)? Bạn vẫn phải thanh toán ĐẦY ĐỦ gói mới cho kỳ tới; phần thời gian còn lại của gói hiện tại không được hoàn hay bù trừ. Nếu muốn tối ưu chi phí, hãy cân nhắc đợi đến kỳ sau."
+      switch_confirm: "Bạn đang dùng gói %{current}, đã thanh toán và còn hiệu lực đến %{expiry}. Nếu chuyển sang gói %{plan} (%{price}/tháng) ngay bây giờ, bạn vẫn phải thanh toán đầy đủ gói mới cho kỳ tới; thời gian còn lại của gói hiện tại sẽ không được hoàn hay bù trừ. Cân nhắc đợi đến hết kỳ (%{expiry})."
       contact_upgrade: "Liên hệ nâng cấp"
       plans_note: "Đổi gói do quản trị nền tảng thực hiện. (Cổng thanh toán tích hợp ở bản production.)"
     choose:
