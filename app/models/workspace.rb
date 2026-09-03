@@ -28,6 +28,7 @@ class Workspace < ApplicationRecord
   has_many :notifications, dependent: :destroy
   has_many :broadcasts, dependent: :destroy
   has_many :referrals, dependent: :destroy
+  has_many :ratings, dependent: :destroy
   has_many :invoices, dependent: :destroy
   has_one  :loyalty_program, dependent: :destroy
 
