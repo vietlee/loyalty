@@ -48,10 +48,10 @@
     <span>🎁</span><span><%= t("merchant.nav.rewards") %></span>
   <% end %>
   <%= link_to merchant_campaigns_path, class: "l-nav-item #{'active' if nav == :campaigns}" do %>
-    <span>◈</span><span><%= t("merchant.nav.campaigns") %></span>
+    <span>◈</span><span><%= t("merchant.nav.campaigns") %><%= " 🔒" if feature_locked?(:campaigns) %></span>
   <% end %>
   <%= link_to merchant_gamification_path, class: "l-nav-item #{'active' if nav == :gamification}" do %>
-    <span>🎯</span><span><%= t("merchant.nav.gamification") %></span>
+    <span>🎯</span><span><%= t("merchant.nav.gamification") %><%= " 🔒" if feature_locked?(:gamification) %></span>
   <% end %>
   <%= link_to merchant_feedback_path, class: "l-nav-item #{'active' if nav == :feedback}" do %>
     <span>⭐</span><span><%= t("merchant.nav.feedback") %></span>

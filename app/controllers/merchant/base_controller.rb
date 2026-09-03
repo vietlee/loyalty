@@ -11,7 +11,16 @@ module Merchant
 
     helper_method :current_workspace, :accessible_workspaces,
                   :current_membership, :current_program, :nav_key,
-                  :scoped_outlet, :branch_scoped?
+                  :scoped_outlet, :branch_scoped?, :feature_locked?
+
+    # A plan-gated feature the current workspace can't use (trials get everything).
+    def feature_locked?(feature) = current_workspace && !current_workspace.plan_allows?(feature)
+
+    # Render the "upgrade to unlock" screen (keeps the merchant layout/nav).
+    def render_locked_feature(feature)
+      @locked_feature = feature
+      render "merchant/shared/locked_feature"
+    end
 
     # A non-owner assigned to a branch only sees that branch's data. Owners (and
     # managers with no branch) see the whole workspace.

@@ -4,6 +4,7 @@ module Merchant
     before_action :set_campaign, only: [:show, :qr]
 
     def index
+      return render_locked_feature(:campaigns) if feature_locked?(:campaigns)
       @campaigns = current_workspace.campaigns.recent.includes(:reward).to_a
     end
 

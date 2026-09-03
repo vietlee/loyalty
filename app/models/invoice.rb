@@ -23,8 +23,10 @@ class Invoice < ApplicationRecord
 
   # Apply a successful payment: mark paid + extend the workspace subscription.
   def apply_payment!(gateway_response: {})
-    return if paid?
-    Invoice.transaction do
+    # Row lock + re-check makes this idempotent under concurrent webhook/return
+    # calls (PayOS retries): the second caller blocks, then sees paid? and bails.
+    with_lock do
+      return if paid?
       update!(status: "paid", paid_at: Time.current, gateway_response: gateway_response)
       base = [workspace.paid_until, Time.current].compact.max
       # Paying reopens a shop unless an operator deliberately suspended it (a

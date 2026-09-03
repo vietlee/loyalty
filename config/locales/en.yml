@@ -24,6 +24,10 @@ en:
       merchant_tag: "Merchant"
       language: "Language"
       logout_confirm: "Log out of your account?"
+    locked_feature:
+      title: "A higher-plan feature"
+      body: "%{feature} is available on Growth and above. Upgrade your plan to unlock it."
+      cta: "See plans"
     dashboard:
       branch: "Branch"
       branch_note: "You're viewing your branch's numbers."

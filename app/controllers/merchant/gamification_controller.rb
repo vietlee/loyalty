@@ -3,6 +3,7 @@ module Merchant
     before_action :require_manager!, only: [:update_wheel]
 
     def show
+      return render_locked_feature(:gamification) if feature_locked?(:gamification)
       @program     = current_program
       @stamp_cards = current_workspace.stamp_cards.ordered.to_a
       @missions    = current_workspace.missions.ordered.to_a
