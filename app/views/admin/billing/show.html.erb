@@ -2,14 +2,15 @@
 
 <div class="l-kpis">
   <div class="l-kpi"><div class="k">MRR ước tính</div><div class="v"><%= number_with_delimiter(@mrr) %>đ</div><div class="d">doanh thu/tháng</div></div>
-  <div class="l-kpi"><div class="k">Đang trả phí</div><div class="v"><%= @active %></div></div>
-  <div class="l-kpi"><div class="k">Dùng thử</div><div class="v"><%= @trial %></div></div>
-  <div class="l-kpi"><div class="k">Quá hạn</div><div class="v" style="color:var(--warn);"><%= @past_due.size %></div></div>
+  <div class="l-kpi"><div class="k">Đã thanh toán</div><div class="v" style="color:var(--good);"><%= @paid_count %></div></div>
+  <div class="l-kpi"><div class="k">Dùng thử</div><div class="v"><%= @trial_count %></div></div>
+  <div class="l-kpi"><div class="k">Đang nợ</div><div class="v" style="color:var(--warn);"><%= @owing.size %></div></div>
 </div>
 
 <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-top:20px;">
   <div class="l-panel">
     <h3 class="l-display" style="font-size:18px; margin-bottom:12px;">Doanh thu theo gói</h3>
+    <p style="color:var(--ink-2); font-size:12.5px; margin:-6px 0 6px;">Chỉ tính các shop <strong>đã thanh toán</strong> (đang hiệu lực).</p>
     <% Workspace::PLAN_PRICES.each do |plan, price| %>
       <% count = @by_plan[plan] || 0 %>
       <div style="display:flex; align-items:center; justify-content:space-between; padding:10px 0; border-top:1px solid var(--line);">
@@ -18,17 +19,54 @@
       </div>
     <% end %>
   </div>
+
   <div class="l-panel">
-    <h3 class="l-display" style="font-size:18px; margin-bottom:12px;">Cần theo dõi (quá hạn)</h3>
-    <% if @past_due.empty? %>
-      <p style="color:var(--ink-2);">Không có workspace quá hạn 🎉</p>
+    <h3 class="l-display" style="font-size:18px; margin-bottom:12px;">Cần theo dõi (đang nợ)</h3>
+    <% if @owing.empty? %>
+      <p style="color:var(--ink-2);">Không có workspace đang nợ 🎉</p>
     <% else %>
-      <% @past_due.each do |ws| %>
-        <div style="display:flex; align-items:center; gap:10px; padding:8px 0; border-top:1px solid var(--line);">
-          <strong><%= ws.name %></strong>
+      <% @owing.each do |ws| %>
+        <div style="display:flex; align-items:center; gap:10px; padding:9px 0; border-top:1px solid var(--line);">
+          <div style="min-width:0;">
+            <strong><%= ws.name %></strong>
+            <div style="font-size:12px; color:var(--warn);">
+              <% if ws.paid_until %>Quá hạn <%= ws.subscription_overdue_days.to_i %> ngày<% if ws.auto_suspended? %> · đã tạm ngưng<% end %><% end %>
+            </div>
+          </div>
           <%= link_to "Xử lý", admin_workspace_path(ws), class: "l-btn l-btn-ghost", style: "margin-left:auto; padding:4px 10px; font-size:12px;" %>
         </div>
       <% end %>
     <% end %>
   </div>
+</div>
+
+<%# ---- Outstanding invoices: concrete unpaid debts ---- %>
+<div class="l-panel" style="margin-top:16px;">
+  <h3 class="l-display" style="font-size:18px; margin-bottom:4px;">Hoá đơn chưa thanh toán</h3>
+  <p style="color:var(--ink-2); font-size:13px; margin-bottom:12px;">Hoá đơn đang chờ / thất bại — số tiền cụ thể từng shop đang nợ.</p>
+  <% if @outstanding.empty? %>
+    <p style="color:var(--ink-2);">Không có hoá đơn nào đang chờ thanh toán 🎉</p>
+  <% else %>
+    <div style="overflow-x:auto;">
+      <table style="width:100%; border-collapse:collapse; font-size:13.5px; min-width:560px;">
+        <thead><tr style="text-align:left; color:var(--ink-2); font-size:11px; text-transform:uppercase; letter-spacing:.06em;">
+          <th style="padding:8px 6px;">Cửa hàng</th><th>Kỳ</th><th style="text-align:right;">Số tiền</th><th style="text-align:right;">Trạng thái</th><th></th>
+        </tr></thead>
+        <tbody>
+          <% @outstanding.each do |inv| %>
+            <tr style="border-top:1px solid var(--line);">
+              <td style="padding:10px 6px;"><strong><%= inv.workspace.name %></strong><div style="font-size:11px; color:var(--ink-2);" class="l-mono"><%= inv.workspace.subdomain %></div></td>
+              <td style="color:var(--ink-2);"><%= inv.period_label %></td>
+              <td style="text-align:right; font-weight:700; font-variant-numeric:tabular-nums;"><%= number_with_delimiter(inv.amount) %>đ</td>
+              <td style="text-align:right;">
+                <% c = inv.status == "failed" ? "var(--warn)" : "var(--primary)" %>
+                <span class="l-chip" style="background:<%= c %>22; color:<%= c %>;"><%= inv.status == "failed" ? "Thất bại" : "Chờ thanh toán" %></span>
+              </td>
+              <td style="text-align:right;"><%= link_to "Xem shop", admin_workspace_path(inv.workspace), class: "l-btn l-btn-ghost", style: "padding:4px 10px; font-size:12px;" %></td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  <% end %>
 </div>

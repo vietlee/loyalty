@@ -4,9 +4,19 @@
   <%= link_to "＋ Tạo workspace", new_admin_workspace_path, class: "l-btn l-btn-primary" %>
 </div>
 
+<div style="margin-bottom:8px; font-size:11px; color:var(--ink-2); text-transform:uppercase; letter-spacing:.06em;">Thanh toán</div>
+<div style="display:flex; gap:8px; flex-wrap:wrap; margin-bottom:14px;">
+  <%= link_to "Tất cả · #{@pay_counts.values.sum}", admin_workspaces_path,
+        class: "l-chip #{'l-chip-brand' if @payment.nil? && @status.nil?}" %>
+  <% Workspace::PAYMENT_STATES.each do |ps| %>
+    <% next unless (@pay_counts[ps] || 0).positive? || @payment == ps %>
+    <%= link_to "#{Workspace::PAYMENT_LABELS[ps]} · #{@pay_counts[ps] || 0}", admin_workspaces_path(payment: ps),
+          class: "l-chip #{'l-chip-brand' if @payment == ps}" %>
+  <% end %>
+</div>
+
+<div style="margin-bottom:8px; font-size:11px; color:var(--ink-2); text-transform:uppercase; letter-spacing:.06em;">Trạng thái workspace</div>
 <div style="display:flex; gap:8px; flex-wrap:wrap; margin-bottom:16px;">
-  <%= link_to "Tất cả · #{@counts.values.sum}", admin_workspaces_path,
-        class: "l-chip #{'l-chip-brand' if @status.nil?}" %>
   <% Workspace::STATUSES.each do |s| %>
     <%= link_to "#{Workspace::STATUS_LABELS[s]} · #{@counts[s] || 0}", admin_workspaces_path(status: s),
           class: "l-chip #{'l-chip-brand' if @status == s}" %>
@@ -32,16 +42,16 @@
             <span class="l-chip" style="background:<%= color %>22; color:<%= color %>;"><%= ws.status_label %></span>
           </td>
           <td style="font-size:12.5px;">
-            <% if ws.paid_until.nil? %>
-              <span style="color:var(--ink-2);">— chưa có kỳ</span>
-            <% elsif ws.subscription_active? %>
-              <% left = ws.subscription_days_left.to_i %>
-              <div><%= l(ws.paid_until.to_date, format: :short) %></div>
-              <div style="color:<%= left <= 7 ? '#C9871F' : 'var(--good)' %>;">còn <%= left %> ngày</div>
-            <% else %>
-              <div style="color:var(--warn); font-weight:600;">Quá hạn <%= ws.subscription_overdue_days.to_i %> ngày</div>
-              <div style="color:var(--ink-2);"><%= l(ws.paid_until.to_date, format: :short) %></div>
-            <% end %>
+            <% ps = ws.payment_state %>
+            <% pc = { paid: "var(--good)", trial: "var(--primary)", owing: "var(--warn)", suspended: "var(--ink-2)", new: "var(--ink-2)" }[ps] %>
+            <span class="l-chip" style="background:<%= pc %>22; color:<%= pc %>; font-weight:600;"><%= ws.payment_label %></span>
+            <div style="color:var(--ink-2); margin-top:4px;">
+              <% if ps == :owing %>
+                <span style="color:var(--warn);">Quá hạn <%= ws.subscription_overdue_days.to_i %> ngày</span>
+              <% elsif ws.subscription_active? %>
+                đến <%= l(ws.paid_until.to_date, format: :short) %> · còn <%= ws.subscription_days_left.to_i %> ngày
+              <% end %>
+            </div>
           </td>
           <td style="color:var(--ink-2);"><%= l(ws.created_at.to_date, format: :short) %></td>
           <td>

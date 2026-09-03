@@ -2,11 +2,16 @@ module Admin
   class BillingController < BaseController
     def show
       ActsAsTenant.without_tenant do
-        @by_plan = Workspace.where(status: "active").group(:plan).count
+        all = Workspace.order(created_at: :desc).to_a
+        @groups = all.group_by(&:payment_state)
+        paid = @groups[:paid] || []
+        @by_plan = paid.group_by(&:plan).transform_values(&:size)
         @mrr = @by_plan.sum { |plan, count| Plan.for(plan).price.to_i * count }
-        @active = Workspace.where(status: "active").count
-        @trial  = Workspace.where(status: "trial").count
-        @past_due = Workspace.where(status: "past_due").to_a
+        @paid_count  = paid.size
+        @trial_count = (@groups[:trial] || []).size
+        @owing = @groups[:owing] || []
+        # Concrete debts: unpaid/failed invoices across all tenants, newest first.
+        @outstanding = Invoice.where(status: %w[pending failed]).order(created_at: :desc).limit(30).to_a
       end
     end
 

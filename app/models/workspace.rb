@@ -73,6 +73,28 @@ class Workspace < ApplicationRecord
   end
   def status_label = STATUS_LABELS[status]
 
+  # Single source of truth for "đã trả / đang nợ / dùng thử" across super admin.
+  #   :paid      — active paid subscription (paid_until in the future)
+  #   :trial     — free trial still running
+  #   :owing     — clock lapsed & not active → owes money (incl. auto-suspended
+  #                for non-payment, and lapsed trials that must convert)
+  #   :suspended — operator suspend (not payment-related)
+  #   :new       — no billing clock yet
+  def payment_state
+    return :suspended if status == "suspended" && !auto_suspended?
+    return :trial     if trial? && subscription_active?
+    return :paid      if subscription_active?
+    return :owing     if paid_until.present?
+    :new
+  end
+
+  PAYMENT_STATES = %i[paid trial owing suspended new].freeze
+  PAYMENT_LABELS = {
+    paid: "Đã thanh toán", trial: "Dùng thử", owing: "Đang nợ",
+    suspended: "Tạm ngưng", new: "Chưa có kỳ"
+  }.freeze
+  def payment_label = PAYMENT_LABELS[payment_state]
+
   # ---- Plan (limits & feature gates) ------------------------------------
   def plan_record
     @plan_record ||= Plan.for(plan)

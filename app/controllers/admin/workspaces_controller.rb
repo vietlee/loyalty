@@ -9,8 +9,13 @@ module Admin
         scope = Workspace.order(created_at: :desc)
         @status = params[:status] if Workspace::STATUSES.include?(params[:status])
         scope = scope.where(status: @status) if @status
-        @workspaces = scope.to_a
+        all = scope.to_a
         @counts = Workspace.group(:status).count
+        # Payment filter (computed in Ruby — payment_state isn't a column).
+        @payment = params[:payment].to_sym if Workspace::PAYMENT_STATES.map(&:to_s).include?(params[:payment])
+        @pay_counts = all.group_by(&:payment_state).transform_values(&:size)
+        all = all.select { |w| w.payment_state == @payment } if @payment
+        @workspaces = all
       end
     end
 
