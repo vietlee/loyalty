@@ -53,7 +53,8 @@
         <%= d.("warn_#{w[:kind]}_body", days: w[:days]) %>
       </div>
     </div>
-    <%= link_to d.(:pay_now), merchant_billing_path, class: "l-btn l-btn-primary", style: "flex:none;" %>
+    <% trial_cta = %i[trial trial_over].include?(w[:kind]) %>
+    <%= link_to d.(trial_cta ? :choose_plan_cta : :pay_now), merchant_billing_path, class: "l-btn l-btn-primary", style: "flex:none;" %>
   </div>
 <% end %>
 

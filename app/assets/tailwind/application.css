@@ -355,6 +355,7 @@ input[type="range"], input[type="checkbox"], input[type="radio"], progress { acc
   border:1px solid var(--line); border-left:4px solid var(--warn); background:color-mix(in srgb, var(--warn) 8%, #fff); color:var(--ink); }
 .l-subwarn.danger { border-left-color:var(--warn); background:color-mix(in srgb, var(--warn) 12%, #fff); }
 .l-subwarn.warn { border-left-color:#C9871F; background:color-mix(in srgb, #C9871F 10%, #fff); }
+.l-subwarn.info { border-left-color:var(--primary); background:color-mix(in srgb, var(--primary) 8%, #fff); }
 
 /* ---- Add-to-Home-Screen popup (customer PWA) — centered modal, top layer ---- */
 .l-a2hs-overlay { position:fixed; inset:0; z-index:2600; display:grid; place-items:center; padding:20px; background:rgba(20,14,8,.5); }

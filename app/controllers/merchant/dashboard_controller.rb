@@ -94,7 +94,11 @@ module Merchant
       pu = ws.paid_until
       return { kind: :inactive, level: :warn, days: nil } if pu.nil?
       left = (pu.to_date - Date.current).to_i
-      if left < 0
+      if ws.trial?
+        # Trial: nudge for the whole period (info), escalate to warn near the end.
+        return { kind: :trial_over, level: :danger, days: [GRACE_DAYS + left, 0].max } if left < 0
+        { kind: :trial, level: (left <= 3 ? :warn : :info), days: left }
+      elsif left < 0
         { kind: :expired, level: :danger, days: [GRACE_DAYS + left, 0].max }
       elsif left <= 7
         { kind: :expiring, level: :warn, days: left }

@@ -49,6 +49,14 @@ class Workspace < ApplicationRecord
 
   def active?  = status == "active"
   def trial?   = status == "trial"
+
+  TRIAL_DAYS = 14 # self-serve signups get a working trial, no manual approval
+
+  # Start (or restart) a free trial: a real clock via paid_until so the whole
+  # billing lifecycle (expiry warning, invoice, grace, auto-suspend) just works.
+  def start_trial!(days = TRIAL_DAYS)
+    update!(status: "trial", paid_until: days.days.from_now)
+  end
   def pending? = status == "pending"
   def onboarded? = settings["onboarded"] == true
 

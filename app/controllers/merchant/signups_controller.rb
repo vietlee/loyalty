@@ -13,8 +13,9 @@ module Merchant
 
     def create
       @workspace = Workspace.new(workspace_params)
-      @workspace.status = "pending"      # goes to the Super Admin approval queue
-      @workspace.plan   = "starter"
+      @workspace.status     = "trial"    # self-serve: live immediately, no approval gate
+      @workspace.paid_until = Workspace::TRIAL_DAYS.days.from_now
+      @workspace.plan       = "starter"
       @workspace.theme  = AppearancesController::PRESETS.dig(preset_for(@workspace.industry), "theme") || {}
       @email = params[:email].to_s.downcase.strip
       @name  = params[:owner_name].presence || "Chủ cửa hàng"
@@ -42,7 +43,7 @@ module Merchant
         session[:workspace_id] = @workspace.id
       end
       redirect_to merchant_url_for(@workspace), allow_other_host: true,
-                  notice: "Chào mừng! Workspace của bạn đang chờ duyệt — bạn vẫn có thể thiết lập ngay."
+                  notice: "Chào mừng! Bạn đang dùng thử #{Workspace::TRIAL_DAYS} ngày miễn phí — bắt đầu thiết lập cửa hàng ngay."
     rescue ActiveRecord::RecordInvalid
       render :new, status: :unprocessable_entity
     end
