@@ -10,6 +10,7 @@
     <% end %>
   </head>
   <body class="pwa-app">
+    <%= render "layouts/splash" %>
     <%= render "layouts/theme_vars", ws: current_workspace %>
 
     <% pwa = current_workspace ? {
