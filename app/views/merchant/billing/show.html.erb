@@ -102,8 +102,14 @@
         <% if current %>
           <span class="l-chip l-chip-brand" style="width:100%; justify-content:center;"><%= t("merchant.billing.using") %></span>
         <% elsif @payos_ready %>
+          <% fdata = { turbo: false }
+             unless @workspace.trial?
+               fdata[:controller] = "confirmsubmit"
+               fdata[:confirmsubmit_message_value] = t("merchant.billing.switch_confirm", plan: plan.name, price: plan.price_label)
+               fdata[:action] = "submit->confirmsubmit#check"
+             end %>
           <%= button_to merchant_billing_pay_path, method: :post, params: { plan: plan.key },
-                class: "l-btn l-btn-primary l-btn-block", form: { target: "_blank", data: { turbo: false } } do %>
+                class: "l-btn l-btn-primary l-btn-block", form: { target: "_blank", data: fdata } do %>
             <% if @workspace.trial? %>
               Chọn & thanh toán <%= number_with_delimiter(@workspace.prorated_amount(plan.price)) %>đ
             <% else %>

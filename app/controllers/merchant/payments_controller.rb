@@ -19,10 +19,10 @@ module Merchant
         invoice.update!(plan: chosen, amount: amount, period_start: start_d, period_end: end_d)
       end
       unless invoice
-        # Don't pre-generate a future period's invoice: a paid plan that is still
-        # comfortably active has nothing due yet (the renewal invoice is created
-        # only when the current period ends). Trials paying to convert are allowed.
-        if start_d > Date.current && ws.subscription_active? && !ws.trial?
+        # Nothing due only when RE-PAYING the same active plan early (no invoice
+        # yet, still comfortably active). Switching to a different plan is always
+        # allowed — it bills the new plan for the upcoming period. Trials too.
+        if chosen == ws.plan && start_d > Date.current && ws.subscription_active? && !ws.trial?
           return redirect_to merchant_billing_path,
             notice: "Gói đang còn hiệu lực đến #{ws.paid_until.to_date.strftime('%d/%m/%Y')}. Hoá đơn kỳ mới sẽ được tạo khi đến hạn."
         end

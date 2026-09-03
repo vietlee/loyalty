@@ -448,6 +448,7 @@ vi:
       repay: "Trả tiếp"
       plans: "Các gói"
       using: "Đang dùng"
+      switch_confirm: "Đổi sang gói %{plan} (%{price}/tháng)? Bạn vẫn phải thanh toán ĐẦY ĐỦ gói mới cho kỳ tới; phần thời gian còn lại của gói hiện tại không được hoàn hay bù trừ. Nếu muốn tối ưu chi phí, hãy cân nhắc đợi đến kỳ sau."
       contact_upgrade: "Liên hệ nâng cấp"
       plans_note: "Đổi gói do quản trị nền tảng thực hiện. (Cổng thanh toán tích hợp ở bản production.)"
     choose:

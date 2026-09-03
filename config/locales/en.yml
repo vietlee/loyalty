@@ -443,6 +443,7 @@ en:
       repay: "Continue payment"
       plans: "Plans"
       using: "Current"
+      switch_confirm: "Switch to %{plan} (%{price}/month)? You still pay the FULL new-plan price for the next period; the remaining days of your current plan are not credited or refunded. Consider waiting until the next cycle to optimise cost."
       contact_upgrade: "Contact to upgrade"
       plans_note: "Plan changes are handled by platform admins. (Payment gateway integrated in production.)"
     choose:
