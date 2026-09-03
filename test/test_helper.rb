@@ -10,6 +10,9 @@ module ActiveSupport
     # Setup all fixtures in test/fixtures/*.yml for all tests in alphabetical order.
     fixtures :all
 
-    # Add more helper methods to be used by all tests here...
+    include FactoryBot::Syntax::Methods
+
+    # Run a block with a tenant set (acts_as_tenant).
+    def with_tenant(ws, &blk) = ActsAsTenant.with_tenant(ws, &blk)
   end
 end
