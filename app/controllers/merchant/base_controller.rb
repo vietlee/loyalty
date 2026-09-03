@@ -19,6 +19,7 @@ module Merchant
     # Render the "upgrade to unlock" screen (keeps the merchant layout/nav).
     def render_locked_feature(feature)
       @locked_feature = feature
+      @upgrade_plan = Plan.lowest_allowing(feature) # real data → correct plan name
       render "merchant/shared/locked_feature"
     end
 

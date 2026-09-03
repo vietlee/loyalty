@@ -22,6 +22,14 @@ class Plan < ApplicationRecord
       features: ["Không giới hạn chi nhánh", "Tên miền riêng", "Ưu tiên hỗ trợ"] }
   ].freeze
 
+  # The cheapest plan whose allow_<feature> flag is on (reads real plan data,
+  # so the "upgrade" message always names the correct plan). nil if none.
+  def self.lowest_allowing(feature)
+    col = "allow_#{feature}"
+    return nil unless column_names.include?(col)
+    ordered.detect { |p| p.public_send(col) }
+  end
+
   def self.for(key)
     find_by(key: key) || new(DEFAULTS.find { |d| d[:key] == key } || DEFAULTS.first)
   end

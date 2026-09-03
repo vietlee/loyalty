@@ -26,7 +26,8 @@ en:
       logout_confirm: "Log out of your account?"
     locked_feature:
       title: "A higher-plan feature"
-      body: "%{feature} is available on Growth and above. Upgrade your plan to unlock it."
+      body: "%{feature} is available on %{plan} and above. Upgrade your plan to unlock it."
+      body_none: "%{feature} is not enabled on any plan yet. Please contact support."
       cta: "See plans"
     dashboard:
       branch: "Branch"

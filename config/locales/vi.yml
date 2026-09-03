@@ -31,7 +31,8 @@ vi:
       logout_confirm: "Đăng xuất khỏi tài khoản?"
     locked_feature:
       title: "Tính năng thuộc gói cao hơn"
-      body: "%{feature} có ở gói Growth trở lên. Nâng cấp gói để mở khoá tính năng này."
+      body: "%{feature} có ở gói %{plan} trở lên. Nâng cấp gói để mở khoá tính năng này."
+      body_none: "%{feature} hiện chưa được bật ở gói nào. Vui lòng liên hệ hỗ trợ."
       cta: "Xem các gói"
     dashboard:
       branch: "Chi nhánh"
