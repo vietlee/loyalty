@@ -30,8 +30,11 @@ class Invoice < ApplicationRecord
       # Paying reopens a shop unless an operator deliberately suspended it (a
       # non-payment auto-suspend is cleared here).
       keep_suspended = workspace.status == "suspended" && !workspace.auto_suspended?
+      # The plan switch only lands now, on a successful payment — cancelling a
+      # checkout never changes the workspace's plan.
       workspace.update!(paid_until: [base, period_end.end_of_day].max,
                         status: keep_suspended ? "suspended" : "active",
+                        plan: plan,
                         settings: workspace.settings.merge("auto_suspended" => false))
     end
   end

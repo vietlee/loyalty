@@ -8,8 +8,8 @@ Rails.application.routes.draw do
              skip: [:registrations]
   devise_for :admin_users,
              path: "admin",
-             path_names: { sign_in: "login", sign_out: "logout" },
-             skip: [:registrations, :passwords]
+             path_names: { sign_in: "login", sign_out: "logout", password: "password" },
+             skip: [:registrations]
   # Member (customer) uses a custom phone+OTP flow; register the Devise mapping
   # for the Warden session helpers but not its routes.
   devise_for :members, skip: :all

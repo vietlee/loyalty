@@ -1,6 +1,6 @@
 class AdminUser < ApplicationRecord
   # Platform operator (Super Admin). Not tenant-scoped — sees across workspaces.
-  devise :database_authenticatable, :rememberable, :validatable, :trackable
+  devise :database_authenticatable, :recoverable, :rememberable, :validatable, :trackable
 
   ROLES = %w[operator superadmin].freeze
   validates :name, presence: true

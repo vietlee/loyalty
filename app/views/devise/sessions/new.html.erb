@@ -28,6 +28,10 @@
   <%= f.submit "Đăng nhập", class: "l-btn l-btn-primary l-btn-block" %>
 <% end %>
 
+<p style="text-align:center; margin-top:14px; font-size:13px;">
+  <%= link_to "Quên mật khẩu?", new_password_path(resource_name), style: "color:var(--ink-2);" %>
+</p>
+
 <% unless admin %>
   <p style="text-align:center; color:var(--ink-2); font-size:13px; margin-top:16px;">
     Chưa có cửa hàng? <%= link_to "Đăng ký miễn phí", merchant_signup_path, style: "color:var(--primary-ink); font-weight:600;" %>

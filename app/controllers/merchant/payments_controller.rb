@@ -6,16 +6,17 @@ module Merchant
     # a fresh PayOS checkout.
     def create
       ws = current_workspace
-      # Plan chosen at checkout (trial converting, or switching plan).
-      if params[:plan].present? && Workspace::PLAN_PRICES.key?(params[:plan])
-        ws.update!(plan: params[:plan])
-      end
+      # The plan the merchant is paying for lives on the INVOICE, not the
+      # workspace — the workspace only switches when payment actually succeeds
+      # (see Invoice#apply_payment!). Cancelling leaves the current plan intact.
+      chosen = Workspace::PLAN_PRICES.key?(params[:plan]) ? params[:plan] : ws.plan
+      price  = Plan.for(chosen).price
       start_d, end_d = ws.first_billing_period
-      amount = ws.prorated_amount(ws.plan_record.price, [start_d, end_d])
-      # Pay any invoice that's already due first (re-price if plan changed).
+      amount = ws.prorated_amount(price, [start_d, end_d])
+      # Pay any invoice that's already due first (re-price to the chosen plan).
       invoice = ws.invoices.pending.order(:period_start).first
-      if invoice && invoice.plan != ws.plan
-        invoice.update!(plan: ws.plan, amount: amount, period_start: start_d, period_end: end_d)
+      if invoice && (invoice.plan != chosen || invoice.amount != amount)
+        invoice.update!(plan: chosen, amount: amount, period_start: start_d, period_end: end_d)
       end
       unless invoice
         # Don't pre-generate a future period's invoice: a paid plan that is still
@@ -26,7 +27,7 @@ module Merchant
             notice: "Gói đang còn hiệu lực đến #{ws.paid_until.to_date.strftime('%d/%m/%Y')}. Hoá đơn kỳ mới sẽ được tạo khi đến hạn."
         end
         invoice = ws.invoices.create!(
-          plan: ws.plan, amount: amount,
+          plan: chosen, amount: amount,
           period_start: start_d, period_end: end_d, status: "pending"
         )
       end
