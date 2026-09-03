@@ -1,13 +1,13 @@
 <% if local_assigns[:error] || @error %>
   <div class="l-chip" style="background:#F3DDD7; color:#B4402F; margin-bottom:14px;">⚠ <%= @error %></div>
 <% end %>
-<p style="color:var(--ink-2); font-size:14px; margin-bottom:12px;">Nhập số tiền hoá đơn để tạo mã QR — khách tự quét bằng app để tích điểm.</p>
+<p style="color:var(--ink-2); font-size:14px; margin-bottom:12px;"><%= t("merchant.scan.pos_intro") %></p>
 <%= form_with url: merchant_pos_charges_path, method: :post do %>
-  <label class="l-label">Số tiền hoá đơn</label>
+  <label class="l-label"><%= t("merchant.scan.bill_amount") %></label>
   <div style="display:flex; align-items:center; gap:8px;">
     <input name="amount" inputmode="numeric" autofocus autocomplete="off"
            class="l-field" style="font-size:26px; font-family:var(--font-display); text-align:right;" placeholder="0">
     <span style="color:var(--ink-2); font-weight:600;"><%= current_program.currency %></span>
   </div>
-  <%= submit_tag "Tạo mã QR giao dịch", class: "l-btn l-btn-primary l-btn-block", style: "margin-top:16px;" %>
+  <%= submit_tag t("merchant.scan.create_qr"), class: "l-btn l-btn-primary l-btn-block", style: "margin-top:16px;" %>
 <% end %>

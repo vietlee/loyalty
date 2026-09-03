@@ -2,17 +2,17 @@
   <% r = @voucher.reward %>
   <div style="text-align:center; padding:14px 0;" data-controller="pointburst">
     <div style="width:76px; height:76px; margin:0 auto 14px; border-radius:50%; background:var(--good); color:#fff; display:grid; place-items:center; font-size:38px;">✓</div>
-    <h3 class="l-display" style="font-size:22px;">Đã xác thực ưu đãi</h3>
+    <h3 class="l-display" style="font-size:22px;"><%= t("merchant.scan.verified") %></h3>
     <div class="l-display" style="font-size:20px; color:var(--primary-ink); margin:6px 0;"><%= r.title %></div>
     <p style="color:var(--ink-2);"><%= r.value_label %> · <%= @voucher.member.display_name %></p>
 
     <div style="margin-top:16px; padding:16px; border-radius:16px; background:var(--surface-2); display:flex; justify-content:space-around;">
-      <div><div class="l-eyebrow">Thời gian</div><div style="font-weight:700;"><%= @voucher.used_at&.strftime("%H:%M") %></div></div>
-      <div><div class="l-eyebrow">Chi nhánh</div><div style="font-weight:700;"><%= @voucher.used_outlet&.name || "—" %></div></div>
-      <div><div class="l-eyebrow">Mã</div><div class="l-mono" style="font-weight:700;"><%= @voucher.code %></div></div>
+      <div><div class="l-eyebrow"><%= t("merchant.scan.time") %></div><div style="font-weight:700;"><%= @voucher.used_at&.strftime("%H:%M") %></div></div>
+      <div><div class="l-eyebrow"><%= t("merchant.scan.branch") %></div><div style="font-weight:700;"><%= @voucher.used_outlet&.name || "—" %></div></div>
+      <div><div class="l-eyebrow"><%= t("merchant.scan.code") %></div><div class="l-mono" style="font-weight:700;"><%= @voucher.code %></div></div>
     </div>
 
-    <%= link_to "Xác thực mã khác", merchant_scanner_path(tab: "redeem"), class: "l-btn l-btn-primary l-btn-block",
+    <%= link_to t("merchant.scan.verify_other"), merchant_scanner_path(tab: "redeem"), class: "l-btn l-btn-primary l-btn-block",
           style: "margin-top:18px;", data: { turbo_frame: "scan_tool" } %>
   </div>
 <% end %>

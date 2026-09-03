@@ -1,12 +1,12 @@
 <%= turbo_frame_tag "scan_tool" do %>
   <div style="text-align:center; padding:14px 0;">
     <div style="width:72px; height:72px; margin:0 auto 12px; border-radius:50%; background:#F3DDD7; color:var(--warn); display:grid; place-items:center; font-size:36px;">⚠</div>
-    <h3 class="l-display" style="font-size:20px;">Ưu đãi đã được sử dụng</h3>
+    <h3 class="l-display" style="font-size:20px;"><%= t("merchant.scan.already_used") %></h3>
     <p style="color:var(--ink-2); margin-top:6px;">
       <strong><%= @voucher.reward.title %></strong><br>
-      đã dùng lúc <strong><%= @voucher.used_at&.strftime("%H:%M %d/%m") %></strong><%= " · #{@voucher.used_outlet.name}" if @voucher.used_outlet %>
+      <%= t("merchant.scan.used_at") %> <strong><%= @voucher.used_at&.strftime("%H:%M %d/%m") %></strong><%= " · #{@voucher.used_outlet.name}" if @voucher.used_outlet %>
     </p>
-    <%= link_to "Quét mã khác", merchant_scanner_path(tab: "redeem"), class: "l-btn l-btn-primary l-btn-block",
+    <%= link_to t("merchant.scan.scan_other"), merchant_scanner_path(tab: "redeem"), class: "l-btn l-btn-primary l-btn-block",
           style: "margin-top:18px;", data: { turbo_frame: "scan_tool" } %>
   </div>
 <% end %>

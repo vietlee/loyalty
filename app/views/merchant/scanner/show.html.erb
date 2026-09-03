@@ -1,11 +1,11 @@
-<% content_for :title, "Máy quét tại quầy" %>
+<% content_for :title, t("merchant.nav.scanner") %>
 <% content_for :title_en, "COUNTER SCANNER" %>
 
 <div style="max-width:560px; margin:0 auto;">
   <% if selectable_outlets.size > 1 %>
     <%= form_with url: merchant_scanner_path, method: :get, data: { turbo: false } do %>
       <input type="hidden" name="tab" value="<%= @tab %>">
-      <label class="l-label">Chi nhánh đang bán</label>
+      <label class="l-label"><%= t("merchant.scan.selling_branch") %></label>
       <select name="outlet" class="l-field" style="margin-bottom:16px;" onchange="this.form.requestSubmit()">
         <% selectable_outlets.each do |o| %>
           <option value="<%= o.id %>" <%= "selected" if current_outlet&.id == o.id %>><%= o.name %></option>
@@ -13,16 +13,16 @@
       </select>
     <% end %>
   <% elsif current_outlet %>
-    <div style="margin-bottom:14px; font-size:13px; color:var(--ink-2);">Chi nhánh: <strong style="color:var(--ink);"><%= current_outlet.name %></strong></div>
+    <div style="margin-bottom:14px; font-size:13px; color:var(--ink-2);"><%= t("merchant.scan.branch_prefix") %>: <strong style="color:var(--ink);"><%= current_outlet.name %></strong></div>
   <% end %>
 
   <div style="display:flex; gap:8px; margin-bottom:16px;">
-    <%= link_to "① Tích điểm", merchant_scanner_path(tab: "earn"),
+    <%= link_to t("merchant.scan.tab_earn"), merchant_scanner_path(tab: "earn"),
           class: "l-chip #{'l-chip-brand' if @tab == 'earn'}", data: { turbo_frame: "scan_tool" } %>
-    <%= link_to "② Xác thực ưu đãi", merchant_scanner_path(tab: "redeem"),
+    <%= link_to t("merchant.scan.tab_redeem"), merchant_scanner_path(tab: "redeem"),
           class: "l-chip #{'l-chip-brand' if @tab == 'redeem'}", data: { turbo_frame: "scan_tool" } %>
     <% if current_program.scan_member? %>
-      <%= link_to "③ Tạo mã quầy", merchant_scanner_path(tab: "pos"),
+      <%= link_to t("merchant.scan.tab_pos"), merchant_scanner_path(tab: "pos"),
             class: "l-chip #{'l-chip-brand' if @tab == 'pos'}", data: { turbo_frame: "scan_tool" } %>
     <% end %>
   </div>

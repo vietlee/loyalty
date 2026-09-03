@@ -26,7 +26,7 @@
                 earn_calc_per_value: current_program.earn_per_amount,
                 earn_calc_mult_value: mult } do %>
     <input type="hidden" name="member_id" value="<%= @member.id %>">
-    <label class="l-label" style="margin-top:16px;">Số tiền hoá đơn</label>
+    <label class="l-label" style="margin-top:16px;"><%= t("merchant.scan.bill_amount") %></label>
     <div style="display:flex; align-items:center; gap:8px;">
       <input name="amount" inputmode="numeric" autofocus autocomplete="off"
              class="l-field" style="font-size:26px; font-family:var(--font-display); text-align:right;"
@@ -35,13 +35,13 @@
     </div>
 
     <div style="margin-top:14px; padding:14px; border-radius:14px; background:var(--surface-2); display:flex; align-items:center; justify-content:space-between;">
-      <span style="color:var(--ink-2);">Điểm sẽ cộng<% if mult > 1 %> <span class="l-chip l-chip-brand" style="margin-left:4px;">×<%= mult %></span><% end %></span>
+      <span style="color:var(--ink-2);"><%= t("merchant.scan.points_to_add") %><% if mult > 1 %> <span class="l-chip l-chip-brand" style="margin-left:4px;">×<%= mult %></span><% end %></span>
       <span class="l-num" style="font-size:28px; color:var(--primary-ink);">+<span data-earn-calc-target="preview">0</span></span>
     </div>
 
     <div style="display:flex; gap:10px; margin-top:16px;">
-      <%= link_to "Huỷ", merchant_scanner_path, class: "l-btn l-btn-ghost", data: { turbo_frame: "scan_tool" } %>
-      <%= submit_tag "Xác nhận tích điểm", class: "l-btn l-btn-primary", style: "flex:1;" %>
+      <%= link_to t("merchant.scan.cancel"), merchant_scanner_path, class: "l-btn l-btn-ghost", data: { turbo_frame: "scan_tool" } %>
+      <%= submit_tag t("merchant.scan.confirm_earn"), class: "l-btn l-btn-primary", style: "flex:1;" %>
     </div>
   <% end %>
 <% end %>
