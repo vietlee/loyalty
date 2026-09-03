@@ -102,7 +102,12 @@ class Workspace < ApplicationRecord
 
   def monthly_price = active? ? plan_record.price.to_i : 0
 
+  # During the free trial the shop gets FULL access — every feature unlocked and
+  # no caps — so they can evaluate everything; they pick a plan when they pay.
+  def full_access? = trial?
+
   def plan_allows?(feature)
+    return true if full_access?
     case feature.to_sym
     when :stamps        then plan_record.allow_stamps
     when :gamification  then plan_record.allow_gamification
@@ -113,8 +118,8 @@ class Workspace < ApplicationRecord
     end
   end
 
-  def outlet_limit = plan_record.max_outlets
-  def member_limit = plan_record.max_members
+  def outlet_limit = full_access? ? nil : plan_record.max_outlets
+  def member_limit = full_access? ? nil : plan_record.max_members
 
   # ---- Subscription / billing -------------------------------------------
   GRACE_DAYS = 10 # days after expiry before an unpaid workspace is locked out

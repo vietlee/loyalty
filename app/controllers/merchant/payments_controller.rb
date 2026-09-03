@@ -6,8 +6,13 @@ module Merchant
     # a fresh PayOS checkout.
     def create
       ws = current_workspace
+      # Plan chosen at checkout (trial converting, or switching plan).
+      if params[:plan].present? && Workspace::PLAN_PRICES.key?(params[:plan])
+        ws.update!(plan: params[:plan])
+      end
       # Pay any invoice that's already due first.
       invoice = ws.invoices.pending.order(:period_start).first
+      invoice&.update!(plan: ws.plan, amount: ws.plan_record.price) if invoice && invoice.plan != ws.plan
       unless invoice
         start_d, end_d = ws.next_billing_period
         # Don't pre-generate a future period's invoice: a paid plan that is still

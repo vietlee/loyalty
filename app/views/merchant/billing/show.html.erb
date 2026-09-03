@@ -5,13 +5,20 @@
   <div class="l-panel" style="display:flex; align-items:center; gap:16px; margin-bottom:16px;">
     <div style="flex:1;">
       <div class="l-eyebrow"><%= t("merchant.billing.current_plan") %></div>
-      <div class="l-display" style="font-size:26px;"><%= @plan.name %></div>
-      <div style="color:var(--ink-2); font-size:14px;"><%= @workspace.status_label %> · <%= t("merchant.customers.count", n: number_with_delimiter(@members)) %><%= " / #{@plan.max_members}" if @plan.max_members %></div>
+      <% if @workspace.trial? %>
+        <div class="l-display" style="font-size:26px;">Dùng thử</div>
+        <div style="color:var(--ink-2); font-size:14px;">Full tính năng · <%= t("merchant.customers.count", n: number_with_delimiter(@members)) %> · chọn gói khi thanh toán</div>
+      <% else %>
+        <div class="l-display" style="font-size:26px;"><%= @plan.name %></div>
+        <div style="color:var(--ink-2); font-size:14px;"><%= @workspace.status_label %> · <%= t("merchant.customers.count", n: number_with_delimiter(@members)) %><%= " / #{@plan.max_members}" if @plan.max_members %></div>
+      <% end %>
     </div>
-    <div style="text-align:right;">
-      <div class="l-num" style="font-size:30px;"><%= @plan.price_label %></div>
-      <div style="color:var(--ink-2); font-size:13px;"><%= t("merchant.billing.per_month") %></div>
-    </div>
+    <% unless @workspace.trial? %>
+      <div style="text-align:right;">
+        <div class="l-num" style="font-size:30px;"><%= @plan.price_label %></div>
+        <div style="color:var(--ink-2); font-size:13px;"><%= t("merchant.billing.per_month") %></div>
+      </div>
+    <% end %>
   </div>
 
   <%# ---- Subscription status + pay ---- %>
@@ -30,7 +37,9 @@
           <div style="color:var(--ink-2); font-size:13px;"><%= t("merchant.billing.unpaid_note") %></div>
         <% end %>
       </div>
-      <% if @payos_ready %>
+      <% if @workspace.trial? %>
+        <span class="l-chip l-chip-brand" style="flex:none;">Chọn gói bên dưới để kích hoạt →</span>
+      <% elsif @payos_ready %>
         <%= button_to merchant_billing_pay_path, method: :post, class: "l-btn l-btn-primary",
               style: "flex:none;", form: { target: "_blank", data: { turbo: false } } do %>
           <%= ui_icon(:wallet, size: 18) %> <%= t("merchant.billing.pay", price: @plan.price_label) %>
@@ -83,7 +92,7 @@
   <div class="l-eyebrow" style="margin-bottom:10px;"><%= t("merchant.billing.plans") %></div>
   <div style="display:grid; grid-template-columns:repeat(<%= @plans.size %>,1fr); gap:14px;">
     <% @plans.each do |plan| %>
-      <% current = @workspace.plan == plan.key %>
+      <% current = !@workspace.trial? && @workspace.plan == plan.key %>
       <div class="l-panel" style="<%= 'border:2px solid var(--primary);' if current %>">
         <div style="font-weight:700; font-size:16px;"><%= plan.name %></div>
         <div class="l-num" style="font-size:24px; margin:6px 0;"><%= plan.price_label %></div>
@@ -92,8 +101,13 @@
         </ul>
         <% if current %>
           <span class="l-chip l-chip-brand" style="width:100%; justify-content:center;"><%= t("merchant.billing.using") %></span>
+        <% elsif @payos_ready %>
+          <%= button_to merchant_billing_pay_path, method: :post, params: { plan: plan.key },
+                class: "l-btn l-btn-primary l-btn-block", form: { target: "_blank", data: { turbo: false } } do %>
+            <%= @workspace.trial? ? "Chọn & thanh toán #{plan.price_label}" : "Chuyển sang gói này" %>
+          <% end %>
         <% else %>
-          <button class="l-btn l-btn-soft l-btn-block" disabled><%= t("merchant.billing.contact_upgrade") %></button>
+          <button class="l-btn l-btn-soft l-btn-block" disabled><%= t("merchant.billing.payos_missing") %></button>
         <% end %>
       </div>
     <% end %>
