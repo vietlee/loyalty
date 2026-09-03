@@ -24,7 +24,9 @@ class BillingRenewalJob < ApplicationJob
   private
 
   def ensure_upcoming_invoice(ws, service)
-    return unless ws.paid_until && ws.paid_until <= 5.days.from_now
+    # Only after the current period has actually ended — never pre-generate a
+    # future month's invoice.
+    return unless ws.paid_until && ws.paid_until <= Time.current
     start_d, end_d = ws.next_billing_period
     return if ws.invoices.pending.exists?(period_start: start_d)
 

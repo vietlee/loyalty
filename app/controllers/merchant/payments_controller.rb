@@ -5,12 +5,23 @@ module Merchant
     # "Thanh toán" — find/create the pending invoice for the next month, then open
     # a fresh PayOS checkout.
     def create
-      start_d, end_d = current_workspace.next_billing_period
-      invoice = current_workspace.invoices.pending.find_by(period_start: start_d) ||
-                current_workspace.invoices.create!(
-                  plan: current_workspace.plan, amount: current_workspace.plan_record.price,
-                  period_start: start_d, period_end: end_d, status: "pending"
-                )
+      ws = current_workspace
+      # Pay any invoice that's already due first.
+      invoice = ws.invoices.pending.order(:period_start).first
+      unless invoice
+        start_d, end_d = ws.next_billing_period
+        # Don't pre-generate a future period's invoice: a paid plan that is still
+        # comfortably active has nothing due yet (the renewal invoice is created
+        # only when the current period ends). Trials paying to convert are allowed.
+        if start_d > Date.current && ws.subscription_active? && !ws.trial?
+          return redirect_to merchant_billing_path,
+            notice: "Gói đang còn hiệu lực đến #{ws.paid_until.to_date.strftime('%d/%m/%Y')}. Hoá đơn kỳ mới sẽ được tạo khi đến hạn."
+        end
+        invoice = ws.invoices.create!(
+          plan: ws.plan, amount: ws.plan_record.price,
+          period_start: start_d, period_end: end_d, status: "pending"
+        )
+      end
       start_checkout(invoice)
     end
 
