@@ -16,7 +16,10 @@ module Merchant
 
     def create
       unless current_workspace.plan_allows?(:campaigns)
-        return redirect_to merchant_campaigns_path, alert: "Chiến dịch có ở gói Growth trở lên. Vui lòng nâng cấp gói."
+        plan = Plan.lowest_allowing(:campaigns)
+        msg = plan ? "Chiến dịch có ở gói #{plan.name} trở lên. Vui lòng nâng cấp gói." \
+                   : "Chiến dịch hiện chưa được bật ở gói nào."
+        return redirect_to merchant_campaigns_path, alert: msg
       end
       @campaign = current_workspace.campaigns.new(campaign_params)
       if @campaign.save
