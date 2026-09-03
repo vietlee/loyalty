@@ -346,7 +346,7 @@ vi:
       ready: "✓ Sẵn sàng"
       default_note: "Customer app của bạn luôn truy cập được tại địa chỉ này (subdomain riêng trên nền tảng)."
       custom_title: "Tên miền riêng (tuỳ chọn)"
-      soon: "Sắp có"
+      soon: "Liên hệ để thiết lập"
       soon_note: "Tên miền riêng (gói Scale) hiện được đội ngũ thiết lập thủ công. Vui lòng liên hệ hỗ trợ để kích hoạt cho cửa hàng của bạn."
       custom_note_html: "Dùng domain của chính thương hiệu bạn, ví dụ <span class=\"l-mono\">loyalty.tenshop.vn</span>."
       custom_label: "Tên miền riêng"

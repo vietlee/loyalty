@@ -341,7 +341,7 @@ en:
       ready: "✓ Ready"
       default_note: "Your customer app is always reachable here (your own subdomain on the platform)."
       custom_title: "Custom domain (optional)"
-      soon: "Coming soon"
+      soon: "Contact to set up"
       soon_note: "Custom domains (Scale plan) are currently set up manually by our team. Please contact support to enable one for your shop."
       custom_note_html: "Use your own brand's domain, e.g. <span class=\"l-mono\">loyalty.yourshop.com</span>."
       custom_label: "Custom domain"
