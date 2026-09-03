@@ -5,6 +5,7 @@ module Merchant
     before_action :authenticate_user!
     before_action :no_browser_cache
     before_action :set_current_workspace
+    before_action :require_accessible_workspace
     before_action :enforce_workspace_access
     around_action :scope_tenant
 
@@ -65,6 +66,16 @@ module Merchant
       end
       @current_workspace ||= accessible_workspaces.first
       session[:workspace_id] = @current_workspace&.id
+    end
+
+    # Signed in but no workspace to manage — their shop was deleted, or they
+    # opened another shop's subdomain they don't belong to. Don't render broken
+    # pages with a nil workspace (500s); sign out and send them to login.
+    def require_accessible_workspace
+      return if @current_workspace
+      sign_out(current_user)
+      redirect_to new_user_session_path,
+        alert: "Tài khoản này hiện không quản lý cửa hàng nào. Vui lòng đăng nhập bằng đúng tài khoản cửa hàng."
     end
 
     def workspace_from_host
