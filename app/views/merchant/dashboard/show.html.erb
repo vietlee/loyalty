@@ -177,7 +177,7 @@
         <p style="color:var(--ink-2); font-size:12.5px;"><%= d.(:checkin_desc) %></p>
       </div>
       <div style="display:flex; gap:8px; flex-wrap:wrap; margin-top:12px;">
-        <%= link_to merchant_checkin_qr_path, class: "l-btn l-btn-soft" do %>
+        <%= link_to merchant_checkin_qr_path, class: "l-btn l-btn-soft", data: { turbo: false } do %>
           <%= ui_icon(:launch, size: 16) %> <%= d.(:download_code) %>
         <% end %>
         <% if current_membership&.can_manage? %>

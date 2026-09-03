@@ -63,7 +63,7 @@
       <div style="flex:1; min-width:220px;">
         <h3 class="l-display" style="font-size:17px; margin-bottom:4px;"><%= t("merchant.outlets.checkin_title") %></h3>
         <p style="color:var(--ink-2); font-size:13px; margin-bottom:12px;"><%= t("merchant.outlets.checkin_desc_html", name: @outlet.name).html_safe %></p>
-        <%= link_to checkin_qr_merchant_outlet_path(@outlet), class: "l-btn l-btn-soft" do %>
+        <%= link_to checkin_qr_merchant_outlet_path(@outlet), class: "l-btn l-btn-soft", data: { turbo: false } do %>
           <%= ui_icon(:launch, size: 16) %> <%= t("merchant.dashboard.download_code") %>
         <% end %>
       </div>

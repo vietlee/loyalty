@@ -35,7 +35,7 @@
           <%= qr_svg(@promo_url, color: "1A1A1A", size: 190) %>
         </div>
         <div class="l-mono" style="margin-top:8px; font-size:13px;"><%= @promo.token %></div>
-        <%= link_to t("merchant.campaigns.download_svg"), qr_merchant_campaign_path(@campaign), class: "l-btn l-btn-soft l-btn-block", style: "margin-top:12px;" %>
+        <%= link_to t("merchant.campaigns.download_svg"), qr_merchant_campaign_path(@campaign), class: "l-btn l-btn-soft l-btn-block", style: "margin-top:12px;", data: { turbo: false } %>
         <p style="font-size:12px; color:var(--ink-2); margin-top:8px;"><%= t("merchant.campaigns.promo_note") %></p>
       </div>
 

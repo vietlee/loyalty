@@ -413,7 +413,7 @@ vi:
       time: "Thời gian"
       unlimited: "không giới hạn"
       promo_qr: "Mã QR phát hành"
-      download_svg: "⬇ Tải ảnh mã (SVG) để in"
+      download_svg: "⬇ Tải ảnh mã QR (PNG) để in"
       promo_note: "In trên poster / hoá đơn / đăng Zalo OA — khách quét là nhận voucher."
       effectiveness: "Hiệu quả"
       scan_count: "Lượt quét"

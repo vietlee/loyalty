@@ -408,7 +408,7 @@ en:
       time: "Schedule"
       unlimited: "no end"
       promo_qr: "Claim QR"
-      download_svg: "⬇ Download code image (SVG) to print"
+      download_svg: "⬇ Download QR image (PNG) to print"
       promo_note: "Print on posters / receipts / post on socials — customers scan to claim."
       effectiveness: "Performance"
       scan_count: "Scans"
