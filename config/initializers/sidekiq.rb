@@ -9,7 +9,8 @@ Sidekiq.configure_server do |config|
   config.on(:startup) do
     schedule = {
       "daily_maintenance"    => { "cron" => "0 3 * * *", "class" => "MaintenanceJob", "queue" => "default" },
-      "daily_billing_renewal" => { "cron" => "30 3 * * *", "class" => "BillingRenewalJob", "queue" => "default" }
+      "daily_billing_renewal" => { "cron" => "30 3 * * *", "class" => "BillingRenewalJob", "queue" => "default" },
+      "deliver_scheduled_broadcasts" => { "cron" => "*/5 * * * *", "class" => "BroadcastDeliveryJob", "queue" => "default" }
     }
     if defined?(Sidekiq::Cron::Job)
       Sidekiq::Cron::Job.load_from_hash(schedule)

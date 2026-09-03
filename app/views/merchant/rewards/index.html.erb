@@ -23,7 +23,7 @@
             <div style="display:flex; gap:8px; margin-top:12px; flex-wrap:wrap;">
               <% if r.cost_points %><span class="l-chip l-chip-brand"><%= t("merchant.rewards.points_n", n: number_with_delimiter(r.cost_points)) %></span><% end %>
               <span class="l-chip"><%= r.stock.nil? ? "∞" : r.remaining %> <%= t("merchant.rewards.uses") %></span>
-              <span class="l-chip"><%= t("merchant.rewards.redeemed", n: r.vouchers.count) %></span>
+              <span class="l-chip"><%= t("merchant.rewards.redeemed", n: r.vouchers.count) %></span><span class="l-chip"><%= t("merchant.rewards.used", n: r.vouchers.where(state: "used").count) %></span>
             </div>
             <div style="display:flex; gap:8px; margin-top:12px;">
               <%= link_to t("merchant.rewards.edit"), edit_merchant_reward_path(r), class: "l-btn l-btn-ghost", style: "padding:6px 12px; font-size:13px;" %>

@@ -29,6 +29,8 @@
       <label class="l-label" style="margin-top:12px;"><%= t("merchant.broadcasts.content") %></label>
       <%= f.text_area :body, class: "l-field", rows: 3, required: true, placeholder: t("merchant.broadcasts.content_ph"),
             data: { campaign_preview_target: "body", action: "input->campaign-preview#update" } %>
+      <label class="l-label" style="margin-top:12px;"><%= t("merchant.broadcasts.schedule_label") %></label>
+      <input type="datetime-local" name="scheduled_at" value="<%= params[:scheduled_at] %>" class="l-field">
     </div>
 
     <% if @count.to_i.zero? %>

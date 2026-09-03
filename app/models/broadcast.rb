@@ -9,6 +9,15 @@ class Broadcast < ApplicationRecord
   validates :body,  presence: true
 
   scope :recent, -> { order(created_at: :desc) }
+  # Scheduled broadcasts whose time has arrived and haven't been sent.
+  scope :due, -> { where(sent_at: nil).where.not(scheduled_at: nil).where("scheduled_at <= ?", Time.current) }
+
+  def scheduled? = scheduled_at.present? && sent_at.nil?
+
+  # Resolve the segment now and deliver (used by the scheduled-delivery job).
+  def deliver_to_segment!
+    deliver!(MemberSegments.resolve(segment_key).to_a)
+  end
 
   # Fan out an in-app notification to every member in the segment.
   def deliver!(members)

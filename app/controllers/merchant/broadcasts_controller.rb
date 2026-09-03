@@ -23,12 +23,18 @@ module Merchant
         return render :new, status: :unprocessable_entity
       end
 
-      if @broadcast.save
+      sched = parse_schedule(params[:scheduled_at])
+      if sched && sched > Time.current
+        @broadcast.scheduled_at = sched
+        if @broadcast.save
+          return redirect_to merchant_broadcasts_path,
+                             notice: "Đã lên lịch gửi vào #{l(sched, format: :short)}."
+        end
+      elsif @broadcast.save
         @broadcast.deliver!(members)
-        redirect_to merchant_broadcasts_path, notice: "Đã gửi tới #{@broadcast.sent_count} khách."
-      else
-        render :new, status: :unprocessable_entity
+        return redirect_to merchant_broadcasts_path, notice: "Đã gửi tới #{@broadcast.sent_count} khách."
       end
+      render :new, status: :unprocessable_entity
     end
 
     private
@@ -37,6 +43,13 @@ module Merchant
 
     def broadcast_params
       params.require(:broadcast).permit(:title, :body)
+    end
+
+    def parse_schedule(raw)
+      return nil if raw.blank?
+      Time.zone.parse(raw.to_s)
+    rescue ArgumentError
+      nil
     end
   end
 end

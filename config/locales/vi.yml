@@ -156,6 +156,7 @@ vi:
       points_n: "%{n} điểm"
       uses: "lượt"
       redeemed: "%{n} đã đổi"
+      used: "%{n} đã dùng"
       edit: "Sửa"
       delete: "Xoá"
       delete_confirm: "Xoá ưu đãi này?"
@@ -310,6 +311,8 @@ vi:
       pv_title: "Tiêu đề thông báo"
       pv_body: "Nội dung hiển thị ở đây…"
       just_now: "vừa xong"
+      schedule_label: "Hẹn giờ gửi (để trống = gửi ngay)"
+      scheduled_chip: "⏰ Hẹn %{time}"
     staff:
       title: "Nhân viên & phân quyền"
       team: "Đội ngũ"

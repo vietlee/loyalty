@@ -151,6 +151,7 @@ en:
       points_n: "%{n} pts"
       uses: "left"
       redeemed: "%{n} redeemed"
+      used: "%{n} used"
       edit: "Edit"
       delete: "Delete"
       delete_confirm: "Delete this reward?"
@@ -305,6 +306,8 @@ en:
       pv_title: "Notification title"
       pv_body: "Message shows here…"
       just_now: "just now"
+      schedule_label: "Schedule send (blank = send now)"
+      scheduled_chip: "⏰ Scheduled %{time}"
     staff:
       title: "Staff & roles"
       team: "Team"
