@@ -4,7 +4,7 @@ module Merchant
 
     def show
       @workspace = current_workspace
-      @default_host = "#{@workspace.subdomain}.loyalty.vn"
+      @default_host = "#{@workspace.subdomain}.#{ApplicationController::PLATFORM_HOST}"
       @verify_token = verify_token
     end
 
