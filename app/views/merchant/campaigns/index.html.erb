@@ -1,15 +1,15 @@
-<% content_for :title, "Chiến dịch" %>
+<% content_for :title, t("merchant.nav.campaigns") %>
 <% content_for :title_en, "CAMPAIGNS" %>
 
 <div style="display:flex; justify-content:flex-end; margin-bottom:16px;">
-  <%= link_to "＋ Tạo chiến dịch", new_merchant_campaign_path, class: "l-btn l-btn-primary" %>
+  <%= link_to t("merchant.campaigns.create"), new_merchant_campaign_path, class: "l-btn l-btn-primary" %>
 </div>
 
 <% if @campaigns.empty? %>
   <div class="l-panel" style="text-align:center; padding:48px;">
     <div style="font-size:40px;">◈</div>
-    <h3 class="l-display" style="font-size:20px; margin-top:8px;">Chưa có chiến dịch</h3>
-    <p style="color:var(--ink-2);">Tạo chiến dịch đầu tiên — phát voucher qua mã QR, giờ vàng, nhân đôi điểm…</p>
+    <h3 class="l-display" style="font-size:20px; margin-top:8px;"><%= t("merchant.campaigns.empty") %></h3>
+    <p style="color:var(--ink-2);"><%= t("merchant.campaigns.empty_sub") %></p>
   </div>
 <% else %>
   <div style="display:grid; grid-template-columns:repeat(auto-fill,minmax(280px,1fr)); gap:16px;">
@@ -25,9 +25,9 @@
         </div>
         <% if (pc = c.promo_codes.first) %>
           <div style="display:flex; gap:8px; margin-top:12px;">
-            <span class="l-chip">👁 <%= pc.scan_count %> quét</span>
-            <span class="l-chip">🎁 <%= pc.claims_count %> nhận</span>
-            <span class="l-chip">✓ <%= pc.used_count %> dùng</span>
+            <span class="l-chip"><%= t("merchant.campaigns.scans", n: pc.scan_count) %></span>
+            <span class="l-chip"><%= t("merchant.campaigns.claims", n: pc.claims_count) %></span>
+            <span class="l-chip"><%= t("merchant.campaigns.uses", n: pc.used_count) %></span>
           </div>
         <% end %>
       <% end %>

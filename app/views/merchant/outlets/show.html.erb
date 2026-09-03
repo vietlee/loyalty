@@ -11,15 +11,15 @@
   </div>
 
   <div class="l-kpis">
-    <div class="l-kpi"><div class="k">Doanh thu</div><div class="v"><%= number_with_delimiter(@revenue) %>đ</div><div class="d"><%= @purchases %> giao dịch</div></div>
-    <div class="l-kpi"><div class="k">Điểm đã phát</div><div class="v"><%= number_with_delimiter(@points) %></div></div>
-    <div class="l-kpi"><div class="k">Khách đã ghé</div><div class="v"><%= number_with_delimiter(@customers) %></div></div>
-    <div class="l-kpi"><div class="k">Ưu đãi đã dùng</div><div class="v"><%= number_with_delimiter(@vouchers) %></div></div>
+    <div class="l-kpi"><div class="k"><%= t("merchant.dashboard.revenue") %></div><div class="v"><%= number_with_delimiter(@revenue) %>đ</div><div class="d"><%= t("merchant.dashboard.transactions", n: @purchases) %></div></div>
+    <div class="l-kpi"><div class="k"><%= t("merchant.dashboard.points_issued") %></div><div class="v"><%= number_with_delimiter(@points) %></div></div>
+    <div class="l-kpi"><div class="k"><%= t("merchant.dashboard.visited") %></div><div class="v"><%= number_with_delimiter(@customers) %></div></div>
+    <div class="l-kpi"><div class="k"><%= t("merchant.dashboard.vouchers_used") %></div><div class="v"><%= number_with_delimiter(@vouchers) %></div></div>
   </div>
 
   <div style="display:grid; grid-template-columns:1fr 1.4fr; gap:16px; margin-top:20px;">
     <div class="l-panel">
-      <h3 class="l-display" style="font-size:18px; margin-bottom:10px;">Nhân viên chi nhánh</h3>
+      <h3 class="l-display" style="font-size:18px; margin-bottom:10px;"><%= t("merchant.outlets.detail_staff") %></h3>
       <% if @staff.any? %>
         <% @staff.each do |m| %>
           <div style="display:flex; align-items:center; gap:10px; padding:9px 0; border-bottom:1px solid var(--line);">
@@ -32,12 +32,12 @@
           </div>
         <% end %>
       <% else %>
-        <p style="color:var(--ink-2); font-size:13px;">Chưa gán nhân viên cho chi nhánh này. <%= link_to "Thêm ở trang Nhân viên", merchant_staff_index_path, style: "color:var(--primary-ink);" %>.</p>
+        <p style="color:var(--ink-2); font-size:13px;"><%= t("merchant.outlets.no_staff_html", link: link_to(t("merchant.outlets.add_at_staff"), merchant_staff_index_path, style: "color:var(--primary-ink);")).html_safe %></p>
       <% end %>
     </div>
 
     <div class="l-panel">
-      <h3 class="l-display" style="font-size:18px; margin-bottom:10px;">Giao dịch gần đây</h3>
+      <h3 class="l-display" style="font-size:18px; margin-bottom:10px;"><%= t("merchant.outlets.recent_txns") %></h3>
       <% if @recent.any? %>
         <table style="width:100%; border-collapse:collapse; font-size:13.5px;">
           <% @recent.each do |tx| %>
@@ -50,7 +50,7 @@
           <% end %>
         </table>
       <% else %>
-        <p style="color:var(--ink-2); font-size:13px;">Chưa có giao dịch nào tại chi nhánh này.</p>
+        <p style="color:var(--ink-2); font-size:13px;"><%= t("merchant.outlets.no_txns") %></p>
       <% end %>
     </div>
   </div>
@@ -58,13 +58,13 @@
   <% if @has_checkin %>
     <div class="l-panel" style="margin-top:16px; display:flex; gap:18px; align-items:center; flex-wrap:wrap;">
       <%= render "merchant/shared/qr_zoom", url: @checkin_url, size: 120,
-            title: "Mã check-in — #{@outlet.name}",
-            note: "Khách quét mã này sẽ được ghi nhận check-in đúng #{@outlet.name}." %>
+            title: "#{t('merchant.outlets.checkin_title')} — #{@outlet.name}",
+            note: t("merchant.dashboard.checkin_note") %>
       <div style="flex:1; min-width:220px;">
-        <h3 class="l-display" style="font-size:17px; margin-bottom:4px;">Mã check-in của chi nhánh này</h3>
-        <p style="color:var(--ink-2); font-size:13px; margin-bottom:12px;">In &amp; dán tại <strong><%= @outlet.name %></strong>, hoặc <strong>nhấn vào mã</strong> để phóng to. Khách quét sẽ được ghi nhận check-in đúng chi nhánh này.</p>
+        <h3 class="l-display" style="font-size:17px; margin-bottom:4px;"><%= t("merchant.outlets.checkin_title") %></h3>
+        <p style="color:var(--ink-2); font-size:13px; margin-bottom:12px;"><%= t("merchant.outlets.checkin_desc_html", name: @outlet.name).html_safe %></p>
         <%= link_to checkin_qr_merchant_outlet_path(@outlet), class: "l-btn l-btn-soft" do %>
-          <%= ui_icon(:launch, size: 16) %> Tải mã để in
+          <%= ui_icon(:launch, size: 16) %> <%= t("merchant.dashboard.download_code") %>
         <% end %>
       </div>
     </div>
