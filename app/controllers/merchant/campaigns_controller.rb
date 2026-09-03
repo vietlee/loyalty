@@ -37,8 +37,8 @@ module Merchant
       promo = @campaign.promo_codes.first
       raise ActiveRecord::RecordNotFound unless promo
       url = helpers.customer_scan_url(current_workspace, promo: promo.token)
-      svg = helpers.qr_svg(url, color: "1A1A1A", size: 600)
-      send_data svg, type: "image/svg+xml", filename: "promo-#{promo.token}.svg", disposition: "attachment"
+      png = helpers.qr_png(url, color: "1A1A1A", size: 720)
+      send_data png, type: "image/png", filename: "promo-#{promo.token}.png", disposition: "attachment"
     end
 
     private

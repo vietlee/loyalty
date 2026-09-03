@@ -25,8 +25,8 @@ module Merchant
     # Printable per-branch check-in QR (attributes check-ins to this outlet).
     def checkin_qr
       url = helpers.customer_scan_url(current_workspace, checkin: Checkin.encode(current_workspace, @outlet))
-      send_data helpers.qr_svg(url, size: 720), type: "image/svg+xml",
-                disposition: "attachment", filename: "checkin-#{@outlet.name.parameterize.presence || @outlet.id}.svg"
+      send_data helpers.qr_png(url, size: 720), type: "image/png",
+                disposition: "attachment", filename: "checkin-#{@outlet.name.parameterize.presence || @outlet.id}.png"
     end
 
     def create

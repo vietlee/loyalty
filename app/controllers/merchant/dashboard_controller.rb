@@ -33,9 +33,9 @@ module Merchant
     # Downloadable, printable check-in QR (static workspace token).
     def checkin_qr
       url = helpers.customer_scan_url(current_workspace, checkin: Checkin.encode(current_workspace))
-      send_data helpers.qr_svg(url, size: 720),
-                type: "image/svg+xml", disposition: "attachment",
-                filename: "checkin-#{current_workspace.subdomain}.svg"
+      send_data helpers.qr_png(url, size: 720),
+                type: "image/png", disposition: "attachment",
+                filename: "checkin-#{current_workspace.subdomain}.png"
     end
 
     # Rotate the check-in token: the old printed QR stops working immediately.
