@@ -1,20 +1,17 @@
-<% content_for :title, "Tự động hoá" %>
+<% content_for :title, t("merchant.nav.automations") %>
 <% content_for :title_en, "AUTOMATIONS" %>
 <% reward_opts = @rewards.map { |r| [r.title, r.id] } %>
 
 <div style="max-width:680px;">
-  <p style="color:var(--ink-2); font-size:14px; margin-bottom:16px;">Cài một lần — hệ thống tự tặng quà và nhắc khách đúng thời điểm. Quà là một ưu đãi bạn đã tạo ở mục <strong>Ưu đãi &amp; quà</strong>.</p>
+  <p style="color:var(--ink-2); font-size:14px; margin-bottom:16px;"><%= t("merchant.automations.intro") %></p>
 
   <% if @rewards.empty? %>
-    <div class="l-panel" style="background:#F7E0DA; color:#B4402F;">Bạn cần tạo ít nhất 1 ưu đãi ở mục “Ưu đãi &amp; quà” trước khi dùng tự động hoá.</div>
+    <div class="l-panel" style="background:#F7E0DA; color:#B4402F;"><%= t("merchant.automations.need_reward") %></div>
   <% end %>
 
   <%= form_with url: merchant_automations_path, method: :patch do %>
-    <% [
-        ["welcome",  "🎁 Chào mừng khách mới", "Tự tặng quà ngay khi khách đăng ký lần đầu."],
-        ["birthday", "🎂 Quà sinh nhật",        "Tự tặng quà vào đúng ngày sinh nhật của khách (cần khách đã nhập ngày sinh)."],
-        ["winback",  "👋 Kéo khách quay lại",   "Tự nhắc (và tặng quà) khách lâu chưa ghé."],
-       ].each do |kind, title, desc| %>
+    <% %w[welcome birthday winback].each do |kind| %>
+      <% title = t("merchant.automations.#{kind}_title"); desc = t("merchant.automations.#{kind}_desc") %>
       <% c = @cfg[kind] || {} %>
       <div class="l-panel" style="margin-bottom:14px;">
         <label style="display:flex; align-items:center; gap:10px; cursor:pointer;">
@@ -26,20 +23,20 @@
 
         <div style="margin-left:28px; display:grid; gap:10px;">
           <div>
-            <label class="l-label"><%= kind == "winback" ? "Quà tặng (không bắt buộc)" : "Quà tặng" %></label>
+            <label class="l-label"><%= kind == "winback" ? t("merchant.automations.gift_optional") : t("merchant.automations.gift") %></label>
             <%= select_tag "automations[#{kind}][reward_id]", options_for_select(reward_opts, c["reward_id"].to_i),
-                  include_blank: (kind == "winback" ? "Không tặng quà — chỉ nhắc" : "— chọn ưu đãi —"), class: "l-field" %>
+                  include_blank: (kind == "winback" ? t("merchant.automations.no_gift") : t("merchant.automations.pick_reward")), class: "l-field" %>
           </div>
 
           <% if kind == "winback" %>
             <div style="display:grid; grid-template-columns:150px 1fr; gap:10px;">
               <div>
-                <label class="l-label">Sau (ngày) không ghé</label>
+                <label class="l-label"><%= t("merchant.automations.winback_days") %></label>
                 <%= number_field_tag "automations[winback][days]", (c["days"].presence || 30), class: "l-field", min: 1 %>
               </div>
               <div>
-                <label class="l-label">Lời nhắn</label>
-                <%= text_field_tag "automations[winback][message]", c["message"], class: "l-field", placeholder: "Lâu rồi không gặp bạn! Ghé lại nhận ưu đãi nhé 💛" %>
+                <label class="l-label"><%= t("merchant.automations.message") %></label>
+                <%= text_field_tag "automations[winback][message]", c["message"], class: "l-field", placeholder: t("merchant.automations.message_ph") %>
               </div>
             </div>
           <% end %>
@@ -47,6 +44,6 @@
       </div>
     <% end %>
 
-    <%= submit_tag "Lưu cấu hình", class: "l-btn l-btn-primary", style: "margin-top:4px;" %>
+    <%= submit_tag t("merchant.automations.save"), class: "l-btn l-btn-primary", style: "margin-top:4px;" %>
   <% end %>
 </div>

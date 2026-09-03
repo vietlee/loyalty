@@ -1,12 +1,12 @@
-<% content_for :title, "Chương trình loyalty" %>
+<% content_for :title, t("merchant.nav.program") %>
 <% content_for :title_en, "LOYALTY PROGRAM" %>
 
 <%= form_with model: @program, url: merchant_loyalty_program_path, method: :patch do |f| %>
   <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px; max-width:900px;">
     <div class="l-panel">
-      <h3 class="l-display" style="font-size:18px; margin-bottom:6px;">Cơ chế</h3>
-      <p style="color:var(--ink-2); font-size:13px; margin-bottom:8px;">Bật/tắt từng cơ chế cho cửa hàng.</p>
-      <% [[:points_enabled, "Điểm thưởng (Points)"], [:tiers_enabled, "Hạng thành viên (Tiers)"], [:stamps_enabled, "Thẻ tem (Stamp)"], [:gamification_enabled, "Gamification"]].each do |attr, label| %>
+      <h3 class="l-display" style="font-size:18px; margin-bottom:6px;"><%= t("merchant.program.mechanisms") %></h3>
+      <p style="color:var(--ink-2); font-size:13px; margin-bottom:8px;"><%= t("merchant.program.mechanisms_note") %></p>
+      <% [[:points_enabled, t("merchant.program.m_points")], [:tiers_enabled, t("merchant.program.m_tiers")], [:stamps_enabled, t("merchant.program.m_stamps")], [:gamification_enabled, t("merchant.program.m_gami")]].each do |attr, label| %>
         <div class="l-toggle-row">
           <span><%= label %></span>
           <label class="l-switch"><%= f.check_box attr %><span class="knob"></span></label>
@@ -15,32 +15,30 @@
     </div>
 
     <div class="l-panel">
-      <h3 class="l-display" style="font-size:18px; margin-bottom:6px;">Tích điểm</h3>
-      <label class="l-label">Số điểm mỗi mốc chi tiêu</label>
+      <h3 class="l-display" style="font-size:18px; margin-bottom:6px;"><%= t("merchant.program.earn") %></h3>
+      <label class="l-label"><%= t("merchant.program.earn_per") %></label>
       <div style="display:flex; gap:8px; align-items:center; margin-bottom:14px;">
         <%= f.number_field :earn_points, class: "l-field", style: "max-width:100px;" %>
-        <span style="color:var(--ink-2);">điểm /</span>
+        <span style="color:var(--ink-2);"><%= t("merchant.program.points_slash") %></span>
         <%= f.number_field :earn_per_amount, class: "l-field", style: "max-width:140px;" %>
         <%= f.text_field :currency, class: "l-field", style: "max-width:80px;" %>
       </div>
 
-      <label class="l-label">Điểm hết hạn sau (tháng)</label>
+      <label class="l-label"><%= t("merchant.program.expiry") %></label>
       <div style="display:flex; gap:8px; align-items:center; margin-bottom:14px;">
         <%= f.number_field :points_expiry_months, class: "l-field", style: "max-width:100px;", min: 0 %>
-        <span style="color:var(--ink-2); font-size:13px;">tháng · để <strong>0</strong> nếu điểm không hết hạn</span>
+        <span style="color:var(--ink-2); font-size:13px;"><%= t("merchant.program.expiry_note") %></span>
       </div>
 
-      <label class="l-label">Chế độ tích điểm tại quầy</label>
+      <label class="l-label"><%= t("merchant.program.scan_mode") %></label>
       <%= f.select :scan_mode,
-            [["Nhân viên quét mã khách", "staff_scans_member"],
-             ["Khách tự quét mã quầy", "member_scans_pos"],
-             ["Cho phép cả hai", "both"]],
+            [[t("merchant.program.sm_staff"), "staff_scans_member"], [t("merchant.program.sm_member"), "member_scans_pos"], [t("merchant.program.sm_both"), "both"]],
             {}, class: "l-field" %>
 
-      <label class="l-label" style="margin-top:14px;">Chu kỳ tính hạng (tháng)</label>
+      <label class="l-label" style="margin-top:14px;"><%= t("merchant.program.tier_cycle") %></label>
       <%= f.number_field :tier_cycle_months, class: "l-field", style: "max-width:120px;" %>
     </div>
   </div>
 
-  <%= f.submit "Lưu cấu hình", class: "l-btn l-btn-primary", style: "margin-top:18px;" %>
+  <%= f.submit t("merchant.program.save"), class: "l-btn l-btn-primary", style: "margin-top:18px;" %>
 <% end %>

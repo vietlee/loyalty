@@ -1,4 +1,4 @@
-<% content_for :title, "Đánh giá" %>
+<% content_for :title, t("merchant.nav.feedback") %>
 <% content_for :title_en, "FEEDBACK" %>
 <% stars = ->(n) { "★" * n.round + "☆" * (5 - n.round) } %>
 
@@ -6,14 +6,14 @@
   <%# ---- Public toggle ---- %>
   <div class="l-panel" style="display:flex; align-items:center; gap:14px; flex-wrap:wrap;">
     <div style="flex:1; min-width:220px;">
-      <h3 class="l-display" style="font-size:17px; margin-bottom:2px;">Trang đánh giá công khai</h3>
-      <p style="color:var(--ink-2); font-size:13px;">Cho phép khách xem thông tin quán, chi nhánh và đánh giá của mọi khách trên app.</p>
+      <h3 class="l-display" style="font-size:17px; margin-bottom:2px;"><%= t("merchant.feedback.public_title") %></h3>
+      <p style="color:var(--ink-2); font-size:13px;"><%= t("merchant.feedback.public_note") %></p>
     </div>
     <%= form_with url: merchant_feedback_path, method: :patch do %>
       <input type="hidden" name="feedback_public" value="0">
       <label style="display:inline-flex; align-items:center; gap:8px; font-size:14px; font-weight:600; cursor:pointer;">
         <input type="checkbox" name="feedback_public" value="1" <%= "checked" if current_workspace.feedback_public? %> onchange="this.form.requestSubmit()" style="width:18px;height:18px; accent-color:var(--primary);">
-        <%= current_workspace.feedback_public? ? "Đang hiển thị" : "Đang ẩn" %>
+        <%= current_workspace.feedback_public? ? t("merchant.feedback.showing") : t("merchant.feedback.hidden") %>
       </label>
     <% end %>
   </div>
@@ -23,7 +23,7 @@
     <div class="l-panel" style="text-align:center;">
       <div class="l-num" style="font-size:44px; line-height:1;"><%= @avg %></div>
       <div style="color:var(--primary-2,#E08A3C); font-size:18px; letter-spacing:2px;"><%= stars.call(@avg) %></div>
-      <div style="color:var(--ink-2); font-size:13px; margin-top:4px;"><%= @count %> đánh giá</div>
+      <div style="color:var(--ink-2); font-size:13px; margin-top:4px;"><%= t("merchant.feedback.reviews_count", n: @count) %></div>
     </div>
     <div class="l-panel">
       <% (5).downto(1) do |s| %>
@@ -39,9 +39,9 @@
 
   <%# ---- All feedback ---- %>
   <div class="l-panel" style="margin-top:16px;">
-    <h3 class="l-display" style="font-size:17px; margin-bottom:10px;">Tất cả đánh giá</h3>
+    <h3 class="l-display" style="font-size:17px; margin-bottom:10px;"><%= t("merchant.feedback.all_reviews") %></h3>
     <% if @ratings.empty? %>
-      <p style="color:var(--ink-2); font-size:13px;">Chưa có đánh giá nào từ khách.</p>
+      <p style="color:var(--ink-2); font-size:13px;"><%= t("merchant.feedback.no_reviews") %></p>
     <% else %>
       <% @ratings.each do |r| %>
         <div style="padding:12px 0; border-bottom:1px solid var(--line);">
