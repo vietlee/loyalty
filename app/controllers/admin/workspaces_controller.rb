@@ -1,6 +1,6 @@
 module Admin
   class WorkspacesController < BaseController
-    before_action :set_workspace, only: [:show, :update, :approve, :suspend, :reactivate]
+    before_action :set_workspace, only: [:show, :update, :approve, :suspend, :reactivate, :destroy]
 
     PRESET_BY_INDUSTRY = { "fnb" => "cozy_cafe", "service" => "modern_beauty", "retail" => "retail_bold" }.freeze
 
@@ -74,6 +74,14 @@ module Admin
     def approve    = transition("active",    "Đã duyệt workspace.")
     def suspend    = transition("suspended", "Đã tạm ngưng workspace.")
     def reactivate = transition("active",    "Đã kích hoạt lại workspace.")
+
+    # Permanently delete a workspace and ALL its data (irreversible).
+    def destroy
+      name = @workspace.name
+      WorkspacePurge.call(@workspace)
+      redirect_to admin_workspaces_path,
+                  notice: "Đã xoá vĩnh viễn workspace “#{name}” và toàn bộ dữ liệu liên quan."
+    end
 
     private
 

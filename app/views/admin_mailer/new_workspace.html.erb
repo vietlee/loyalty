@@ -1,0 +1,17 @@
+<div style="font-family:Arial,sans-serif; color:#3A2A20; max-width:520px;">
+  <h2 style="margin:0 0 6px; color:#8C4A2F;">🎉 Có workspace mới đăng ký</h2>
+  <p style="color:#7A6656; margin:0 0 18px;">Một cửa hàng vừa tự đăng ký dùng thử trên nền tảng.</p>
+
+  <table style="width:100%; border-collapse:collapse; font-size:14px; margin-bottom:18px;">
+    <tr><td style="padding:6px 0; color:#7A6656;">Tên cửa hàng</td><td style="padding:6px 0; font-weight:700; text-align:right;"><%= @workspace.name %></td></tr>
+    <tr><td style="padding:6px 0; color:#7A6656;">Subdomain</td><td style="padding:6px 0; text-align:right;"><%= @workspace.subdomain %></td></tr>
+    <tr><td style="padding:6px 0; color:#7A6656;">Ngành</td><td style="padding:6px 0; text-align:right;"><%= @workspace.industry %></td></tr>
+    <tr><td style="padding:6px 0; color:#7A6656;">Chủ cửa hàng</td><td style="padding:6px 0; text-align:right;"><%= @workspace.billing_email %></td></tr>
+    <tr><td style="padding:6px 0; color:#7A6656;">Trạng thái</td><td style="padding:6px 0; text-align:right;"><%= @workspace.status_label %></td></tr>
+    <tr><td style="padding:6px 0; color:#7A6656;">Đăng ký lúc</td><td style="padding:6px 0; text-align:right;"><%= @workspace.created_at.strftime("%d/%m/%Y %H:%M") %></td></tr>
+  </table>
+
+  <p style="margin:18px 0;">
+    <a href="<%= @admin_url %>" style="background:#8C4A2F; color:#fff; text-decoration:none; padding:12px 22px; border-radius:12px; font-weight:700; display:inline-block;">Xem trong Super Admin</a>
+  </p>
+</div>

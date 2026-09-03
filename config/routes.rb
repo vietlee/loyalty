@@ -27,7 +27,7 @@ Rails.application.routes.draw do
   # ---- Super Admin (platform ops) : /admin -------------------------------
   namespace :admin do
     root "dashboard#show"
-    resources :workspaces, only: [:index, :new, :create, :show, :update] do
+    resources :workspaces, only: [:index, :new, :create, :show, :update, :destroy] do
       member do
         patch :approve
         patch :suspend
@@ -37,6 +37,8 @@ Rails.application.routes.draw do
     get "monitoring", to: "monitoring#show"
     get "billing",    to: "billing#show"
     resources :plans, only: [:index, :update]
+    get   "account", to: "account#edit",   as: :account
+    patch "account", to: "account#update"
   end
 
   # ---- Merchant self-serve signup (public) -------------------------------

@@ -42,6 +42,12 @@ module Merchant
         sign_in(:user, owner)
         session[:workspace_id] = @workspace.id
       end
+      # Notify super admins of the new signup (never block signup on mail).
+      begin
+        AdminMailer.new_workspace(@workspace).deliver_later
+      rescue => e
+        Rails.logger.error("[Signup] admin notify failed: #{e.class} #{e.message}")
+      end
       redirect_to merchant_url_for(@workspace), allow_other_host: true,
                   notice: "Chào mừng! Bạn đang dùng thử #{Workspace::TRIAL_DAYS} ngày miễn phí — bắt đầu thiết lập cửa hàng ngay."
     rescue ActiveRecord::RecordInvalid

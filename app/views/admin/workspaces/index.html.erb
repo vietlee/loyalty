@@ -16,7 +16,7 @@
 <div class="l-panel">
   <table style="width:100%; border-collapse:collapse;">
     <thead><tr style="text-align:left; color:var(--ink-2); font-size:12px; text-transform:uppercase; letter-spacing:.08em;">
-      <th style="padding:10px 8px;">Cửa hàng</th><th>Ngành</th><th>Gói</th><th>Trạng thái</th><th>Tạo</th><th></th>
+      <th style="padding:10px 8px;">Cửa hàng</th><th>Ngành</th><th>Gói</th><th>Trạng thái</th><th>Thanh toán</th><th>Tạo</th><th></th>
     </tr></thead>
     <tbody>
       <% @workspaces.each do |ws| %>
@@ -30,6 +30,18 @@
           <td>
             <% color = { "active" => "var(--good)", "pending" => "var(--primary-2)", "past_due" => "var(--warn)", "suspended" => "var(--ink-2)", "trial" => "var(--primary)" }[ws.status] %>
             <span class="l-chip" style="background:<%= color %>22; color:<%= color %>;"><%= ws.status_label %></span>
+          </td>
+          <td style="font-size:12.5px;">
+            <% if ws.paid_until.nil? %>
+              <span style="color:var(--ink-2);">— chưa có kỳ</span>
+            <% elsif ws.subscription_active? %>
+              <% left = ws.subscription_days_left.to_i %>
+              <div><%= l(ws.paid_until.to_date, format: :short) %></div>
+              <div style="color:<%= left <= 7 ? '#C9871F' : 'var(--good)' %>;">còn <%= left %> ngày</div>
+            <% else %>
+              <div style="color:var(--warn); font-weight:600;">Quá hạn <%= ws.subscription_overdue_days.to_i %> ngày</div>
+              <div style="color:var(--ink-2);"><%= l(ws.paid_until.to_date, format: :short) %></div>
+            <% end %>
           </td>
           <td style="color:var(--ink-2);"><%= l(ws.created_at.to_date, format: :short) %></td>
           <td>
@@ -49,11 +61,16 @@
               <%= link_to admin_workspace_path(ws), class: "l-btn l-btn-ghost", style: "padding:7px 12px; font-size:12px;" do %>
                 <%= ui_icon(:eye, size: 15) %> Xem
               <% end %>
+              <%= button_to admin_workspace_path(ws), method: :delete, class: "l-btn l-btn-ghost",
+                    style: "padding:7px 12px; font-size:12px; color:var(--warn);",
+                    form: { style: "display:inline;", data: { turbo_confirm: "XOÁ VĨNH VIỄN “#{ws.name}” và toàn bộ dữ liệu (khách, điểm, ưu đãi, hoá đơn…)? Không thể hoàn tác." } } do %>
+                <%= ui_icon(:trash, size: 15) %> Xoá
+              <% end %>
             </div>
           </td>
         </tr>
       <% end %>
-      <% if @workspaces.empty? %><tr><td colspan="6" style="padding:20px; text-align:center; color:var(--ink-2);">Không có workspace.</td></tr><% end %>
+      <% if @workspaces.empty? %><tr><td colspan="7" style="padding:20px; text-align:center; color:var(--ink-2);">Không có workspace.</td></tr><% end %>
     </tbody>
   </table>
 </div>
