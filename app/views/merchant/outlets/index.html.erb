@@ -1,15 +1,15 @@
-<% content_for :title, "Chi nhánh" %>
+<% content_for :title, t("merchant.nav.outlets") %>
 <% content_for :title_en, "OUTLETS" %>
 
 <div style="display:grid; grid-template-columns:1fr 340px; gap:20px; align-items:start;">
   <div>
     <% if @outlets.empty? %>
-      <div class="l-panel" style="text-align:center; padding:40px; color:var(--ink-2);">Chưa có chi nhánh nào.</div>
+      <div class="l-panel" style="text-align:center; padding:40px; color:var(--ink-2);"><%= t("merchant.outlets.empty") %></div>
     <% else %>
       <div style="display:grid; grid-template-columns:repeat(auto-fill,minmax(340px,1fr)); gap:16px;">
         <% @outlets.each do |o| %>
           <div class="l-outlet-card" style="<%= 'opacity:.55;' unless o.active? %>">
-            <%= link_to "", merchant_outlet_path(o), class: "l-outlet-hit", "aria-label": "Xem #{o.name}" %>
+            <%= link_to "", merchant_outlet_path(o), class: "l-outlet-hit", "aria-label": o.name %>
             <div style="display:flex; align-items:flex-start; gap:10px;">
               <span style="width:38px; height:38px; border-radius:11px; background:var(--surface-2); display:grid; place-items:center; font-size:19px; flex:none;">🏬</span>
               <strong style="flex:1; font-size:15px; line-height:1.3;"><%= o.name %></strong>
@@ -20,9 +20,9 @@
               <% if o.phone.present? %><div style="margin-top:2px;">📞 <%= o.phone %></div><% end %>
             </div>
             <div class="l-outlet-actions" style="display:flex; gap:8px; margin-top:14px; padding-top:12px; border-top:1px solid var(--line);">
-              <%= link_to "Xem", merchant_outlet_path(o), class: "l-btn l-btn-soft", style: "padding:6px 12px; font-size:13px;" %>
-              <%= link_to "Sửa", edit_merchant_outlet_path(o), class: "l-btn l-btn-ghost", style: "padding:6px 12px; font-size:13px;" %>
-              <%= button_to "Xoá", merchant_outlet_path(o), method: :delete, class: "l-btn l-btn-ghost", style: "padding:6px 12px; font-size:13px; color:var(--warn);", form: { data: { turbo_confirm: "Xoá chi nhánh?" }, style: "display:inline;" } %>
+              <%= link_to t("merchant.outlets.view"), merchant_outlet_path(o), class: "l-btn l-btn-soft", style: "padding:6px 12px; font-size:13px;" %>
+              <%= link_to t("merchant.outlets.edit"), edit_merchant_outlet_path(o), class: "l-btn l-btn-ghost", style: "padding:6px 12px; font-size:13px;" %>
+              <%= button_to t("merchant.outlets.delete"), merchant_outlet_path(o), method: :delete, class: "l-btn l-btn-ghost", style: "padding:6px 12px; font-size:13px; color:var(--warn);", form: { data: { turbo_confirm: t("merchant.outlets.delete_confirm") }, style: "display:inline;" } %>
             </div>
           </div>
         <% end %>
@@ -31,18 +31,18 @@
   </div>
 
   <div class="l-panel" style="position:sticky; top:90px;">
-    <h3 class="l-display" style="font-size:18px; margin-bottom:12px;">Thêm chi nhánh</h3>
+    <h3 class="l-display" style="font-size:18px; margin-bottom:12px;"><%= t("merchant.outlets.add") %></h3>
     <%= form_with model: @outlet, url: merchant_outlets_path, method: :post do |f| %>
-      <label class="l-label">Tên chi nhánh</label>
-      <%= f.text_field :name, class: "l-field", placeholder: "VD: Chi nhánh Quận 1" %>
+      <label class="l-label"><%= t("merchant.outlets.name") %></label>
+      <%= f.text_field :name, class: "l-field", placeholder: t("merchant.outlets.name_ph") %>
       <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-top:12px;">
-        <div><label class="l-label">Mã</label><%= f.text_field :code, class: "l-field", placeholder: "Q1" %></div>
-        <div><label class="l-label">SĐT</label><%= f.telephone_field :phone, class: "l-field" %></div>
+        <div><label class="l-label"><%= t("merchant.outlets.code") %></label><%= f.text_field :code, class: "l-field", placeholder: "Q1" %></div>
+        <div><label class="l-label"><%= t("merchant.outlets.phone") %></label><%= f.telephone_field :phone, class: "l-field" %></div>
       </div>
-      <label class="l-label" style="margin-top:12px;">Địa chỉ</label>
+      <label class="l-label" style="margin-top:12px;"><%= t("merchant.outlets.address") %></label>
       <%= f.text_field :address, class: "l-field" %>
       <%= f.hidden_field :active, value: true %>
-      <%= f.submit "Thêm chi nhánh", class: "l-btn l-btn-primary", style: "margin-top:14px;" %>
+      <%= f.submit t("merchant.outlets.add"), class: "l-btn l-btn-primary", style: "margin-top:14px;" %>
     <% end %>
   </div>
 </div>

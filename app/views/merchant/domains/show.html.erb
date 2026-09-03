@@ -1,26 +1,26 @@
-<% content_for :title, "Tên miền" %>
+<% content_for :title, t("merchant.nav.domain") %>
 <% content_for :title_en, "DOMAIN" %>
 <% ws = @workspace %>
 
 <div style="max-width:680px;">
   <div class="l-panel" style="margin-bottom:16px;">
-    <div class="l-eyebrow">Tên miền mặc định</div>
+    <div class="l-eyebrow"><%= t("merchant.domain.default") %></div>
     <div style="display:flex; align-items:center; gap:10px; margin-top:8px;">
       <span class="l-mono" style="font-size:18px; font-weight:700;"><%= @default_host %></span>
-      <span class="l-chip" style="background:var(--good)22; color:var(--good);">✓ Sẵn sàng</span>
+      <span class="l-chip" style="background:var(--good)22; color:var(--good);"><%= t("merchant.domain.ready") %></span>
     </div>
-    <p style="color:var(--ink-2); font-size:13px; margin-top:8px;">Customer app của bạn luôn truy cập được tại địa chỉ này (subdomain riêng trên nền tảng).</p>
+    <p style="color:var(--ink-2); font-size:13px; margin-top:8px;"><%= t("merchant.domain.default_note") %></p>
   </div>
 
   <div class="l-panel">
-    <h3 class="l-display" style="font-size:18px; margin-bottom:4px;">Tên miền riêng (tuỳ chọn)</h3>
-    <p style="color:var(--ink-2); font-size:13px; margin-bottom:14px;">Dùng domain của chính thương hiệu bạn, ví dụ <span class="l-mono">loyalty.tenshop.vn</span>.</p>
+    <h3 class="l-display" style="font-size:18px; margin-bottom:4px;"><%= t("merchant.domain.custom_title") %></h3>
+    <p style="color:var(--ink-2); font-size:13px; margin-bottom:14px;"><%= t("merchant.domain.custom_note_html").html_safe %></p>
 
     <%= form_with model: ws, url: merchant_domain_path, method: :patch do |f| %>
-      <label class="l-label">Tên miền riêng</label>
+      <label class="l-label"><%= t("merchant.domain.custom_label") %></label>
       <div style="display:flex; gap:8px;">
         <%= f.text_field :custom_domain, value: ws.custom_domain, class: "l-field", placeholder: "loyalty.tenshop.vn" %>
-        <%= f.submit "Lưu", class: "l-btn l-btn-primary", style: "white-space:nowrap;" %>
+        <%= f.submit t("merchant.domain.save"), class: "l-btn l-btn-primary", style: "white-space:nowrap;" %>
       </div>
     <% end %>
 
@@ -28,18 +28,18 @@
       <div style="margin-top:16px; padding:16px; border-radius:14px; background:var(--surface-2);">
         <% if ws.domain_verified_at %>
           <div style="display:flex; align-items:center; gap:8px; color:var(--good); font-weight:600;">
-            ✓ Đã xác minh <span style="color:var(--ink-2); font-weight:400; font-size:13px;">(<%= l(ws.domain_verified_at, format: :short) %>)</span>
+            <%= t("merchant.domain.verified") %> <span style="color:var(--ink-2); font-weight:400; font-size:13px;">(<%= l(ws.domain_verified_at, format: :short) %>)</span>
           </div>
-          <p style="font-size:13px; color:var(--ink-2); margin-top:6px;">Customer app đã hoạt động tại <span class="l-mono"><%= ws.custom_domain %></span>.</p>
+          <p style="font-size:13px; color:var(--ink-2); margin-top:6px;"><%= t("merchant.domain.verified_note_html", domain: ws.custom_domain).html_safe %></p>
         <% else %>
-          <div class="l-eyebrow" style="color:var(--warn);">Chưa xác minh · thêm bản ghi DNS</div>
-          <p style="font-size:13px; color:var(--ink-2); margin:8px 0;">Thêm 2 bản ghi sau tại nhà cung cấp tên miền của bạn, rồi bấm "Kiểm tra".</p>
+          <div class="l-eyebrow" style="color:var(--warn);"><%= t("merchant.domain.not_verified") %></div>
+          <p style="font-size:13px; color:var(--ink-2); margin:8px 0;"><%= t("merchant.domain.dns_intro") %></p>
           <table style="width:100%; font-size:13px; border-collapse:collapse;">
-            <tr style="color:var(--ink-2);"><td style="padding:4px 8px;">Loại</td><td>Tên</td><td>Giá trị</td></tr>
+            <tr style="color:var(--ink-2);"><td style="padding:4px 8px;"><%= t("merchant.domain.th_type") %></td><td><%= t("merchant.domain.th_name") %></td><td><%= t("merchant.domain.th_value") %></td></tr>
             <tr style="border-top:1px solid var(--line);"><td style="padding:6px 8px;" class="l-mono">CNAME</td><td class="l-mono">@</td><td class="l-mono"><%= ws.subdomain %>.loyalty.vn</td></tr>
             <tr style="border-top:1px solid var(--line);"><td style="padding:6px 8px;" class="l-mono">TXT</td><td class="l-mono">_loyalty</td><td class="l-mono" style="word-break:break-all;"><%= @verify_token %></td></tr>
           </table>
-          <%= button_to "Kiểm tra & xác minh", verify_merchant_domain_path, method: :post, class: "l-btn l-btn-primary", style: "margin-top:12px;" %>
+          <%= button_to t("merchant.domain.verify_btn"), verify_merchant_domain_path, method: :post, class: "l-btn l-btn-primary", style: "margin-top:12px;" %>
         <% end %>
       </div>
     <% end %>

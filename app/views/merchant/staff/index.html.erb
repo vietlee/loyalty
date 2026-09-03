@@ -1,9 +1,9 @@
-<% content_for :title, "Nhân viên & phân quyền" %>
+<% content_for :title, t("merchant.staff.title") %>
 <% content_for :title_en, "STAFF" %>
 
 <div style="display:grid; grid-template-columns:1fr 340px; gap:20px; align-items:start;">
   <div class="l-panel">
-    <h3 class="l-display" style="font-size:18px; margin-bottom:12px;">Đội ngũ</h3>
+    <h3 class="l-display" style="font-size:18px; margin-bottom:12px;"><%= t("merchant.staff.team") %></h3>
     <% @memberships.each do |m| %>
       <div style="display:flex; align-items:center; gap:12px; padding:12px 0; border-top:1px solid var(--line);">
         <div class="l-avatar" style="width:38px; height:38px; border-radius:11px; background:var(--surface-2); display:grid; place-items:center; font-weight:600;"><%= m.user.initials %></div>
@@ -14,34 +14,34 @@
         <%= form_with url: merchant_staff_path(m), method: :patch, style: "display:flex; gap:6px;" do %>
           <select name="role" class="l-field" style="padding:6px 10px; font-size:13px;" onchange="this.form.requestSubmit()">
             <% Membership::ROLES.each do |r| %>
-              <option value="<%= r %>" <%= "selected" if m.role == r %>><%= { "owner" => "Chủ", "manager" => "Quản lý", "staff" => "Nhân viên", "cashier" => "Thu ngân" }[r] %></option>
+              <option value="<%= r %>" <%= "selected" if m.role == r %>><%= { "owner" => t("merchant.roles.owner"), "manager" => t("merchant.roles.manager"), "staff" => t("merchant.roles.staff"), "cashier" => t("merchant.roles.cashier") }[r] %></option>
             <% end %>
           </select>
         <% end %>
-        <%= button_to "✕", merchant_staff_path(m), method: :delete, class: "l-btn l-btn-ghost", style: "padding:6px 10px;", form: { data: { turbo_confirm: "Gỡ nhân viên này?" } } %>
+        <%= button_to "✕", merchant_staff_path(m), method: :delete, class: "l-btn l-btn-ghost", style: "padding:6px 10px;", form: { data: { turbo_confirm: t("merchant.staff.remove_confirm") } } %>
       </div>
     <% end %>
   </div>
 
   <div class="l-panel" style="position:sticky; top:90px;">
-    <h3 class="l-display" style="font-size:18px; margin-bottom:12px;">Mời nhân viên</h3>
+    <h3 class="l-display" style="font-size:18px; margin-bottom:12px;"><%= t("merchant.staff.invite") %></h3>
     <%= form_with url: merchant_staff_index_path, method: :post do %>
-      <label class="l-label">Email</label>
-      <%= email_field_tag :email, nil, class: "l-field", placeholder: "nhanvien@email.com" %>
-      <label class="l-label" style="margin-top:12px;">Tên hiển thị</label>
-      <%= text_field_tag :name, nil, class: "l-field", placeholder: "Tên nhân viên" %>
+      <label class="l-label"><%= t("merchant.staff.email") %></label>
+      <%= email_field_tag :email, nil, class: "l-field", placeholder: t("merchant.staff.email_ph") %>
+      <label class="l-label" style="margin-top:12px;"><%= t("merchant.staff.name") %></label>
+      <%= text_field_tag :name, nil, class: "l-field", placeholder: t("merchant.staff.name_ph") %>
       <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-top:12px;">
         <div>
-          <label class="l-label">Vai trò</label>
-          <%= select_tag :role, options_for_select([["Thu ngân", "cashier"], ["Nhân viên", "staff"], ["Quản lý", "manager"]], "staff"), class: "l-field" %>
+          <label class="l-label"><%= t("merchant.staff.role") %></label>
+          <%= select_tag :role, options_for_select([[t("merchant.roles.cashier"), "cashier"], [t("merchant.roles.staff"), "staff"], [t("merchant.roles.manager"), "manager"]], "staff"), class: "l-field" %>
         </div>
         <div>
-          <label class="l-label">Chi nhánh</label>
+          <label class="l-label"><%= t("merchant.staff.branch") %></label>
           <%= select_tag :outlet_id, options_from_collection_for_select(@outlets, :id, :name), include_blank: "—", class: "l-field" %>
         </div>
       </div>
-      <%= submit_tag "Gửi lời mời", class: "l-btn l-btn-primary", style: "margin-top:14px;" %>
+      <%= submit_tag t("merchant.staff.send_invite"), class: "l-btn l-btn-primary", style: "margin-top:14px;" %>
     <% end %>
-    <p style="font-size:12px; color:var(--ink-2); margin-top:10px;">Nhân viên đăng nhập tại <span class="l-mono">/merchant/login</span> bằng email được mời.</p>
+    <p style="font-size:12px; color:var(--ink-2); margin-top:10px;"><%= t("merchant.staff.note_html").html_safe %></p>
   </div>
 </div>
