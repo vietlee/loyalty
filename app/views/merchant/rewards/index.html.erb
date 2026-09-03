@@ -1,4 +1,4 @@
-<% content_for :title, "Ưu đãi & quà" %>
+<% content_for :title, t("merchant.nav.rewards") %>
 <% content_for :title_en, "REWARDS" %>
 
 <div style="display:grid; grid-template-columns:1fr 380px; gap:20px; align-items:start;">
@@ -6,8 +6,8 @@
     <% if @rewards.empty? %>
       <div class="l-panel" style="text-align:center; padding:40px; color:var(--ink-2);">
         <div style="font-size:40px;">🎁</div>
-        <p style="font-weight:600; margin-top:8px;">Chưa có ưu đãi nào</p>
-        <p style="font-size:13px;">Tạo ưu đãi đầu tiên để khách đổi điểm.</p>
+        <p style="font-weight:600; margin-top:8px;"><%= t("merchant.rewards.empty") %></p>
+        <p style="font-size:13px;"><%= t("merchant.rewards.empty_sub") %></p>
       </div>
     <% else %>
       <div style="display:grid; grid-template-columns:repeat(auto-fill,minmax(240px,1fr)); gap:14px;">
@@ -21,13 +21,13 @@
               </div>
             </div>
             <div style="display:flex; gap:8px; margin-top:12px; flex-wrap:wrap;">
-              <% if r.cost_points %><span class="l-chip l-chip-brand"><%= number_with_delimiter(r.cost_points) %> điểm</span><% end %>
-              <span class="l-chip"><%= r.stock.nil? ? "∞" : r.remaining %> lượt</span>
-              <span class="l-chip"><%= r.vouchers.count %> đã đổi</span>
+              <% if r.cost_points %><span class="l-chip l-chip-brand"><%= t("merchant.rewards.points_n", n: number_with_delimiter(r.cost_points)) %></span><% end %>
+              <span class="l-chip"><%= r.stock.nil? ? "∞" : r.remaining %> <%= t("merchant.rewards.uses") %></span>
+              <span class="l-chip"><%= t("merchant.rewards.redeemed", n: r.vouchers.count) %></span>
             </div>
             <div style="display:flex; gap:8px; margin-top:12px;">
-              <%= link_to "Sửa", edit_merchant_reward_path(r), class: "l-btn l-btn-ghost", style: "padding:6px 12px; font-size:13px;" %>
-              <%= button_to "Xoá", merchant_reward_path(r), method: :delete, form: { data: { turbo_confirm: "Xoá ưu đãi này?" } },
+              <%= link_to t("merchant.rewards.edit"), edit_merchant_reward_path(r), class: "l-btn l-btn-ghost", style: "padding:6px 12px; font-size:13px;" %>
+              <%= button_to t("merchant.rewards.delete"), merchant_reward_path(r), method: :delete, form: { data: { turbo_confirm: t("merchant.rewards.delete_confirm") } },
                     class: "l-btn l-btn-ghost", style: "padding:6px 12px; font-size:13px; color:var(--warn);" %>
             </div>
           </div>
@@ -37,7 +37,7 @@
   </div>
 
   <div class="l-panel" style="position:sticky; top:90px;">
-    <h3 class="l-display" style="font-size:18px; margin-bottom:12px;">Thêm ưu đãi</h3>
-    <%= render "form", reward: @reward, url: merchant_rewards_path, method: :post, submit_label: "Tạo ưu đãi" %>
+    <h3 class="l-display" style="font-size:18px; margin-bottom:12px;"><%= t("merchant.rewards.add") %></h3>
+    <%= render "form", reward: @reward, url: merchant_rewards_path, method: :post, submit_label: t("merchant.rewards.create") %>
   </div>
 </div>

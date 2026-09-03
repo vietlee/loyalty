@@ -1,160 +1,159 @@
-<% content_for :title, "Gamification" %>
+<% content_for :title, t("merchant.nav.gamification") %>
 <% content_for :title_en, "GAMES" %>
 
 <% unless @program.gamification_enabled %>
   <div class="l-panel" style="margin-bottom:16px; display:flex; align-items:center; gap:12px;">
     <span style="font-size:22px;">⚠️</span>
-    <div style="flex:1;">Gamification đang <strong>tắt</strong> cho workspace này. Bật trong Chương trình loyalty để khách thấy thẻ tem, nhiệm vụ, vòng quay.</div>
-    <%= link_to "Bật ngay", merchant_loyalty_program_path, class: "l-btn l-btn-soft" %>
+    <div style="flex:1;"><%= t("merchant.gami.disabled") %></div>
+    <%= link_to t("merchant.gami.enable_now"), merchant_loyalty_program_path, class: "l-btn l-btn-soft" %>
   </div>
 <% end %>
 
 <div style="display:grid; grid-template-columns:1fr 1fr; gap:20px; align-items:start;">
   <%# ---- Stamp cards ---- %>
   <div class="l-panel">
-    <h3 class="l-display" style="font-size:18px; margin-bottom:10px;">🎟️ Thẻ tem</h3>
+    <h3 class="l-display" style="font-size:18px; margin-bottom:10px;"><%= t("merchant.gami.stamps") %></h3>
     <% @stamp_cards.each do |c| %>
       <details class="l-editrow">
         <summary style="display:flex; align-items:center; gap:10px; padding:8px 0; cursor:pointer; list-style:none;">
           <span style="font-size:20px;"><%= c.display_icon %></span>
-          <div style="flex:1;"><strong><%= c.title %></strong><div style="font-size:12px; color:var(--ink-2);">Mua <%= c.target_count %> · thưởng <%= c.reward&.title || "—" %></div></div>
-          <span class="l-chip" style="font-size:11px;">✎ Sửa</span>
-          <%= button_to "✕", merchant_stamp_card_path(c), method: :delete, class: "l-btn l-btn-ghost", style: "padding:4px 10px;", form: { data: { turbo_confirm: "Xoá thẻ tem?" }, style: "display:inline;" } %>
+          <div style="flex:1;"><strong><%= c.title %></strong><div style="font-size:12px; color:var(--ink-2);"><%= t("merchant.gami.stamp_desc", n: c.target_count, reward: c.reward&.title || "—") %></div></div>
+          <span class="l-chip" style="font-size:11px;"><%= t("merchant.gami.edit_chip") %></span>
+          <%= button_to "✕", merchant_stamp_card_path(c), method: :delete, class: "l-btn l-btn-ghost", style: "padding:4px 10px;", form: { data: { turbo_confirm: t("merchant.gami.delete_stamp_confirm") }, style: "display:inline;" } %>
         </summary>
         <%= form_with model: c, url: merchant_stamp_card_path(c), method: :patch, scope: :stamp_card do |f| %>
           <%= f.text_field :title, class: "l-field", style: "margin:4px 0 8px;" %>
           <div style="display:grid; grid-template-columns:80px 1fr; gap:8px;">
             <%= f.number_field :target_count, class: "l-field" %>
-            <%= f.select :reward_id, @rewards.map { |r| ["Thưởng: #{r.title}", r.id] }, { include_blank: "Phần thưởng —" }, class: "l-field" %>
+            <%= f.select :reward_id, @rewards.map { |r| [t("merchant.gami.reward_opt", title: r.title), r.id] }, { include_blank: t("merchant.gami.reward_blank") }, class: "l-field" %>
           </div>
           <%= f.text_field :icon, class: "l-field", placeholder: "Icon 🧋", style: "margin-top:8px;" %>
-          <%= f.submit "Lưu thay đổi", class: "l-btn l-btn-primary", style: "margin:10px 0 12px;" %>
+          <%= f.submit t("merchant.gami.save"), class: "l-btn l-btn-primary", style: "margin:10px 0 12px;" %>
         <% end %>
       </details>
     <% end %>
     <%= form_with url: merchant_stamp_cards_path, method: :post, scope: :stamp_card do |f| %>
-      <input type="text" name="stamp_card[title]" class="l-field" placeholder="VD: Mua 9 ly tặng 1" style="margin-top:12px;">
+      <input type="text" name="stamp_card[title]" class="l-field" placeholder="<%= t("merchant.gami.stamp_title_ph") %>" style="margin-top:12px;">
       <div style="display:grid; grid-template-columns:80px 1fr; gap:8px; margin-top:8px;">
-        <%= f.number_field :target_count, value: 9, class: "l-field", placeholder: "Số" %>
-        <%= f.select :reward_id, @rewards.map { |r| ["Thưởng: #{r.title}", r.id] }, { include_blank: "Phần thưởng —" }, class: "l-field" %>
+        <%= f.number_field :target_count, value: 9, class: "l-field", placeholder: t("merchant.gami.num") %>
+        <%= f.select :reward_id, @rewards.map { |r| [t("merchant.gami.reward_opt", title: r.title), r.id] }, { include_blank: t("merchant.gami.reward_blank") }, class: "l-field" %>
       </div>
       <input type="text" name="stamp_card[icon]" class="l-field" placeholder="Icon 🧋" style="margin-top:8px;">
       <%= f.hidden_field :active, value: true %>
-      <%= f.submit "Thêm thẻ tem", class: "l-btn l-btn-primary", style: "margin-top:10px;" %>
+      <%= f.submit t("merchant.gami.add_stamp"), class: "l-btn l-btn-primary", style: "margin-top:10px;" %>
     <% end %>
   </div>
 
   <%# ---- Missions ---- %>
   <div class="l-panel">
-    <h3 class="l-display" style="font-size:18px; margin-bottom:10px;">🎯 Nhiệm vụ</h3>
+    <h3 class="l-display" style="font-size:18px; margin-bottom:10px;"><%= t("merchant.gami.missions") %></h3>
     <% @missions.each do |m| %>
       <div style="display:flex; align-items:center; gap:10px; padding:8px 0; border-bottom:1px solid var(--line);">
         <span style="font-size:20px;"><%= m.display_icon %></span>
-        <div style="flex:1;"><strong><%= m.title %></strong><div style="font-size:12px; color:var(--ink-2);"><%= m.period == 'daily' ? 'Hàng ngày' : 'Hàng tuần' %> · +<%= m.reward_points %> điểm</div></div>
-        <%= button_to "✕", merchant_mission_path(m), method: :delete, class: "l-btn l-btn-ghost", style: "padding:4px 10px;", form: { data: { turbo_confirm: "Xoá nhiệm vụ?" } } %>
+        <div style="flex:1;"><strong><%= m.title %></strong><div style="font-size:12px; color:var(--ink-2);"><%= m.period == 'daily' ? t('merchant.gami.daily') : t('merchant.gami.weekly') %> · <%= t("merchant.gami.points_plus", n: m.reward_points) %></div></div>
+        <%= button_to "✕", merchant_mission_path(m), method: :delete, class: "l-btn l-btn-ghost", style: "padding:4px 10px;", form: { data: { turbo_confirm: t("merchant.gami.delete_mission_confirm") } } %>
       </div>
     <% end %>
     <%= form_with url: merchant_missions_path, method: :post, scope: :mission do |f| %>
-      <input type="text" name="mission[title]" class="l-field" placeholder="VD: Check-in hôm nay" style="margin-top:12px;">
+      <input type="text" name="mission[title]" class="l-field" placeholder="<%= t("merchant.gami.mission_title_ph") %>" style="margin-top:12px;">
       <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-top:8px;">
-        <%= f.select :mission_type, [["Check-in", "checkin"], ["Chi tiêu", "spend"], ["Ghé thăm", "visit"]], {}, class: "l-field" %>
-        <%= f.select :period, [["Hàng ngày", "daily"], ["Hàng tuần", "weekly"]], {}, class: "l-field" %>
+        <%= f.select :mission_type, [["Check-in", "checkin"], [t("merchant.gami.mtype_spend"), "spend"], [t("merchant.gami.mtype_visit"), "visit"]], {}, class: "l-field" %>
+        <%= f.select :period, [[t("merchant.gami.daily"), "daily"], [t("merchant.gami.weekly"), "weekly"]], {}, class: "l-field" %>
       </div>
       <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-top:8px;">
-        <%= f.number_field :goal, value: 1, class: "l-field", placeholder: "Mục tiêu" %>
-        <%= f.number_field :reward_points, value: 20, class: "l-field", placeholder: "Điểm" %>
+        <%= f.number_field :goal, value: 1, class: "l-field", placeholder: t("merchant.gami.goal_ph") %>
+        <%= f.number_field :reward_points, value: 20, class: "l-field", placeholder: t("merchant.gami.points_ph") %>
       </div>
       <%= f.hidden_field :active, value: true %>
-      <%= f.submit "Thêm nhiệm vụ", class: "l-btn l-btn-primary", style: "margin-top:10px;" %>
+      <%= f.submit t("merchant.gami.add_mission"), class: "l-btn l-btn-primary", style: "margin-top:10px;" %>
     <% end %>
   </div>
 
   <%# ---- Badges (editable) ---- %>
-  <% crit = { "first_purchase" => "Mua hàng lần đầu", "purchases_count" => "Số lần mua đạt mốc",
-              "points_total" => "Điểm tích luỹ đạt mốc", "night_owl" => "Mua sau 22h (cú đêm)" } %>
+  <% crit = { "first_purchase" => t("merchant.gami.crit_first"), "purchases_count" => t("merchant.gami.crit_count"), "points_total" => t("merchant.gami.crit_points"), "night_owl" => t("merchant.gami.crit_night") } %>
   <div class="l-panel">
-    <h3 class="l-display" style="font-size:18px; margin-bottom:10px;">🏅 Huy hiệu</h3>
+    <h3 class="l-display" style="font-size:18px; margin-bottom:10px;"><%= t("merchant.gami.badges") %></h3>
     <% @badges.each do |b| %>
       <details class="l-editrow">
         <summary style="display:flex; align-items:center; gap:10px; padding:8px 0; cursor:pointer; list-style:none;">
           <span style="font-size:20px;"><%= b.display_icon %></span>
           <div style="flex:1;"><strong><%= b.name %></strong>
-            <div style="font-size:12px; color:var(--ink-2);"><%= crit[b.criteria_type] || b.criteria_type %><%= " · mốc #{b.threshold}" if %w[purchases_count points_total].include?(b.criteria_type) %></div>
+            <div style="font-size:12px; color:var(--ink-2);"><%= crit[b.criteria_type] || b.criteria_type %><%= " · #{t('merchant.gami.threshold_word')} #{b.threshold}" if %w[purchases_count points_total].include?(b.criteria_type) %></div>
           </div>
-          <span class="l-chip" style="font-size:11px;">✎ Sửa</span>
-          <%= button_to "✕", merchant_badge_path(b), method: :delete, class: "l-btn l-btn-ghost", style: "padding:4px 10px;", form: { data: { turbo_confirm: "Xoá huy hiệu?" }, style: "display:inline;" } %>
+          <span class="l-chip" style="font-size:11px;"><%= t("merchant.gami.edit_chip") %></span>
+          <%= button_to "✕", merchant_badge_path(b), method: :delete, class: "l-btn l-btn-ghost", style: "padding:4px 10px;", form: { data: { turbo_confirm: t("merchant.gami.delete_badge_confirm") }, style: "display:inline;" } %>
         </summary>
         <%= form_with model: b, url: merchant_badge_path(b), method: :patch, scope: :badge do |f| %>
-          <%= f.text_field :name, class: "l-field", style: "margin:4px 0 8px;", placeholder: "Tên huy hiệu" %>
+          <%= f.text_field :name, class: "l-field", style: "margin:4px 0 8px;", placeholder: t("merchant.gami.badge_name_ph") %>
           <div style="display:grid; grid-template-columns:80px 1fr 110px; gap:8px;">
             <%= f.text_field :icon, class: "l-field", placeholder: "🏅" %>
             <%= f.select :criteria_type, crit.map { |k, v| [v, k] }, {}, class: "l-field" %>
-            <%= f.number_field :threshold, class: "l-field", min: 1, placeholder: "Mốc" %>
+            <%= f.number_field :threshold, class: "l-field", min: 1, placeholder: t("merchant.gami.threshold_ph") %>
           </div>
-          <%= f.submit "Lưu thay đổi", class: "l-btn l-btn-primary", style: "margin:10px 0 12px;" %>
+          <%= f.submit t("merchant.gami.save"), class: "l-btn l-btn-primary", style: "margin:10px 0 12px;" %>
         <% end %>
       </details>
     <% end %>
 
     <%= form_with url: merchant_badges_path, method: :post, scope: :badge do %>
-      <input type="text" name="badge[name]" class="l-field" placeholder="VD: Khách VIP" style="margin-top:12px;">
+      <input type="text" name="badge[name]" class="l-field" placeholder="<%= t("merchant.gami.add_badge_name_ph") %>" style="margin-top:12px;">
       <div style="display:grid; grid-template-columns:80px 1fr 110px; gap:8px; margin-top:8px;">
         <input type="text" name="badge[icon]" class="l-field" placeholder="🏅">
         <select name="badge[criteria_type]" class="l-field"><% crit.each { |k, v| %><option value="<%= k %>"><%= v %></option><% } %></select>
-        <input type="number" name="badge[threshold]" class="l-field" value="1" min="1" placeholder="Mốc">
+        <input type="number" name="badge[threshold]" class="l-field" value="1" min="1" placeholder="<%= t("merchant.gami.threshold_ph") %>">
       </div>
-      <%= submit_tag "Thêm huy hiệu", class: "l-btn l-btn-primary", style: "margin-top:10px;" %>
+      <%= submit_tag t("merchant.gami.add_badge"), class: "l-btn l-btn-primary", style: "margin-top:10px;" %>
     <% end %>
-    <p style="font-size:12px; color:var(--ink-2); margin-top:10px;">Huy hiệu tự trao khi khách đạt điều kiện. <strong>Mốc</strong> = số lần mua hoặc số điểm tích luỹ (tuỳ loại điều kiện); loại “lần đầu” và “cú đêm” không cần mốc.</p>
+    <p style="font-size:12px; color:var(--ink-2); margin-top:10px;"><%= t("merchant.gami.badges_note") %></p>
   </div>
 
   <%# ---- Lucky wheel (editable prizes) ---- %>
   <div class="l-panel">
-    <h3 class="l-display" style="font-size:18px; margin-bottom:4px;">🎡 Vòng quay may mắn</h3>
-    <p style="color:var(--ink-2); font-size:13px; margin-bottom:14px;">Tự đặt giải thưởng của cửa hàng. <strong>Điểm</strong> = số điểm trúng (để 0 nghĩa là ô “Chúc may mắn”). <strong>Tỉ lệ</strong> = trọng số, càng cao càng dễ trúng. Để trống <strong>Tên giải</strong> để bỏ ô đó.</p>
+    <h3 class="l-display" style="font-size:18px; margin-bottom:4px;"><%= t("merchant.gami.wheel") %></h3>
+    <p style="color:var(--ink-2); font-size:13px; margin-bottom:14px;"><%= t("merchant.gami.wheel_note") %></p>
     <% rows = @wheel.resolved_segments.dup; rows << {} while rows.size < 2 %>
     <%= form_with url: merchant_wheel_config_path, method: :patch do %>
       <div data-controller="rows" data-rows-next-value="<%= rows.size %>" data-rows-min-value="2">
         <div style="display:flex; gap:8px; font-size:11px; color:var(--ink-2); text-transform:uppercase; letter-spacing:.05em; padding:0 2px 6px;">
-          <span style="width:40px;">Màu</span><span style="flex:1;">Tên giải</span><span style="width:78px;">Điểm</span><span style="width:70px;">Tỉ lệ</span><span style="width:34px;"></span>
+          <span style="width:40px;"><%= t("merchant.gami.col_color") %></span><span style="flex:1;"><%= t("merchant.gami.col_prize") %></span><span style="width:78px;"><%= t("merchant.gami.col_points") %></span><span style="width:70px;"><%= t("merchant.gami.col_rate") %></span><span style="width:34px;"></span>
         </div>
         <div style="display:flex; flex-direction:column; gap:8px;" data-rows-target="list">
           <% rows.each_with_index do |s, i| %>
             <div style="display:flex; gap:8px; align-items:center;" data-row>
               <input type="color" name="segments[<%= i %>][color]" value="<%= s['color'] || '#E08A3C' %>" style="width:40px; height:38px; border:1px solid var(--line); border-radius:10px; padding:2px; background:#fff; cursor:pointer;">
-              <input type="text" name="segments[<%= i %>][label]" value="<%= s['label'] %>" placeholder="Ví dụ: Giảm 20%" class="l-field" style="flex:1;">
+              <input type="text" name="segments[<%= i %>][label]" value="<%= s['label'] %>" placeholder="<%= t("merchant.gami.prize_ph") %>" class="l-field" style="flex:1;">
               <input type="number" name="segments[<%= i %>][value]" value="<%= s['value'] %>" min="0" placeholder="0" class="l-field" style="width:78px;">
               <input type="number" name="segments[<%= i %>][weight]" value="<%= s['weight'] || 10 %>" min="1" placeholder="10" class="l-field" style="width:70px;">
-              <button type="button" class="wheel-x" data-action="rows#remove" aria-label="Xoá ô">✕</button>
+              <button type="button" class="wheel-x" data-action="rows#remove" aria-label="<%= t("merchant.gami.remove_cell") %>">✕</button>
             </div>
           <% end %>
         </div>
         <template data-rows-target="template">
           <div style="display:flex; gap:8px; align-items:center;" data-row>
             <input type="color" name="segments[__INDEX__][color]" value="#E08A3C" style="width:40px; height:38px; border:1px solid var(--line); border-radius:10px; padding:2px; background:#fff; cursor:pointer;">
-            <input type="text" name="segments[__INDEX__][label]" placeholder="Ví dụ: Giảm 20%" class="l-field" style="flex:1;">
+            <input type="text" name="segments[__INDEX__][label]" placeholder="<%= t("merchant.gami.prize_ph") %>" class="l-field" style="flex:1;">
             <input type="number" name="segments[__INDEX__][value]" min="0" placeholder="0" class="l-field" style="width:78px;">
             <input type="number" name="segments[__INDEX__][weight]" value="10" min="1" placeholder="10" class="l-field" style="width:70px;">
-            <button type="button" class="wheel-x" data-action="rows#remove" aria-label="Xoá ô">✕</button>
+            <button type="button" class="wheel-x" data-action="rows#remove" aria-label="<%= t("merchant.gami.remove_cell") %>">✕</button>
           </div>
         </template>
         <button type="button" class="l-btn l-btn-ghost" data-action="rows#add" style="margin-top:10px;">
-          <%= ui_icon(:check, size: 15) %> Thêm ô giải
+          <%= ui_icon(:check, size: 15) %> <%= t("merchant.gami.add_cell") %>
         </button>
       </div>
 
       <div style="display:flex; gap:16px; align-items:center; margin-top:14px; flex-wrap:wrap;">
         <label style="display:flex; align-items:center; gap:8px; font-size:14px;">
           <input type="checkbox" name="daily_free" value="1" <%= "checked" if @wheel.daily_free %>>
-          Tặng 1 lượt quay miễn phí mỗi ngày
+          <%= t("merchant.gami.daily_free") %>
         </label>
         <label style="display:flex; align-items:center; gap:8px; font-size:14px;">
-          Quay thêm tốn
-          <input type="number" name="cost_points" value="<%= @wheel.cost_points %>" min="0" class="l-field" style="width:90px;"> điểm
+          <%= t("merchant.gami.extra_spin_pre") %>
+          <input type="number" name="cost_points" value="<%= @wheel.cost_points %>" min="0" class="l-field" style="width:90px;"> <%= t("merchant.gami.extra_spin_suf") %>
         </label>
       </div>
 
-      <%= submit_tag "Lưu vòng quay", class: "l-btn l-btn-primary", style: "margin-top:16px;" %>
+      <%= submit_tag t("merchant.gami.save_wheel"), class: "l-btn l-btn-primary", style: "margin-top:16px;" %>
     <% end %>
   </div>
 </div>

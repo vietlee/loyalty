@@ -2,54 +2,54 @@
   <% if reward.errors.any? %>
     <div class="l-chip" style="background:#F3DDD7; color:#B4402F; margin-bottom:12px;"><%= reward.errors.full_messages.to_sentence %></div>
   <% end %>
-  <label class="l-label">Tên ưu đãi</label>
-  <%= f.text_field :title, class: "l-field", placeholder: "VD: Cà phê sữa đá miễn phí" %>
+  <label class="l-label"><%= t("merchant.rewards.name") %></label>
+  <%= f.text_field :title, class: "l-field", placeholder: t("merchant.rewards.name_ph") %>
 
   <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-top:12px;">
     <div>
-      <label class="l-label">Loại</label>
-      <%= f.select :kind, [["Voucher", "voucher"], ["Quà tặng", "gift"], ["Giảm giá", "discount"]], {},
+      <label class="l-label"><%= t("merchant.rewards.kind") %></label>
+      <%= f.select :kind, [["Voucher", "voucher"], [t("merchant.rewards.kind_gift"), "gift"], [t("merchant.rewards.kind_discount"), "discount"]], {},
             class: "l-field", data: { rewardform_target: "kind", action: "change->rewardform#kindChanged" } %>
     </div>
     <div>
-      <label class="l-label">Icon (emoji)</label>
+      <label class="l-label"><%= t("merchant.rewards.icon") %></label>
       <%= f.text_field :icon, class: "l-field", placeholder: "🎁" %>
     </div>
   </div>
 
   <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:12px; margin-top:12px;">
     <div>
-      <label class="l-label">Đổi bằng điểm</label>
+      <label class="l-label"><%= t("merchant.rewards.cost") %></label>
       <%= f.number_field :cost_points, class: "l-field", placeholder: "300" %>
     </div>
     <div>
-      <label class="l-label" data-rewardform-target="valueLabel">Giá trị</label>
+      <label class="l-label" data-rewardform-target="valueLabel"><%= t("merchant.rewards.value") %></label>
       <%= f.number_field :value, class: "l-field", min: 0, step: "any", placeholder: "30",
             data: { rewardform_target: "value" } %>
     </div>
     <div>
-      <label class="l-label">Đơn vị</label>
-      <%= f.select :value_unit, [["đ", "vnd"], ["%", "percent"], ["Sản phẩm", "item"]], {},
+      <label class="l-label"><%= t("merchant.rewards.unit") %></label>
+      <%= f.select :value_unit, [["đ", "vnd"], ["%", "percent"], [t("merchant.rewards.unit_item"), "item"]], {},
             class: "l-field", data: { rewardform_target: "unit", action: "change->rewardform#syncLabel" } %>
     </div>
   </div>
 
   <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-top:12px;">
     <div>
-      <label class="l-label">Tồn kho (trống = không giới hạn)</label>
+      <label class="l-label"><%= t("merchant.rewards.stock") %></label>
       <%= f.number_field :stock, class: "l-field", placeholder: "∞" %>
     </div>
     <div>
-      <label class="l-label">Hạn dùng sau khi đổi (ngày)</label>
+      <label class="l-label"><%= t("merchant.rewards.valid_days") %></label>
       <%= f.number_field :valid_days, class: "l-field" %>
     </div>
   </div>
 
-  <label class="l-label" style="margin-top:12px;">Mô tả</label>
-  <%= f.text_area :description, class: "l-field", rows: 2, placeholder: "Áp dụng mọi chi nhánh…" %>
+  <label class="l-label" style="margin-top:12px;"><%= t("merchant.rewards.description") %></label>
+  <%= f.text_area :description, class: "l-field", rows: 2, placeholder: t("merchant.rewards.description_ph") %>
 
   <label style="display:flex; align-items:center; gap:8px; margin-top:12px; font-size:14px;">
-    <%= f.check_box :active %> Đang phát hành
+    <%= f.check_box :active %> <%= t("merchant.rewards.active") %>
   </label>
 
   <%= f.submit submit_label, class: "l-btn l-btn-primary", style: "margin-top:14px;" %>
