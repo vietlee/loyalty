@@ -29,6 +29,9 @@
   (function () {
     var s = document.getElementById("l-splash");
     if (!s) return;
+    // Only the first load of an app session shows the splash; mark it seen so
+    // later loads suppress it before paint (see the <head> guard).
+    try { sessionStorage.setItem("l_splash_seen", "1"); } catch (e) {}
     var hidden = false;
     function hide() {
       if (hidden) return; hidden = true;

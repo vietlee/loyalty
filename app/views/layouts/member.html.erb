@@ -1,6 +1,9 @@
 <!DOCTYPE html>
 <html lang="<%= I18n.locale %>" class="pwa-app">
   <head>
+    <%# Show the first-load splash only once per app session (suppress before paint on later loads). %>
+    <script>try{if(sessionStorage.getItem("l_splash_seen"))document.documentElement.classList.add("l-splash-seen");}catch(e){}</script>
+    <style>html.l-splash-seen #l-splash{display:none!important;}</style>
     <%= render "layouts/head" %>
     <% if current_workspace %>
       <link rel="manifest" href="<%= pwa_manifest_path(host: request.host_with_port) %>">
