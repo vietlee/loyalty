@@ -76,7 +76,9 @@ module Customer
     private
 
     def normalize(email)
-      email.to_s.strip.downcase.presence
+      # Canonicalize (gmail dots + "+tag") so the OTP + member lookup match the
+      # stored canonical email and alias tricks can't farm rewards.
+      Member.canonical_email(email)
     end
 
     # Show the code on-screen in dev, when explicitly enabled, or until an email

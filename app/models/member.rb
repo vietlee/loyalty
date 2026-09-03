@@ -133,7 +133,23 @@ class Member < ApplicationRecord
   end
 
   def normalize_email
-    self.email = email.to_s.strip.downcase.presence
+    self.email = self.class.canonical_email(email)
+  end
+
+  # Canonicalize so alias tricks map to one account: strip a "+tag" (all
+  # providers) and, for Gmail, ignore dots and treat googlemail as gmail.
+  # e.g. quocvietlee+1@gmail.com and quoc.vietlee@gmail.com → quocvietlee@gmail.com
+  def self.canonical_email(raw)
+    e = raw.to_s.strip.downcase
+    return nil if e.blank?
+    return e unless e.include?("@")
+    local, domain = e.split("@", 2)
+    local = local.split("+", 2).first.to_s
+    if %w[gmail.com googlemail.com].include?(domain)
+      local  = local.delete(".")
+      domain = "gmail.com"
+    end
+    local.present? ? "#{local}@#{domain}" : e
   end
 
   def assign_referral_code
