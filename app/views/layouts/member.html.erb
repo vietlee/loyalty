@@ -1,8 +1,10 @@
 <!DOCTYPE html>
 <html lang="<%= I18n.locale %>" class="pwa-app">
   <head>
-    <%# Show the first-load splash only once per app session (suppress before paint on later loads). %>
-    <script>try{if(sessionStorage.getItem("l_splash_seen"))document.documentElement.classList.add("l-splash-seen");}catch(e){}</script>
+    <%# First-load splash: show once per app session. This runs before paint —
+        if already seen, hide it now; otherwise mark seen immediately so every
+        later full load in this session is suppressed too. %>
+    <script>try{if(sessionStorage.getItem("l_splash_seen"))document.documentElement.classList.add("l-splash-seen");else sessionStorage.setItem("l_splash_seen","1");}catch(e){}</script>
     <style>html.l-splash-seen #l-splash{display:none!important;}</style>
     <%= render "layouts/head" %>
     <% if current_workspace %>
