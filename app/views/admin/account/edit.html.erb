@@ -21,15 +21,15 @@
       <div class="l-eyebrow">Đổi mật khẩu</div>
       <p style="color:var(--ink-2); font-size:12.5px; margin:4px 0 8px;">Để trống nếu chỉ đổi tên/email.</p>
       <label class="l-label">Mật khẩu mới</label>
-      <%= f.password_field :password, class: "l-field", autocomplete: "new-password" %>
+      <%= f.password_field :password, class: "l-field", autocomplete: "new-password", autocapitalize: "none", autocorrect: "off", spellcheck: "false" %>
       <label class="l-label" style="margin-top:12px;">Nhập lại mật khẩu mới</label>
-      <%= f.password_field :password_confirmation, class: "l-field", autocomplete: "new-password" %>
+      <%= f.password_field :password_confirmation, class: "l-field", autocomplete: "new-password", autocapitalize: "none", autocorrect: "off", spellcheck: "false" %>
     </div>
 
     <div class="l-panel" style="margin-bottom:16px;">
       <div class="l-eyebrow">Xác nhận</div>
       <label class="l-label" style="margin-top:8px;">Mật khẩu hiện tại (bắt buộc)</label>
-      <%= f.password_field :current_password, class: "l-field", required: true, autocomplete: "current-password" %>
+      <%= f.password_field :current_password, class: "l-field", required: true, autocomplete: "current-password", autocapitalize: "none", autocorrect: "off", spellcheck: "false" %>
     </div>
 
     <%= f.submit "Lưu thay đổi", class: "l-btn l-btn-primary" %>

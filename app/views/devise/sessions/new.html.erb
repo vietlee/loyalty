@@ -11,6 +11,7 @@
     <%= f.label :password, "Mật khẩu", class: "l-label" %>
     <div style="position:relative;">
       <%= f.password_field :password, autocomplete: "current-password", class: "l-field",
+            autocapitalize: "none", autocorrect: "off", spellcheck: "false",
             placeholder: "••••••••", data: { reveal_target: "input" }, style: "padding-right:46px;" %>
       <button type="button" data-action="reveal#toggle" aria-label="Hiện/ẩn mật khẩu"
               style="position:absolute; right:8px; top:50%; transform:translateY(-50%); background:none; border:none; cursor:pointer; color:var(--ink-2); padding:6px; display:grid; place-items:center; line-height:0;">

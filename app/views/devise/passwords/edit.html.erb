@@ -14,11 +14,13 @@
   <div class="field">
     <label class="l-label">Mật khẩu mới</label>
     <%= f.password_field :password, autofocus: true, autocomplete: "new-password",
+          autocapitalize: "none", autocorrect: "off", spellcheck: "false",
           class: "l-field", placeholder: "tối thiểu 6 ký tự" %>
   </div>
   <div class="field">
     <label class="l-label">Nhập lại mật khẩu</label>
-    <%= f.password_field :password_confirmation, autocomplete: "new-password", class: "l-field" %>
+    <%= f.password_field :password_confirmation, autocomplete: "new-password",
+          autocapitalize: "none", autocorrect: "off", spellcheck: "false", class: "l-field" %>
   </div>
 
   <%= f.submit "Đặt mật khẩu & đăng nhập", class: "l-btn l-btn-primary", style: "width:100%; margin-top:6px;" %>
