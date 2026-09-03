@@ -2,8 +2,8 @@
 
 <div class="m-formwrap"><div class="m-in">
   <div class="m-formcard">
-    <h1>Tạo cửa hàng của bạn</h1>
-    <p class="sub">Mỗi cửa hàng có một app tri ân riêng — subdomain thương hiệu riêng. Miễn phí để bắt đầu.</p>
+    <h1><%= t("merchant.signup.title") %></h1>
+    <p class="sub"><%= t("merchant.signup.sub") %></p>
 
     <% if @workspace.errors.any? %>
       <div style="background:#F7E0DA; color:#B4402F; border-radius:12px; padding:11px 14px; font-size:14px; margin-bottom:18px;">
@@ -13,46 +13,46 @@
 
     <%= form_with model: @workspace, url: merchant_signup_path, method: :post, html: { data: { turbo: false } } do |f| %>
       <div class="m-field">
-        <%= f.label :name, "Tên cửa hàng", class: "l-label" %>
-        <%= f.text_field :name, class: "l-field", placeholder: "VD: Mộc Cà Phê" %>
+        <%= f.label :name, t("merchant.signup.shop_name"), class: "l-label" %>
+        <%= f.text_field :name, class: "l-field", placeholder: t("merchant.signup.shop_name_ph") %>
       </div>
 
       <div class="m-field">
-        <%= f.label :subdomain, "Địa chỉ app (subdomain)", class: "l-label" %>
+        <%= f.label :subdomain, t("merchant.signup.subdomain"), class: "l-label" %>
         <div style="display:flex; align-items:center; gap:6px;">
           <%= f.text_field :subdomain, class: "l-field", placeholder: "moccaphe", style: "text-align:right;" %>
           <span class="l-mono" style="color:var(--ink-2); white-space:nowrap;">.loyalty.czin.net</span>
         </div>
-        <div style="font-size:12px; color:var(--ink-2); margin-top:4px;">Khách của bạn sẽ mở app tại địa chỉ này.</div>
+        <div style="font-size:12px; color:var(--ink-2); margin-top:4px;"><%= t("merchant.signup.subdomain_note") %></div>
       </div>
 
       <div class="m-field">
-        <%= f.label :industry, "Ngành", class: "l-label" %>
-        <%= f.select :industry, [["F&B (cà phê, nhà hàng, trà sữa)", "fnb"], ["Bán lẻ (thời trang, mỹ phẩm)", "retail"], ["Dịch vụ (spa, salon, gym)", "service"]], {}, class: "l-field" %>
+        <%= f.label :industry, t("merchant.signup.industry"), class: "l-label" %>
+        <%= f.select :industry, [[t("merchant.signup.ind_fnb"), "fnb"], [t("merchant.signup.ind_retail"), "retail"], [t("merchant.signup.ind_service"), "service"]], {}, class: "l-field" %>
       </div>
 
       <hr style="border:none; border-top:1px solid var(--line); margin:20px 0;">
 
       <div class="m-grid2">
         <div class="m-field">
-          <%= label_tag :owner_name, "Tên chủ cửa hàng", class: "l-label" %>
+          <%= label_tag :owner_name, t("merchant.signup.owner_name"), class: "l-label" %>
           <%= text_field_tag :owner_name, params[:owner_name], class: "l-field" %>
         </div>
         <div class="m-field">
-          <%= label_tag :email, "Email đăng nhập", class: "l-label" %>
+          <%= label_tag :email, t("merchant.signup.email"), class: "l-label" %>
           <%= email_field_tag :email, params[:email], class: "l-field", placeholder: "you@example.com" %>
         </div>
       </div>
       <div class="m-field">
-        <%= label_tag :password, "Mật khẩu", class: "l-label" %>
-        <%= password_field_tag :password, nil, class: "l-field", placeholder: "tối thiểu 6 ký tự" %>
+        <%= label_tag :password, t("merchant.signup.password"), class: "l-label" %>
+        <%= password_field_tag :password, nil, class: "l-field", placeholder: t("merchant.signup.password_ph") %>
       </div>
 
-      <%= submit_tag "Tạo cửa hàng miễn phí", class: "l-btn l-btn-primary l-btn-block", style: "margin-top:6px;" %>
+      <%= submit_tag t("merchant.signup.submit"), class: "l-btn l-btn-primary l-btn-block", style: "margin-top:6px;" %>
     <% end %>
 
     <p style="text-align:center; color:var(--ink-2); font-size:13.5px; margin-top:18px;">
-      Đã có tài khoản? <%= link_to "Đăng nhập", new_user_session_path, style: "color:var(--brown); font-weight:600;" %>
+      <%= t("merchant.signup.have_account") %> <%= link_to t("merchant.signup.login"), new_user_session_path, style: "color:var(--brown); font-weight:600;" %>
     </p>
   </div>
 </div></div>
