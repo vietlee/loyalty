@@ -443,7 +443,7 @@ en:
       repay: "Continue payment"
       plans: "Plans"
       using: "Current"
-      switch_confirm: "You are on %{current}, already paid and active until %{expiry}. Switching to %{plan} (%{price}/month) now still charges the full new-plan price for the next period; the remaining time on your current plan is not credited or refunded. Consider waiting until %{expiry}."
+      switch_confirm: "You are on %{current} (paid, active until %{expiry}). Switching to %{plan} (%{price}/month) takes effect immediately and you pay the full new-plan price for the current period (until %{expiry}); the time already paid on %{current} this period is not credited or refunded."
       contact_upgrade: "Contact to upgrade"
       plans_note: "Plan changes are handled by platform admins. (Payment gateway integrated in production.)"
     choose:

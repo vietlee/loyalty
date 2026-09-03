@@ -11,7 +11,14 @@ module Merchant
       # (see Invoice#apply_payment!). Cancelling leaves the current plan intact.
       chosen = Workspace::PLAN_PRICES.key?(params[:plan]) ? params[:plan] : ws.plan
       price  = Plan.for(chosen).price
-      start_d, end_d = ws.first_billing_period
+      # Switching plan on an active (paid) shop takes effect immediately and is
+      # billed for the CURRENT calendar month (the old plan's already-paid time
+      # this month is not refunded). Everything else uses the normal next period.
+      if chosen != ws.plan && ws.subscription_active? && !ws.trial?
+        start_d, end_d = Date.current.beginning_of_month, Date.current.end_of_month
+      else
+        start_d, end_d = ws.first_billing_period
+      end
       amount = ws.prorated_amount(price, [start_d, end_d])
       # Pay any invoice that's already due first (re-price to the chosen plan).
       invoice = ws.invoices.pending.order(:period_start).first
