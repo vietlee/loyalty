@@ -9,7 +9,7 @@
   </div>
   <div style="display:flex; justify-content:space-between; margin-bottom:20px;">
     <div class="l-eyebrow"><%= t("merchant.onboarding.step_label", n: @step, label: steps[@step]) %></div>
-    <%= button_to t("merchant.onboarding.skip_setup"), skip_merchant_onboarding_path, method: :post, class: "l-mono",
+    <%= button_to t("merchant.onboarding.skip_setup"), merchant_skip_onboarding_path, method: :post, class: "l-mono",
           style: "background:none; border:none; color:var(--ink-2); font-size:12px; cursor:pointer;" %>
   </div>
 
