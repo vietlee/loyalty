@@ -547,8 +547,17 @@ en:
       all: "All customers"
       vip: "VIP customers"
       at_risk: "At risk (>30 days)"
+      at_risk_60: "Lapsed (>60 days)"
       new: "New this week"
+      has_points: "Has unredeemed points"
+      near_stamp: "Near a stamp reward"
+      birthday_week: "Birthday this week"
       birthday: "Birthday this month"
+      search_ph: "Search name / email / phone…"
+      sort_recent: "Newest"
+      sort_points: "Most points"
+      sort_spend: "Top spenders"
+      sort_label: "Sort"
     plans:
       starter:
         features: ["1 branch", "Points + Tiers + Stamp", "Up to 500 customers", "Counter scanner"]

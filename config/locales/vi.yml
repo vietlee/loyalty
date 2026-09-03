@@ -552,8 +552,17 @@ vi:
       all: "Tất cả khách"
       vip: "Khách VIP"
       at_risk: "Sắp rời bỏ (>30 ngày)"
+      at_risk_60: "Rời bỏ (>60 ngày)"
       new: "Khách mới trong tuần"
+      has_points: "Có điểm chưa đổi"
+      near_stamp: "Sắp hoàn thành thẻ tem"
+      birthday_week: "Sinh nhật tuần này"
       birthday: "Sinh nhật tháng này"
+      search_ph: "Tìm tên / email / SĐT…"
+      sort_recent: "Mới tham gia"
+      sort_points: "Điểm cao nhất"
+      sort_spend: "Chi tiêu nhiều nhất"
+      sort_label: "Sắp xếp"
     plans:
       starter:
         features: ["1 chi nhánh", "Points + Tiers + Stamp", "Tối đa 500 khách", "Máy quét tại quầy"]

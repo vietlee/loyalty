@@ -11,7 +11,10 @@ module Merchant
       if branch_scoped?
         scope = scope.where(id: Purchase.where(outlet_id: scoped_outlet.id).select(:member_id))
       end
-      @members = scope.order(created_at: :desc).limit(100).to_a
+      @q, @sort = params[:q].to_s.strip, params[:sort]
+      scope = apply_search(scope, @q)
+      scope = apply_sort(scope, @sort)
+      @members = scope.limit(100).to_a
     end
 
     def show
@@ -43,6 +46,22 @@ module Merchant
 
     def set_member
       @member = Member.find(params[:id])
+    end
+
+    def apply_search(scope, q)
+      return scope if q.blank?
+      like = "%#{q}%"
+      scope.where("members.name ILIKE :q OR members.email ILIKE :q OR members.phone ILIKE :q", q: like)
+    end
+
+    def apply_sort(scope, sort)
+      case sort
+      when "points" then scope.order(points_balance: :desc)
+      when "spend"
+        scope.left_joins(:purchases).group("members.id")
+             .order(Arel.sql("COALESCE(SUM(purchases.amount), 0) DESC"))
+      else scope.order(created_at: :desc)
+      end
     end
   end
 end

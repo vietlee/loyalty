@@ -17,6 +17,19 @@
   <% end %>
 </div>
 
+<%= form_with url: merchant_customers_path, method: :get, data: { turbo: false } do %>
+  <input type="hidden" name="segment" value="<%= @segment %>">
+  <div style="display:flex; gap:10px; margin-bottom:16px; flex-wrap:wrap;">
+    <input type="search" name="q" value="<%= @q %>" placeholder="<%= t('merchant.segments.search_ph') %>" class="l-field" style="flex:1; min-width:220px;">
+    <select name="sort" class="l-field" style="max-width:200px;" onchange="this.form.requestSubmit()" aria-label="<%= t('merchant.segments.sort_label') %>">
+      <option value="recent" <%= 'selected' unless %w[points spend].include?(@sort) %>><%= t('merchant.segments.sort_recent') %></option>
+      <option value="points" <%= 'selected' if @sort == 'points' %>><%= t('merchant.segments.sort_points') %></option>
+      <option value="spend"  <%= 'selected' if @sort == 'spend' %>><%= t('merchant.segments.sort_spend') %></option>
+    </select>
+    <%= submit_tag "🔍", class: "l-btn l-btn-soft", style: "flex:none;" %>
+  </div>
+<% end %>
+
 <div class="l-panel">
   <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:8px;">
     <strong><%= MemberSegments.icon(@segment) %> <%= MemberSegments.label(@segment) %></strong>
