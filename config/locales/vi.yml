@@ -444,7 +444,7 @@ vi:
       st_paid: "Đã trả"
       st_pending: "Chờ"
       st_failed: "Lỗi"
-      st_cancelled: "Huỷ"
+      st_cancelled: "Đã huỷ"
       repay: "Trả tiếp"
       plans: "Các gói"
       using: "Đang dùng"
