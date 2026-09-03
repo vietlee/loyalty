@@ -18,6 +18,7 @@ gem "stimulus-rails"
 gem "tailwindcss-rails"
 # Redis — cache, sessions, ActionCable, Sidekiq
 gem "redis", ">= 4.0.1"
+gem "rack-attack"
 gem "connection_pool", "~> 2.4"
 
 # --- Dynamic Loyalty stack (mirrors Orbit CRM / VOX) ---
