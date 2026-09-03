@@ -27,12 +27,11 @@ module ApplicationHelper
   # Workspace avatar: the uploaded logo (cover-cropped, inherits the box shape)
   # if present, otherwise the initials. Pass extra style for the box.
   def workspace_avatar(ws, klass: "avatar", style: nil)
-    if ws&.logo&.attached?
-      content_tag(:div, image_tag(rails_storage_proxy_path(ws.logo, only_path: true), style: "width:100%;height:100%;object-fit:cover;"),
-                  class: klass, style: ["overflow:hidden", style].compact.join(";"))
-    else
-      content_tag(:div, ws&.logo_initials, class: klass, style: style)
-    end
+    # Uploaded logo if present, otherwise the default Loyalty logo (/icon.png) —
+    # never the shop-name initials.
+    content_tag(:div,
+                image_tag(workspace_icon_url(ws), alt: "", style: "width:100%;height:100%;object-fit:cover;"),
+                class: klass, style: ["overflow:hidden", style].compact.join(";"))
   end
 
   # Member avatar: uploaded image (cover-cropped) if present, else initials.

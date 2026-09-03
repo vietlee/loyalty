@@ -4,11 +4,7 @@
   <div class="l-splash-mark">
     <div class="l-splash-ring"></div>
     <div class="l-splash-badge">
-      <% if current_workspace&.logo&.attached? %>
-        <img src="<%= workspace_icon_url(current_workspace) %>" alt="">
-      <% else %>
-        <span><%= (current_workspace&.name.to_s.strip[0, 1].presence || "❤").upcase %></span>
-      <% end %>
+      <img src="<%= workspace_icon_url(current_workspace) %>" alt="">
     </div>
   </div>
 </div>
