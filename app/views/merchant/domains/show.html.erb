@@ -16,32 +16,9 @@
     <h3 class="l-display" style="font-size:18px; margin-bottom:4px;"><%= t("merchant.domain.custom_title") %></h3>
     <p style="color:var(--ink-2); font-size:13px; margin-bottom:14px;"><%= t("merchant.domain.custom_note_html").html_safe %></p>
 
-    <%= form_with model: ws, url: merchant_domain_path, method: :patch do |f| %>
-      <label class="l-label"><%= t("merchant.domain.custom_label") %></label>
-      <div style="display:flex; gap:8px;">
-        <%= f.text_field :custom_domain, value: ws.custom_domain, class: "l-field", placeholder: "loyalty.tenshop.vn" %>
-        <%= f.submit t("merchant.domain.save"), class: "l-btn l-btn-primary", style: "white-space:nowrap;" %>
-      </div>
-    <% end %>
-
-    <% if ws.custom_domain.present? %>
-      <div style="margin-top:16px; padding:16px; border-radius:14px; background:var(--surface-2);">
-        <% if ws.domain_verified_at %>
-          <div style="display:flex; align-items:center; gap:8px; color:var(--good); font-weight:600;">
-            <%= t("merchant.domain.verified") %> <span style="color:var(--ink-2); font-weight:400; font-size:13px;">(<%= l(ws.domain_verified_at, format: :short) %>)</span>
-          </div>
-          <p style="font-size:13px; color:var(--ink-2); margin-top:6px;"><%= t("merchant.domain.verified_note_html", domain: ws.custom_domain).html_safe %></p>
-        <% else %>
-          <div class="l-eyebrow" style="color:var(--warn);"><%= t("merchant.domain.not_verified") %></div>
-          <p style="font-size:13px; color:var(--ink-2); margin:8px 0;"><%= t("merchant.domain.dns_intro") %></p>
-          <table style="width:100%; font-size:13px; border-collapse:collapse;">
-            <tr style="color:var(--ink-2);"><td style="padding:4px 8px;"><%= t("merchant.domain.th_type") %></td><td><%= t("merchant.domain.th_name") %></td><td><%= t("merchant.domain.th_value") %></td></tr>
-            <tr style="border-top:1px solid var(--line);"><td style="padding:6px 8px;" class="l-mono">CNAME</td><td class="l-mono">@</td><td class="l-mono"><%= ws.subdomain %>.loyalty.vn</td></tr>
-            <tr style="border-top:1px solid var(--line);"><td style="padding:6px 8px;" class="l-mono">TXT</td><td class="l-mono">_loyalty</td><td class="l-mono" style="word-break:break-all;"><%= @verify_token %></td></tr>
-          </table>
-          <%= button_to t("merchant.domain.verify_btn"), verify_merchant_domain_path, method: :post, class: "l-btn l-btn-primary", style: "margin-top:12px;" %>
-        <% end %>
-      </div>
-    <% end %>
+    <div style="display:flex; align-items:center; gap:12px; padding:14px 16px; border-radius:14px; background:var(--surface-2);">
+      <span class="l-chip" style="background:var(--primary)22; color:var(--primary-ink); font-weight:600; flex:none;"><%= t("merchant.domain.soon") %></span>
+      <p style="font-size:13px; color:var(--ink-2); margin:0;"><%= t("merchant.domain.soon_note") %></p>
+    </div>
   </div>
 </div>

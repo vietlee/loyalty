@@ -8,29 +8,15 @@ module Merchant
       @verify_token = verify_token
     end
 
+    # Custom domains are hidden for now — set up manually by ops (no automated
+    # cert/host provisioning yet). Keep these endpoints inert so a stray POST
+    # can't store an unusable domain.
     def update
-      domain = params.dig(:workspace, :custom_domain).to_s.downcase.strip.presence
-      if domain.present? && !current_workspace.plan_allows?(:custom_domain)
-        return redirect_to merchant_domain_path,
-          alert: "Tên miền riêng chỉ có ở gói Scale. Vui lòng nâng cấp gói."
-      end
-      if current_workspace.update(custom_domain: domain, domain_verified_at: nil)
-        redirect_to merchant_domain_path, notice: domain ? "Đã lưu tên miền. Vui lòng xác minh DNS." : "Đã gỡ tên miền riêng."
-      else
-        @default_host = "#{current_workspace.subdomain}.loyalty.vn"
-        @verify_token = verify_token
-        render :show, status: :unprocessable_entity
-      end
+      redirect_to merchant_domain_path, notice: t("merchant.domain.soon_note")
     end
 
-    # Dev stub: real deployment checks the DNS TXT record. Here we mark verified.
     def verify
-      if current_workspace.custom_domain.present?
-        current_workspace.update!(domain_verified_at: Time.current)
-        redirect_to merchant_domain_path, notice: "Đã xác minh tên miền ✓ (giả lập DNS trong môi trường dev)."
-      else
-        redirect_to merchant_domain_path, alert: "Chưa có tên miền để xác minh."
-      end
+      redirect_to merchant_domain_path, notice: t("merchant.domain.soon_note")
     end
 
     private
