@@ -168,9 +168,17 @@ class Workspace < ApplicationRecord
   def access_blocked? = access_blocked_reason.present?
 
   # The next unpaid billing month (starts when the current paid period ends).
+  # Calendar-month billing: every period runs from the 1st to the last day of a
+  # month. An active plan renews into the next full month; an expired plan is
+  # billed for the current calendar month.
   def next_billing_period
-    start = subscription_active? ? paid_until.to_date : Date.current
-    [start, start + 1.month - 1.day]
+    if subscription_active?
+      d = paid_until.to_date + 1.day
+      start = (d.day == 1) ? d : (d.beginning_of_month + 1.month)
+    else
+      start = Date.current.beginning_of_month
+    end
+    [start, start.end_of_month]
   end
 
   def can_add_outlet?(current = outlets.count)
