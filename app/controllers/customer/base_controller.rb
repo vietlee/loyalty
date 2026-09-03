@@ -9,9 +9,38 @@ module Customer
     before_action :enforce_workspace_access
     before_action -> { no_browser_cache if member_signed_in? }
     around_action :scope_tenant
-    helper_method :current_workspace, :current_program
+    helper_method :current_workspace, :current_program, :current_member, :member_signed_in?
 
     private
+
+    # ---- Per-shop member auth ---------------------------------------------
+    # Each workspace keeps its own signed cookie (mbr_<workspace_id>), so a
+    # customer of several shops stays logged in to each one independently — no
+    # re-login when switching shops (a single shared Devise session couldn't do
+    # this). The cookie key is per-workspace, so shops never collide even on a
+    # shared host (dev) or a domain-wide cookie (prod).
+    MEMBER_COOKIE_TTL = 1.year
+
+    def current_member
+      return @current_member if defined?(@current_member)
+      mid = current_workspace && cookies.signed["mbr_#{current_workspace.id}"]
+      @current_member = mid ? Member.where(workspace_id: current_workspace.id).find_by(id: mid) : nil
+    end
+
+    def member_signed_in? = current_member.present?
+
+    def sign_in_member(member)
+      cookies.signed["mbr_#{member.workspace_id}"] = {
+        value: member.id, expires: MEMBER_COOKIE_TTL.from_now,
+        httponly: true, secure: Rails.env.production?, same_site: :lax
+      }
+      @current_member = member
+    end
+
+    def sign_out_member
+      cookies.delete("mbr_#{current_workspace.id}") if current_workspace
+      @current_member = nil
+    end
 
     def set_current_workspace
       @current_workspace = resolve_workspace

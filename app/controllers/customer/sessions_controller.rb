@@ -55,8 +55,7 @@ module Customer
         Referrals.attach(referred: member, referrer_code: ref_code) if is_new && ref_code.present?
         Automations.on_signup(member) if is_new
         session.delete(:otp_email)
-        member.remember_me = true          # keep them signed in for a long time
-        sign_in(:member, member)
+        sign_in_member(member)             # per-shop long-lived cookie
         # Resume a stashed target (e.g. the promo QR they scanned) so the reward
         # is claimed right after login; otherwise land on home.
         target = session.delete(:return_to).presence || member_root_path
@@ -70,7 +69,7 @@ module Customer
     end
 
     def destroy
-      sign_out(:member)
+      sign_out_member
       redirect_to member_login_path, notice: "Đã đăng xuất."
     end
 
