@@ -1,12 +1,12 @@
-<% content_for :title, "Thương hiệu & Theme" %>
+<% content_for :title, t("merchant.nav.appearance") %>
 <% content_for :title_en, "BRANDING" %>
 
 <div data-controller="theme-preview" style="display:grid; grid-template-columns:1fr 380px; gap:20px; align-items:start;">
   <%# ---------------- Controls ---------------- %>
   <div>
     <div class="l-panel" style="margin-bottom:16px;">
-      <h3 class="l-display" style="font-size:18px; margin-bottom:2px;">Bộ theme mẫu</h3>
-      <p style="color:var(--ink-2); font-size:13px; margin-bottom:10px;">Chọn nhanh để bắt đầu — hoặc tự tuỳ chỉnh màu &amp; font bên dưới.</p>
+      <h3 class="l-display" style="font-size:18px; margin-bottom:2px;"><%= t("merchant.appearance.presets_title") %></h3>
+      <p style="color:var(--ink-2); font-size:13px; margin-bottom:10px;"><%= t("merchant.appearance.presets_note") %></p>
       <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:10px;">
         <% @presets.each do |key, p| %>
           <%= button_to merchant_appearance_path, method: :patch, params: { preset: key }, class: "l-preset" do %>
@@ -23,10 +23,10 @@
 
     <%= form_with url: merchant_appearance_path, method: :patch, multipart: true do %>
       <div class="l-panel" style="margin-bottom:16px;">
-        <h3 class="l-display" style="font-size:18px; margin-bottom:2px;">Màu sắc — tự chọn</h3>
-        <p style="color:var(--ink-2); font-size:13px; margin-bottom:12px;">Bấm vào ô màu để chọn <strong>màu bất kỳ</strong>. Không giới hạn ở 3 bộ mẫu.</p>
+        <h3 class="l-display" style="font-size:18px; margin-bottom:2px;"><%= t("merchant.appearance.colors_title") %></h3>
+        <p style="color:var(--ink-2); font-size:13px; margin-bottom:12px;"><%= t("merchant.appearance.colors_note_html").html_safe %></p>
         <div style="display:grid; grid-template-columns:1fr 1fr; gap:14px;">
-          <% [["primary", "Màu chính"], ["primary_2", "Màu nhấn"], ["surface", "Nền"], ["ink", "Chữ"]].each do |k, label| %>
+          <% [["primary", t("merchant.appearance.c_primary")], ["primary_2", t("merchant.appearance.c_accent")], ["surface", t("merchant.appearance.c_surface")], ["ink", t("merchant.appearance.c_ink")]].each do |k, label| %>
             <div>
               <label class="l-label"><%= label %></label>
               <label style="display:flex; align-items:center; gap:10px; border:1px solid var(--line); border-radius:12px; padding:6px 10px 6px 6px; background:#fff; cursor:pointer;">
@@ -41,7 +41,7 @@
           <% end %>
         </div>
 
-        <label class="l-label" style="margin-top:14px;">Bo góc</label>
+        <label class="l-label" style="margin-top:14px;"><%= t("merchant.appearance.radius") %></label>
         <input type="range" name="theme[radius]" min="8" max="30"
                value="<%= current_workspace.theme_value('radius').to_i %>"
                data-theme-preview-target="radius" data-action="input->theme-preview#update"
@@ -49,29 +49,29 @@
       </div>
 
       <div class="l-panel" style="margin-bottom:16px;">
-        <h3 class="l-display" style="font-size:18px; margin-bottom:10px;">Font & Giọng văn</h3>
-        <label class="l-label">Font tiêu đề (số điểm)</label>
+        <h3 class="l-display" style="font-size:18px; margin-bottom:10px;"><%= t("merchant.appearance.font_voice") %></h3>
+        <label class="l-label"><%= t("merchant.appearance.font_display") %></label>
         <select name="theme[font_display]" class="l-field" data-theme-preview-target="fontDisplay" data-action="change->theme-preview#update">
           <% Workspace::FONT_STACKS.keys.each do |fnt| %>
             <option value="<%= fnt %>" <%= "selected" if current_workspace.theme_value('font_display') == fnt %>><%= fnt %></option>
           <% end %>
         </select>
-        <label class="l-label" style="margin-top:12px;">Font nội dung</label>
+        <label class="l-label" style="margin-top:12px;"><%= t("merchant.appearance.font_body") %></label>
         <select name="theme[font_body]" class="l-field" data-theme-preview-target="fontBody" data-action="change->theme-preview#update">
           <% Workspace::FONT_STACKS.keys.each do |fnt| %>
             <option value="<%= fnt %>" <%= "selected" if current_workspace.theme_value('font_body') == fnt %>><%= fnt %></option>
           <% end %>
         </select>
 
-        <label class="l-label" style="margin-top:12px;">Xưng hô với khách</label>
-        <input type="text" name="branding[customer_term]" value="<%= current_workspace.branding_value('customer_term') %>" class="l-field" placeholder="bạn / quý khách / Fan cứng">
-        <label class="l-label" style="margin-top:12px;">Tagline</label>
+        <label class="l-label" style="margin-top:12px;"><%= t("merchant.appearance.customer_term") %></label>
+        <input type="text" name="branding[customer_term]" value="<%= current_workspace.branding_value('customer_term') %>" class="l-field" placeholder="<%= t("merchant.onboarding.customer_term_ph") %>">
+        <label class="l-label" style="margin-top:12px;"><%= t("merchant.appearance.tagline") %></label>
         <input type="text" name="branding[tagline]" value="<%= current_workspace.branding_value('tagline') %>" class="l-field">
       </div>
 
       <div class="l-panel" style="margin-bottom:16px;">
-        <h3 class="l-display" style="font-size:18px; margin-bottom:2px;">Logo cửa hàng</h3>
-        <p style="color:var(--ink-2); font-size:13px; margin-bottom:12px;">Dùng làm favicon cho tên miền và icon khi khách cài app (PWA). Ảnh vuông PNG, tối thiểu 192×192.</p>
+        <h3 class="l-display" style="font-size:18px; margin-bottom:2px;"><%= t("merchant.appearance.logo_title") %></h3>
+        <p style="color:var(--ink-2); font-size:13px; margin-bottom:12px;"><%= t("merchant.appearance.logo_note") %></p>
         <div style="display:flex; align-items:center; gap:14px;" data-controller="upload">
           <div data-upload-target="preview" style="width:64px; height:64px; border-radius:16px; overflow:hidden; background:var(--surface-2); display:grid; place-items:center; flex:none;">
             <% if current_workspace.logo.attached? %>
@@ -82,20 +82,20 @@
           </div>
           <button type="button" class="l-upload" data-action="upload#pick" style="flex:1;">
             <%= ui_icon(:launch, size: 18) %>
-            <span data-upload-target="name">Chọn ảnh logo…</span>
+            <span data-upload-target="name"><%= t("merchant.appearance.pick_logo") %></span>
           </button>
           <input type="file" name="logo" accept="image/png,image/jpeg,image/webp"
                  data-upload-target="input" data-action="upload#changed" hidden>
         </div>
       </div>
 
-      <%= submit_tag "Lưu giao diện", class: "l-btn l-btn-primary" %>
+      <%= submit_tag t("merchant.appearance.save"), class: "l-btn l-btn-primary" %>
     <% end %>
   </div>
 
   <%# ---------------- Live preview ---------------- %>
   <div style="position:sticky; top:90px;">
-    <div class="l-eyebrow" style="margin-bottom:8px;">Xem trước · Customer app</div>
+    <div class="l-eyebrow" style="margin-bottom:8px;"><%= t("merchant.appearance.preview_label") %></div>
     <div data-theme-preview-target="frame"
          style="border-radius:26px; border:1px solid var(--line); padding:16px; background:var(--pv-surface, #FBF6EF); box-shadow:var(--shadow-lg);">
       <div style="display:flex; align-items:center; gap:10px; margin-bottom:14px;">
@@ -103,11 +103,11 @@
         <strong style="color:var(--pv-ink,#3A2A20); font-family:var(--pv-fb,'Plus Jakarta Sans');"><%= current_workspace.name %></strong>
       </div>
       <div style="border-radius:var(--pv-radius,22px); padding:20px; color:#fff; background:linear-gradient(135deg, var(--pv-primary,#8C4A2F), color-mix(in srgb, var(--pv-primary,#8C4A2F) 55%, #000)); box-shadow:var(--shadow-lg);">
-        <div style="font-size:11px; letter-spacing:.14em; text-transform:uppercase; opacity:.85;">Điểm hiện có</div>
+        <div style="font-size:11px; letter-spacing:.14em; text-transform:uppercase; opacity:.85;"><%= t("merchant.appearance.pv_points") %></div>
         <div style="font-family:var(--pv-fd,'Fraunces'); font-size:42px; line-height:1;">2.480</div>
         <div style="margin-top:14px; font-weight:600; letter-spacing:.04em;">NGUYỄN THUỲ LINH</div>
       </div>
-      <button style="margin-top:14px; width:100%; padding:12px; border:none; border-radius:14px; color:#fff; font-weight:600; background:var(--pv-primary,#8C4A2F); font-family:var(--pv-fb,'Plus Jakarta Sans');">Đổi thưởng ngay</button>
+      <button style="margin-top:14px; width:100%; padding:12px; border:none; border-radius:14px; color:#fff; font-weight:600; background:var(--pv-primary,#8C4A2F); font-family:var(--pv-fb,'Plus Jakarta Sans');"><%= t("merchant.appearance.pv_redeem") %></button>
     </div>
   </div>
 </div>

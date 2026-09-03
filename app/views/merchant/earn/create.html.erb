@@ -12,7 +12,7 @@
     </div>
 
     <% if @result.leveled_up %>
-      <div class="l-chip l-chip-brand" style="margin-top:14px;">🎉 Khách vừa thăng hạng <%= @result.tier_after&.name %>!</div>
+      <div class="l-chip l-chip-brand" style="margin-top:14px;"><%= t("merchant.scan.leveled_up", tier: @result.tier_after&.name) %></div>
     <% end %>
 
     <%= link_to t("merchant.scan.new_txn"), merchant_scanner_path, class: "l-btn l-btn-primary l-btn-block",
