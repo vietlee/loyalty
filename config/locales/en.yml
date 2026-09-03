@@ -423,6 +423,8 @@ en:
       sub_status: "Subscription status"
       active: "✓ Active"
       paid_until: "Paid through %{date} (%{n} days left)"
+      trial_status: "✓ On free trial"
+      trial_until: "Trial until %{date} · %{n} days left. Pay to activate your plan."
       unpaid: "● Unpaid"
       unpaid_note: "Pay to fully activate the service."
       pay: "Pay %{price}"

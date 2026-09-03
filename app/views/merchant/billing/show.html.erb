@@ -19,7 +19,10 @@
     <div style="display:flex; align-items:center; gap:16px; flex-wrap:wrap;">
       <div style="flex:1; min-width:220px;">
         <div class="l-eyebrow"><%= t("merchant.billing.sub_status") %></div>
-        <% if @workspace.subscription_active? %>
+        <% if @workspace.trial? %>
+          <div style="font-weight:700; color:var(--primary); margin-top:4px;"><%= t("merchant.billing.trial_status") %></div>
+          <div style="color:var(--ink-2); font-size:13px;"><%= t("merchant.billing.trial_until", date: l(@workspace.paid_until.to_date, format: :long), n: @workspace.subscription_days_left) %></div>
+        <% elsif @workspace.subscription_active? %>
           <div style="font-weight:700; color:var(--good); margin-top:4px;"><%= t("merchant.billing.active") %></div>
           <div style="color:var(--ink-2); font-size:13px;"><%= t("merchant.billing.paid_until", date: l(@workspace.paid_until.to_date, format: :long), n: @workspace.subscription_days_left) %></div>
         <% else %>

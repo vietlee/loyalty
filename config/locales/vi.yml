@@ -428,6 +428,8 @@ vi:
       sub_status: "Trạng thái thuê bao"
       active: "✓ Đang hiệu lực"
       paid_until: "Đã thanh toán đến %{date} (còn %{n} ngày)"
+      trial_status: "✓ Đang dùng thử"
+      trial_until: "Dùng thử đến %{date} · còn %{n} ngày. Thanh toán để kích hoạt gói chính thức."
       unpaid: "● Chưa thanh toán"
       unpaid_note: "Thanh toán để kích hoạt đầy đủ dịch vụ."
       pay: "Thanh toán %{price}"
