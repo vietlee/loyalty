@@ -19,7 +19,7 @@ class Plan < ApplicationRecord
       max_outlets: nil, max_members: nil,
       allow_stamps: true, allow_gamification: true, allow_campaigns: true,
       allow_custom_domain: true, allow_ab_testing: true,
-      features: ["Không giới hạn chi nhánh", "Tên miền riêng", "A/B testing", "Ưu tiên hỗ trợ"] }
+      features: ["Không giới hạn chi nhánh", "Tên miền riêng", "Ưu tiên hỗ trợ"] }
   ].freeze
 
   def self.for(key)

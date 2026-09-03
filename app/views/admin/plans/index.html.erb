@@ -27,7 +27,7 @@
         </div>
 
         <div style="margin-top:12px; display:flex; flex-direction:column; gap:8px;">
-          <% [[:allow_stamps, "Thẻ tem"], [:allow_gamification, "Gamification"], [:allow_campaigns, "Campaign + QR phát hành"], [:allow_custom_domain, "Tên miền riêng"], [:allow_ab_testing, "A/B testing"]].each do |attr, label| %>
+          <% [[:allow_stamps, "Thẻ tem"], [:allow_gamification, "Gamification"], [:allow_campaigns, "Campaign + QR phát hành"], [:allow_custom_domain, "Tên miền riêng"]].each do |attr, label| %>
             <label style="display:flex; align-items:center; justify-content:space-between; font-size:14px;">
               <span><%= label %></span>
               <span class="l-switch"><%= f.check_box attr %><span class="knob"></span></span>

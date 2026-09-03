@@ -592,7 +592,7 @@ vi:
       growth:
         features: ["5 chi nhánh", "Đủ 4 cơ chế loyalty", "Không giới hạn khách", "Campaign + mã QR phát hành", "CRM & thông báo"]
       scale:
-        features: ["Không giới hạn chi nhánh", "Tên miền riêng", "A/B testing", "Ưu tiên hỗ trợ"]
+        features: ["Không giới hạn chi nhánh", "Tên miền riêng", "Ưu tiên hỗ trợ"]
     reward_units:
       vnd_label: "Giá trị (đ)"
       percent_label: "Giá trị (%)"

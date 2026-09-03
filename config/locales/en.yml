@@ -587,7 +587,7 @@ en:
       growth:
         features: ["5 branches", "All 4 loyalty mechanics", "Unlimited customers", "Campaigns + claim QR", "CRM & notifications"]
       scale:
-        features: ["Unlimited branches", "Custom domain", "A/B testing", "Priority support"]
+        features: ["Unlimited branches", "Custom domain", "Priority support"]
     reward_units:
       vnd_label: "Value (đ)"
       percent_label: "Value (%)"
