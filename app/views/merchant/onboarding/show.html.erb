@@ -1,5 +1,5 @@
-<% content_for :title, "Thiết lập cửa hàng" %>
-<% steps = { 1 => "Thương hiệu", 2 => "Cơ chế loyalty", 3 => "Nhân viên", 4 => "Hoàn tất" } %>
+<% content_for :title, t("merchant.onboarding.setup_title") %>
+<% steps = { 1 => t("merchant.onboarding.st_brand"), 2 => t("merchant.onboarding.st_mech"), 3 => t("merchant.onboarding.st_staff"), 4 => t("merchant.onboarding.st_done") } %>
 
 <div style="max-width:640px; margin:0 auto;">
   <div style="display:flex; align-items:center; gap:8px; margin-bottom:8px;">
@@ -8,19 +8,19 @@
     <% end %>
   </div>
   <div style="display:flex; justify-content:space-between; margin-bottom:20px;">
-    <div class="l-eyebrow">Bước <%= @step %>/4 · <%= steps[@step] %></div>
-    <%= button_to "Bỏ qua thiết lập", skip_merchant_onboarding_path, method: :post, class: "l-mono",
+    <div class="l-eyebrow"><%= t("merchant.onboarding.step_label", n: @step, label: steps[@step]) %></div>
+    <%= button_to t("merchant.onboarding.skip_setup"), skip_merchant_onboarding_path, method: :post, class: "l-mono",
           style: "background:none; border:none; color:var(--ink-2); font-size:12px; cursor:pointer;" %>
   </div>
 
   <% case @step %>
   <% when 1 %>
     <div class="l-panel">
-      <h2 class="l-display" style="font-size:22px;">Thương hiệu của bạn 🎨</h2>
-      <p style="color:var(--ink-2); font-size:14px; margin-bottom:16px;">Chọn tông màu và cách xưng hô với khách.</p>
+      <h2 class="l-display" style="font-size:22px;"><%= t("merchant.onboarding.s1_title") %></h2>
+      <p style="color:var(--ink-2); font-size:14px; margin-bottom:16px;"><%= t("merchant.onboarding.s1_note") %></p>
       <%= form_with url: merchant_onboarding_path, method: :patch do %>
         <input type="hidden" name="step" value="1">
-        <label class="l-label">Bộ màu</label>
+        <label class="l-label"><%= t("merchant.onboarding.palette") %></label>
         <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin-bottom:16px;">
           <% @presets.each do |key, p| %>
             <label class="l-preset" style="cursor:pointer;">
@@ -30,53 +30,53 @@
             </label>
           <% end %>
         </div>
-        <label class="l-label">Tagline</label>
-        <%= text_field_tag "branding[tagline]", @workspace.branding_value("tagline"), class: "l-field", placeholder: "VD: Mỗi ly một niềm vui" %>
-        <label class="l-label" style="margin-top:12px;">Xưng hô với khách</label>
-        <%= text_field_tag "branding[customer_term]", @workspace.branding_value("customer_term"), class: "l-field", placeholder: "bạn / quý khách / Fan cứng" %>
-        <%= submit_tag "Tiếp tục →", class: "l-btn l-btn-primary", style: "margin-top:18px;" %>
+        <label class="l-label"><%= t("merchant.onboarding.tagline") %></label>
+        <%= text_field_tag "branding[tagline]", @workspace.branding_value("tagline"), class: "l-field", placeholder: t("merchant.onboarding.tagline_ph") %>
+        <label class="l-label" style="margin-top:12px;"><%= t("merchant.onboarding.customer_term") %></label>
+        <%= text_field_tag "branding[customer_term]", @workspace.branding_value("customer_term"), class: "l-field", placeholder: t("merchant.onboarding.customer_term_ph") %>
+        <%= submit_tag t("merchant.onboarding.continue"), class: "l-btn l-btn-primary", style: "margin-top:18px;" %>
       <% end %>
     </div>
 
   <% when 2 %>
     <div class="l-panel">
-      <h2 class="l-display" style="font-size:22px;">Cơ chế loyalty ⚙️</h2>
-      <p style="color:var(--ink-2); font-size:14px; margin-bottom:16px;">Bật cơ chế phù hợp với cửa hàng.</p>
+      <h2 class="l-display" style="font-size:22px;"><%= t("merchant.onboarding.s2_title") %></h2>
+      <p style="color:var(--ink-2); font-size:14px; margin-bottom:16px;"><%= t("merchant.onboarding.s2_note") %></p>
       <%= form_with model: @program, url: merchant_onboarding_path, method: :patch do |f| %>
         <input type="hidden" name="step" value="2">
-        <% [[:points_enabled, "Điểm thưởng"], [:tiers_enabled, "Hạng thành viên"], [:stamps_enabled, "Thẻ tem"], [:gamification_enabled, "Gamification (vòng quay, nhiệm vụ)"]].each do |attr, label| %>
+        <% [[:points_enabled, t("merchant.onboarding.m_points")], [:tiers_enabled, t("merchant.onboarding.m_tiers")], [:stamps_enabled, t("merchant.onboarding.m_stamps")], [:gamification_enabled, t("merchant.onboarding.m_gami")]].each do |attr, label| %>
           <div class="l-toggle-row"><span><%= label %></span>
             <label class="l-switch"><%= f.check_box attr %><span class="knob"></span></label>
           </div>
         <% end %>
-        <label class="l-label" style="margin-top:14px;">Tỷ lệ tích điểm</label>
+        <label class="l-label" style="margin-top:14px;"><%= t("merchant.onboarding.earn_rate") %></label>
         <div style="display:flex; align-items:center; gap:8px;">
           <%= f.number_field :earn_points, class: "l-field", style: "max-width:90px;" %>
-          <span style="color:var(--ink-2);">điểm /</span>
+          <span style="color:var(--ink-2);"><%= t("merchant.onboarding.points_slash") %></span>
           <%= f.number_field :earn_per_amount, class: "l-field", style: "max-width:140px;" %>
           <span style="color:var(--ink-2);">đ</span>
         </div>
-        <label class="l-label" style="margin-top:14px;">Chế độ quét tại quầy</label>
-        <%= f.select :scan_mode, [["Nhân viên quét mã khách", "staff_scans_member"], ["Khách tự quét mã quầy", "member_scans_pos"], ["Cả hai", "both"]], {}, class: "l-field" %>
-        <%= f.submit "Tiếp tục →", class: "l-btn l-btn-primary", style: "margin-top:18px;" %>
+        <label class="l-label" style="margin-top:14px;"><%= t("merchant.onboarding.scan_mode") %></label>
+        <%= f.select :scan_mode, [[t("merchant.program.sm_staff"), "staff_scans_member"], [t("merchant.program.sm_member"), "member_scans_pos"], [t("merchant.onboarding.sm_both"), "both"]], {}, class: "l-field" %>
+        <%= f.submit t("merchant.onboarding.continue"), class: "l-btn l-btn-primary", style: "margin-top:18px;" %>
       <% end %>
     </div>
 
   <% when 3 %>
     <div class="l-panel">
-      <h2 class="l-display" style="font-size:22px;">Mời nhân viên 👥</h2>
-      <p style="color:var(--ink-2); font-size:14px; margin-bottom:16px;">Thêm thu ngân/nhân viên để họ dùng máy quét tại quầy. Có thể làm sau.</p>
+      <h2 class="l-display" style="font-size:22px;"><%= t("merchant.onboarding.s3_title") %></h2>
+      <p style="color:var(--ink-2); font-size:14px; margin-bottom:16px;"><%= t("merchant.onboarding.s3_note") %></p>
       <%= form_with url: merchant_onboarding_path, method: :patch do %>
         <input type="hidden" name="step" value="3">
-        <label class="l-label">Email nhân viên</label>
-        <%= email_field_tag :email, nil, class: "l-field", placeholder: "nhanvien@email.com" %>
+        <label class="l-label"><%= t("merchant.onboarding.staff_email") %></label>
+        <%= email_field_tag :email, nil, class: "l-field", placeholder: t("merchant.staff.email_ph") %>
         <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-top:12px;">
-          <div><label class="l-label">Tên</label><%= text_field_tag :name, nil, class: "l-field" %></div>
-          <div><label class="l-label">Vai trò</label><%= select_tag :role, options_for_select([["Thu ngân", "cashier"], ["Nhân viên", "staff"], ["Quản lý", "manager"]], "cashier"), class: "l-field" %></div>
+          <div><label class="l-label"><%= t("merchant.onboarding.name") %></label><%= text_field_tag :name, nil, class: "l-field" %></div>
+          <div><label class="l-label"><%= t("merchant.staff.role") %></label><%= select_tag :role, options_for_select([[t("merchant.roles.cashier"), "cashier"], [t("merchant.roles.staff"), "staff"], [t("merchant.roles.manager"), "manager"]], "cashier"), class: "l-field" %></div>
         </div>
         <div style="display:flex; gap:10px; margin-top:18px;">
-          <%= button_to "Bỏ qua bước này", merchant_onboarding_path(step: 3), method: :patch, params: { step: 3 }, class: "l-btn l-btn-ghost" %>
-          <%= submit_tag "Mời & tiếp tục →", class: "l-btn l-btn-primary", style: "flex:1;" %>
+          <%= button_to t("merchant.onboarding.skip_step"), merchant_onboarding_path(step: 3), method: :patch, params: { step: 3 }, class: "l-btn l-btn-ghost" %>
+          <%= submit_tag t("merchant.onboarding.invite_continue"), class: "l-btn l-btn-primary", style: "flex:1;" %>
         </div>
       <% end %>
     </div>
@@ -84,16 +84,16 @@
   <% when 4 %>
     <div class="l-panel" style="text-align:center;" data-controller="pointburst">
       <div style="font-size:56px;">🎉</div>
-      <h2 class="l-display" style="font-size:24px; margin-top:8px;">Sẵn sàng rồi!</h2>
-      <p style="color:var(--ink-2); margin:8px 0 20px;">Cửa hàng <strong><%= @workspace.name %></strong> đã được thiết lập. App khách của bạn tại <span class="l-mono"><%= @workspace.subdomain %>.loyalty.vn</span>.</p>
+      <h2 class="l-display" style="font-size:24px; margin-top:8px;"><%= t("merchant.onboarding.s4_title") %></h2>
+      <p style="color:var(--ink-2); margin:8px 0 20px;"><%= t("merchant.onboarding.done_html", name: @workspace.name, host: "#{@workspace.subdomain}.loyalty.czin.net").html_safe %></p>
       <div style="display:flex; flex-wrap:wrap; gap:8px; justify-content:center; margin-bottom:20px;">
-        <span class="l-chip">✓ Thương hiệu</span>
+        <span class="l-chip"><%= t("merchant.onboarding.chip_brand") %></span>
         <span class="l-chip">✓ <%= [@program.points_enabled && "Điểm", @program.tiers_enabled && "Hạng", @program.stamps_enabled && "Tem", @program.gamification_enabled && "Game"].select(&:itself).join(" · ") %></span>
-        <span class="l-chip">✓ <%= @workspace.memberships.count %> nhân viên</span>
+        <span class="l-chip"><%= t("merchant.onboarding.chip_staff", n: @workspace.memberships.count) %></span>
       </div>
       <%= form_with url: merchant_onboarding_path, method: :patch do %>
         <input type="hidden" name="step" value="4">
-        <%= submit_tag "Vào bảng điều khiển", class: "l-btn l-btn-primary l-btn-block" %>
+        <%= submit_tag t("merchant.onboarding.enter_dashboard"), class: "l-btn l-btn-primary l-btn-block" %>
       <% end %>
     </div>
   <% end %>
