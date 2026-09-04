@@ -9,7 +9,7 @@
     <div class="av" style="width:56px; height:56px; border-radius:16px; background:<%= @member.tier&.gradient_css || 'var(--primary)' %>; color:#fff; display:grid; place-items:center; font-weight:700; font-size:20px; flex:none;"><%= @member.initials %></div>
     <div style="flex:1; min-width:180px;">
       <div style="font-size:20px; font-weight:700;"><%= @member.display_name %></div>
-      <div style="color:var(--ink-2); font-size:13px;"><%= @member.email.presence || @member.phone %></div>
+      <div style="color:var(--ink-2); font-size:13px;"><%= [@member.email.presence, @member.phone.presence].compact.join(" · ").presence || "—" %></div>
       <div style="margin-top:6px; display:flex; gap:8px; flex-wrap:wrap;">
         <% if @member.tier %><span class="l-chip l-chip-brand"><%= @member.tier.name %></span><% end %>
         <% if @member.birthday %><span class="l-chip">🎂 <%= l(@member.birthday, format: :short) %></span><% end %>

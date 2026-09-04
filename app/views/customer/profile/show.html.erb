@@ -42,6 +42,9 @@
       <label class="l-label" style="margin-top:12px;"><%= t("customer.profile.email") %></label>
       <%= f.email_field :email, class: "l-field", autocomplete: "email", placeholder: "ban@vidu.com" %>
 
+      <label class="l-label" style="margin-top:12px;"><%= t("customer.profile.phone") %></label>
+      <%= f.telephone_field :phone, class: "l-field", autocomplete: "tel", inputmode: "numeric", placeholder: "0901234567" %>
+
       <label class="l-label" style="margin-top:12px;"><%= t("customer.profile.birthday") %></label>
       <%# Masked text field guarantees DD/MM/YYYY on every browser; a ghost
           overlay keeps the remaining DD/MM/YYYY template visible while typing. %>
