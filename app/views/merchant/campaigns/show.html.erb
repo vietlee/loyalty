@@ -1,24 +1,32 @@
 <% content_for :title, @campaign.name %>
 <% content_for :title_en, "CAMPAIGN" %>
 
-<div style="display:flex; align-items:center; gap:10px; margin-bottom:16px;">
+<div style="margin-bottom:14px;">
   <%= link_to t("merchant.campaigns.back"), merchant_campaigns_path, style: "color:var(--ink-2); font-size:13px; text-decoration:none;" %>
-  <span class="l-chip"><%= @campaign.type_label %></span>
-  <span class="l-chip <%= 'l-chip-brand' if @campaign.status == 'running' %>"><%= @campaign.status_label %></span>
-  <span class="l-chip"><%= @campaign.audience_label %></span>
+</div>
+<%# Static metadata (not clickable): plain labels with dot separators %>
+<div style="display:flex; align-items:center; gap:8px; margin-bottom:16px; flex-wrap:wrap; color:var(--ink-2); font-size:13px;">
+  <span><%= @campaign.type_label %></span>
+  <span style="opacity:.5;">·</span>
+  <span style="display:inline-flex; align-items:center; gap:6px; font-weight:700; color:<%= @campaign.status == 'running' ? 'var(--good)' : 'var(--ink)' %>;">
+    <% if @campaign.status == "running" %><span style="width:7px; height:7px; border-radius:50%; background:var(--good); display:inline-block;"></span><% end %>
+    <%= @campaign.status_label %>
+  </span>
+  <span style="opacity:.5;">·</span>
+  <span><%= @campaign.audience_label %></span>
 </div>
 
 <% if current_membership&.can_manage? %>
-  <div style="display:flex; gap:8px; margin-bottom:16px; flex-wrap:wrap;">
+  <div style="display:flex; gap:10px; margin-bottom:16px; flex-wrap:wrap;">
     <% if @campaign.status == "running" %>
       <%= button_to "⏸ Tạm dừng", pause_merchant_campaign_path(@campaign), method: :patch,
-            class: "l-btn l-btn-soft", form: { style: "display:inline;" } %>
+            class: "l-btn l-btn-soft", style: "border-color:color-mix(in srgb, var(--btn-primary) 32%, transparent);", form: { style: "display:inline;" } %>
     <% elsif @campaign.status == "paused" %>
       <%= button_to "▶ Tiếp tục", resume_merchant_campaign_path(@campaign), method: :patch,
             class: "l-btn l-btn-primary", form: { style: "display:inline;" } %>
     <% end %>
     <%= button_to "🗑 Xoá chiến dịch", merchant_campaign_path(@campaign), method: :delete,
-          class: "l-btn l-btn-ghost", style: "color:var(--warn);",
+          class: "l-btn l-btn-ghost", style: "color:var(--warn); border-color:color-mix(in srgb, var(--warn) 45%, var(--line));",
           form: { style: "display:inline;", data: { turbo_confirm: "Xoá chiến dịch này? Mã QR phát hành sẽ ngừng hoạt động. Voucher đã phát cho khách vẫn được giữ." } } %>
   </div>
 <% end %>
