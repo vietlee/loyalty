@@ -47,14 +47,11 @@
   <% prog = current_workspace.program %>
   <%
     items = []
-    items << [member_wheel_path,      :wheel,  t("customer.home.q_wheel"),     false] if prog.gamification_enabled
-    items << [member_missions_path,   :target, t("customer.home.q_missions"),  false] if prog.gamification_enabled
-    items << [member_stamps_path,     :stamp,  t("customer.home.chip_stamps"), false] if prog.gamification_enabled && @has_stamps
-    items << [member_refer_path,      :users,  t("customer.home.q_invite"),    false] if prog.referral_enabled
-    items << [member_badges_path,     :medal,  t("customer.home.chip_badges"), false] if prog.gamification_enabled
-    items << [member_wallet_path,     :gift,   t("customer.home.q_wallet"),    false]
-    items << [member_tier_path,       :medal,  t("customer.home.q_tier"),      false]
-    items << [member_shop_about_path, "🏬",    "Về quán",                      true]  if current_workspace.feedback_public?
+    items << [member_wheel_path,      :wheel,  t("customer.home.q_wheel"),      false] if prog.gamification_enabled
+    items << [member_missions_path,   :target, t("customer.home.q_missions"),   false] if prog.gamification_enabled
+    items << [member_refer_path,      :users,  t("customer.home.q_invite"),     false] if prog.referral_enabled
+    items << [member_badges_path,     :medal,  t("customer.home.chip_badges"),  false] if prog.gamification_enabled
+    items << [member_shop_about_path, "🏬",    t("customer.home.q_about"),      true]  if current_workspace.feedback_public?
   %>
   <div class="l-quick">
     <% items.each do |path, icon, label, emoji| %>
