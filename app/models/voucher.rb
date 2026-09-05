@@ -2,7 +2,7 @@ class Voucher < ApplicationRecord
   acts_as_tenant(:workspace)
 
   STATES  = %w[active used expired].freeze
-  SOURCES = %w[redeem claim_qr campaign birthday referral].freeze
+  SOURCES = %w[redeem claim_qr campaign birthday referral spin].freeze
   USE_TTL = 12.minutes # point-of-use code lifetime (§6.4)
 
   belongs_to :workspace

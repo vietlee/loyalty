@@ -18,6 +18,7 @@ module Customer
           index: result[:index],
           label: result[:segment]["label"],
           points: result[:points],
+          reward: result[:reward]&.title,
           free: result[:free],
           balance: current_member.reload.points_balance,
           free_left: @wheel.free_spin_available?(current_member)

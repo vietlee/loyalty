@@ -246,6 +246,8 @@ vi:
       col_color: "Màu"
       col_prize: "Tên giải"
       col_points: "Điểm"
+      col_reward: "Ưu đãi (thay điểm)"
+      reward_none: "— Không —"
       col_rate: "Tỉ lệ"
       prize_ph: "Ví dụ: Giảm 20%"
       remove_cell: "Xoá ô"

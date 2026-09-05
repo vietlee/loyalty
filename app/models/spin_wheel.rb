@@ -43,16 +43,24 @@ class SpinWheel < ApplicationRecord
 
     index, seg = pick
     points = seg["kind"] == "points" ? seg["value"].to_i : 0
+    reward = (seg["kind"] == "reward" && seg["reward_id"].present?) ?
+             Reward.find_by(id: seg["reward_id"], workspace_id: workspace_id) : nil
 
+    voucher = nil
     SpinWheel.transaction do
       SpinLog.create!(workspace: workspace, member: member, segment_index: index,
-                      result_kind: seg["kind"], result_value: points, cost: cost)
+                      result_kind: seg["kind"], result_value: (reward ? reward.id : points), cost: cost)
       PointTransaction.create!(workspace: workspace, member: member, kind: "adjust",
                                amount: -cost, note: "Lượt quay") if cost.positive?
       PointTransaction.create!(workspace: workspace, member: member, kind: "game",
                                amount: points, note: "Vòng quay may mắn") if points.positive?
+      if reward
+        voucher = Voucher.create!(workspace: workspace, member: member, reward: reward,
+                                  source: "spin", state: "active", points_spent: 0,
+                                  expires_at: reward.valid_days.present? ? reward.valid_days.days.from_now : nil)
+      end
       member.recompute_points!
     end
-    { index: index, segment: seg, points: points, free: free, cost: cost }
+    { index: index, segment: seg, points: points, reward: reward, voucher: voucher, free: free, cost: cost }
   end
 end

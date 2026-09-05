@@ -41,8 +41,11 @@ export default class extends Controller {
   }
 
   reveal(data) {
-    this.resultTarget.textContent = data.points > 0 ? `🎉 ${data.label}!` : `${data.label} — chúc bạn may mắn lần sau`
-    if (data.points > 0) { this.confetti(); this.playWin() } else { this.playLose() }
+    const won = data.points > 0 || data.reward
+    if (data.reward)      this.resultTarget.textContent = `🎉 Trúng ${data.reward} — đã vào ví của bạn!`
+    else if (data.points > 0) this.resultTarget.textContent = `🎉 ${data.label}!`
+    else                  this.resultTarget.textContent = `${data.label} — chúc bạn may mắn lần sau`
+    if (won) { this.confetti(); this.playWin() } else { this.playLose() }
     // Update spin state
     if (data.free_left) {
       this.btnTarget.textContent = "Quay miễn phí 🎉"

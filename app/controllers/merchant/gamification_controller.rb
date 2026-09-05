@@ -17,13 +17,20 @@ module Merchant
     def update_wheel
       wheel = current_workspace.spin_wheel || current_workspace.build_spin_wheel
       rows = (params[:segments] || {}).values
+      valid_reward_ids = current_workspace.rewards.pluck(:id).to_set
       segs = rows.filter_map do |r|
         label = r[:label].to_s.strip
         next if label.blank?
         value = r[:value].to_i
-        { "label" => label, "kind" => value.positive? ? "points" : "none",
-          "value" => value, "weight" => [r[:weight].to_i, 1].max,
-          "color" => r[:color].presence || "#E08A3C" }
+        rid = r[:reward_id].to_i
+        seg = { "label" => label, "weight" => [r[:weight].to_i, 1].max,
+                "color" => r[:color].presence || "#E08A3C" }
+        if rid.positive? && valid_reward_ids.include?(rid)
+          # Prize is a reward voucher (points ignored).
+          seg.merge("kind" => "reward", "reward_id" => rid, "value" => 0)
+        else
+          seg.merge("kind" => value.positive? ? "points" : "none", "value" => value)
+        end
       end
       wheel.segments    = segs
       wheel.cost_points = params[:cost_points].to_i if params[:cost_points].present?

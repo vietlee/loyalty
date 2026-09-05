@@ -241,6 +241,8 @@ en:
       col_color: "Color"
       col_prize: "Prize"
       col_points: "Points"
+      col_reward: "Reward (instead of points)"
+      reward_none: "— None —"
       col_rate: "Weight"
       prize_ph: "e.g. 20% off"
       remove_cell: "Remove"
