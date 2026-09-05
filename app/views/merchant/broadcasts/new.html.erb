@@ -1,5 +1,6 @@
 <% content_for :title, t("merchant.nav.broadcasts") %>
 <% content_for :title_en, "BROADCAST" %>
+<% merchant_back merchant_broadcasts_path %>
 
 <div data-controller="campaign-preview" style="display:grid; grid-template-columns:1fr 360px; gap:20px; align-items:start;">
   <%= form_with model: @broadcast, url: merchant_broadcasts_path, method: :post do |f| %>

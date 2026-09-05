@@ -12,6 +12,17 @@ module Merchant
       end
     end
 
+    def update
+      mission = current_workspace.missions.find(params[:id])
+      mission.assign_attributes(mission_params)
+      mission.proof_config = mission.photo_proof? ? build_proof_config : {}
+      if mission.save
+        redirect_to merchant_gamification_path, notice: "Đã cập nhật nhiệm vụ “#{mission.title}”."
+      else
+        redirect_to merchant_gamification_path, alert: mission.errors.full_messages.to_sentence
+      end
+    end
+
     def destroy
       current_workspace.missions.find(params[:id]).destroy
       redirect_to merchant_gamification_path, notice: "Đã xoá nhiệm vụ."

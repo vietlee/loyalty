@@ -20,9 +20,21 @@ module Merchant
       end
     end
 
+    # Deleting a stamp card cascades to its memberships (dependent: :destroy),
+    # which would wipe every customer's in-progress stamps. To avoid silently
+    # erasing customer progress, only hard-delete a card nobody is collecting;
+    # if any customer has stamps or a completed cycle, archive it (active: false)
+    # instead — their progress and any earned vouchers stay intact.
     def destroy
-      current_workspace.stamp_cards.find(params[:id]).destroy
-      redirect_to merchant_gamification_path, notice: "Đã xoá thẻ tem."
+      card = current_workspace.stamp_cards.find(params[:id])
+      in_progress = card.stamp_card_memberships.where("count > 0 OR completed_count > 0").count
+      if in_progress.positive?
+        card.update(active: false)
+        redirect_to merchant_gamification_path, notice: t("merchant.gami.stamp_archived", n: in_progress)
+      else
+        card.destroy
+        redirect_to merchant_gamification_path, notice: t("merchant.gami.stamp_deleted")
+      end
     end
 
     private

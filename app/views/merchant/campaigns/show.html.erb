@@ -1,9 +1,6 @@
 <% content_for :title, @campaign.name %>
 <% content_for :title_en, "CAMPAIGN" %>
-
-<div style="margin-bottom:14px;">
-  <%= link_to t("merchant.campaigns.back"), merchant_campaigns_path, style: "color:var(--ink-2); font-size:13px; text-decoration:none;" %>
-</div>
+<% merchant_back merchant_campaigns_path %>
 <%# Static metadata (not clickable): plain labels with dot separators %>
 <div style="display:flex; align-items:center; gap:8px; margin-bottom:16px; flex-wrap:wrap; color:var(--ink-2); font-size:13px;">
   <span><%= @campaign.type_label %></span>
@@ -45,9 +42,32 @@
         </button>
       </span>
       <a href="<%= @share_url %>" target="_blank" rel="noopener" class="l-btn l-btn-soft" style="padding:8px 14px; font-size:13px;">🔗 <%= t("merchant.campaigns.open_link") %></a>
-      <%= button_to t("merchant.campaigns.push_now"), push_merchant_campaign_path(@campaign), method: :post,
-            class: "l-btn l-btn-primary", style: "padding:8px 14px; font-size:13px;",
-            form: { style: "display:inline; margin:0;", data: { turbo_confirm: t("merchant.campaigns.push_confirm", audience: @campaign.audience_label) } } %>
+      <div data-controller="audiencepick" style="position:relative; display:inline-block;">
+        <button type="button" class="l-btn l-btn-primary" style="padding:8px 14px; font-size:13px;"
+                data-action="audiencepick#toggle" data-audiencepick-target="button">
+          <%= t("merchant.campaigns.push_now") %> ▾
+        </button>
+        <%= form_with url: push_merchant_campaign_path(@campaign), method: :post,
+              data: { turbo_confirm: t("merchant.campaigns.push_confirm_multi") } do %>
+          <div data-audiencepick-target="panel" hidden
+               style="position:absolute; z-index:1000; top:calc(100% + 6px); right:0; width:290px; background:#fff; border:1px solid var(--line); border-radius:14px; box-shadow:var(--shadow-lg); padding:10px; max-height:340px; overflow:auto;">
+            <div style="font-size:12px; font-weight:700; color:var(--ink-2); text-transform:uppercase; letter-spacing:.06em; padding:4px 6px 8px;"><%= t("merchant.campaigns.push_pick") %></div>
+            <% MemberSegments::PRESETS.each do |key, _meta| %>
+              <label style="display:flex; align-items:center; gap:10px; padding:8px 6px; border-radius:9px; cursor:pointer; font-size:14px;"
+                     onmouseover="this.style.background='var(--surface-2)'" onmouseout="this.style.background='transparent'">
+                <input type="checkbox" name="segments[]" value="<%= key %>" <%= 'checked' if key == @campaign.audience %>
+                       data-audiencepick-target="check" data-action="audiencepick#update" style="width:16px; height:16px; flex:none;">
+                <span style="flex:1;"><%= MemberSegments.icon(key) %> <%= MemberSegments.label(key) %></span>
+                <span style="font-size:12px; color:var(--ink-2); font-variant-numeric:tabular-nums;"><%= @counts[key] %></span>
+              </label>
+            <% end %>
+            <button type="submit" class="l-btn l-btn-primary" data-audiencepick-target="send"
+                    style="width:100%; margin-top:8px; padding:9px; font-size:13px;">
+              <%= t("merchant.campaigns.push_send_prefix") %> <span data-audiencepick-target="count">1</span> <%= t("merchant.campaigns.push_send_suffix") %>
+            </button>
+          </div>
+        <% end %>
+      </div>
       <% if AiImageService.configured? %>
         <%= button_to t("merchant.campaigns.gen_banner"), generate_banner_merchant_campaign_path(@campaign), method: :patch,
               class: "l-btn l-btn-soft", style: "padding:8px 14px; font-size:13px;",

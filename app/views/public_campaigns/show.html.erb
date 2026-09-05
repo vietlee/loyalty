@@ -58,7 +58,8 @@
       <h1><%= title %></h1>
       <% if body.present? %><p><%= body %></p><% end %>
 
-      <% if @promo_scan_url %>
+      <%# Standalone QR only when the banner doesn't already carry a composited QR %>
+      <% if @promo_scan_url && !og_img %>
         <div style="margin:6px 0 16px; padding:16px; border:1px solid var(--line, #eee); border-radius:16px; text-align:center; background:#fff;">
           <div style="font-size:12px; color:var(--ink-2); font-weight:700; letter-spacing:.04em; text-transform:uppercase; margin-bottom:10px;">Quét mã để nhận ưu đãi</div>
           <div style="display:inline-block; padding:10px; background:#fff; border-radius:12px;">

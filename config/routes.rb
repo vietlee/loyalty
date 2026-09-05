@@ -89,6 +89,7 @@ Rails.application.routes.draw do
     resources :campaigns, only: [:index, :new, :create, :show, :edit, :update, :destroy] do
       collection do
         post :generate_content # AI content suggestion (title/body), no persisted campaign
+        get  :banner_jobs      # JSON poll for the global banner-generation progress bar
       end
       member do
         get   :qr      # downloadable promo QR (PNG)
@@ -115,7 +116,7 @@ Rails.application.routes.draw do
     get   "gamification",      to: "gamification#show"
     patch "gamification/wheel", to: "gamification#update_wheel", as: :wheel_config
     resources :stamp_cards, only: [:create, :update, :destroy]
-    resources :missions,    only: [:create, :destroy]
+    resources :missions,    only: [:create, :update, :destroy]
     resources :mission_submissions, only: [:index] do
       member do
         patch :approve

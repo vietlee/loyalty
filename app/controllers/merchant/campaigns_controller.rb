@@ -1,6 +1,6 @@
 module Merchant
   class CampaignsController < BaseController
-    before_action :require_manager!, except: [:index, :show]
+    before_action :require_manager!, except: [:index, :show, :banner_jobs]
     before_action :set_campaign, only: [:show, :edit, :update, :qr, :pause, :resume, :destroy, :generate_banner, :push]
 
     def index
@@ -35,6 +35,7 @@ module Merchant
       @promo = @campaign.promo_codes.first
       @promo_url = helpers.customer_scan_url(current_workspace, promo: @promo.token) if @promo
       @share_url = public_campaign_url(@campaign.share_token!)
+      @counts = MemberSegments.counts if current_membership&.can_manage?
     end
 
     def edit
@@ -70,18 +71,45 @@ module Merchant
       unless AiImageService.configured?
         return redirect_to merchant_campaign_path(@campaign), alert: t("merchant.campaigns.banner_no_key")
       end
+      @campaign.update_columns(banner_status: "generating", banner_requested_at: Time.current, updated_at: Time.current)
       GenerateCampaignBannerJob.perform_later(@campaign.id)
       redirect_to merchant_campaign_path(@campaign), notice: t("merchant.campaigns.banner_generating")
     end
 
-    # Push the campaign announcement to its audience (logged as a Broadcast).
+    # JSON poll for the global progress bar: banner jobs started recently.
+    def banner_jobs
+      cutoff = 10.minutes.ago
+      jobs = current_workspace.campaigns
+               .where(banner_status: %w[generating ready failed])
+               .where("banner_requested_at > ?", cutoff)
+               .order(banner_requested_at: :desc).limit(10)
+               .map do |c|
+        { id: c.id, name: c.name, status: c.banner_status,
+          elapsed: (Time.current - (c.banner_requested_at || Time.current)).to_i,
+          requested_at: c.banner_requested_at&.to_i,
+          url: merchant_campaign_path(c) }
+      end
+      render json: { jobs: jobs }
+    end
+
+    # Push the campaign announcement to one or more customer groups (logged as a
+    # Broadcast). The merchant picks the groups in the multi-select; recipients are
+    # the de-duplicated union across every selected group.
     def push
-      title = @campaign.content_value("title").presence || @campaign.name
-      body  = @campaign.content_value("body").to_s
-      members = MemberSegments.resolve(@campaign.audience).to_a
+      keys = Array(params[:segments]).map(&:to_s).select { |k| MemberSegments::PRESETS.key?(k) }.uniq
+      keys = [@campaign.audience] if keys.empty? # fall back to the campaign's own audience
+      members = keys.flat_map { |k| MemberSegments.resolve(k).to_a }.uniq(&:id)
+
+      if members.empty?
+        return redirect_to merchant_campaign_path(@campaign),
+                           alert: t("merchant.campaigns.push_empty")
+      end
+
+      label = keys.map { |k| MemberSegments.label(k) }.join(", ")
       broadcast = current_workspace.broadcasts.create!(
-        campaign: @campaign, segment_key: @campaign.audience,
-        title: title, body: body, created_by: current_user
+        campaign: @campaign, segment_key: (keys.one? ? keys.first : "all"),
+        audience_label: label, title: (@campaign.content_value("title").presence || @campaign.name),
+        body: @campaign.content_value("body").to_s, created_by: current_user
       )
       broadcast.deliver!(members)
       redirect_to merchant_campaign_path(@campaign),

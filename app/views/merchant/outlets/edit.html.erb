@@ -1,5 +1,6 @@
 <% content_for :title, t("merchant.outlets.edit_title") %>
 <% content_for :title_en, "EDIT OUTLET" %>
+<% merchant_back merchant_outlet_path(@outlet) %>
 <div class="l-panel" style="max-width:480px;">
   <%= form_with model: @outlet, url: merchant_outlet_path(@outlet), method: :patch do |f| %>
     <label class="l-label"><%= t("merchant.outlets.name") %></label>

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2026_09_06_090000) do
+ActiveRecord::Schema[7.2].define(version: 2026_09_06_120000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -120,6 +120,8 @@ ActiveRecord::Schema[7.2].define(version: 2026_09_06_090000) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "share_slug"
+    t.string "banner_status"
+    t.datetime "banner_requested_at"
     t.index ["reward_id"], name: "index_campaigns_on_reward_id"
     t.index ["share_slug"], name: "index_campaigns_on_share_slug", unique: true
     t.index ["workspace_id", "status"], name: "index_campaigns_on_workspace_id_and_status"

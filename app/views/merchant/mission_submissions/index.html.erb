@@ -1,6 +1,7 @@
 <% content_for :title, t("merchant.gami.rq_title") %>
 <% content_for :title_en, "PROOF REVIEW" %>
 <% g = ->(k, **o) { t("merchant.gami.#{k}", **o) } %>
+<% merchant_back merchant_gamification_path %>
 
 <%= form_with url: merchant_mission_submissions_path, method: :get, data: { turbo: false } do %>
   <div style="display:flex; gap:8px; margin-bottom:16px; flex-wrap:wrap;">
