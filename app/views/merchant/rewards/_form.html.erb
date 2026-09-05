@@ -56,6 +56,42 @@
     </div>
   </div>
 
+  <%# ---- Availability schedule ---- %>
+  <div style="margin-top:14px; padding:12px 14px; border:1px solid var(--line); border-radius:12px;">
+    <div class="l-eyebrow" style="margin-bottom:8px;"><%= t("merchant.rewards.sched_title") %></div>
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+      <div>
+        <label class="l-label"><%= t("merchant.rewards.sched_from") %></label>
+        <%= f.datetime_local_field :starts_at, value: f.object.starts_at&.strftime("%Y-%m-%dT%H:%M"), class: "l-field" %>
+      </div>
+      <div>
+        <label class="l-label"><%= t("merchant.rewards.sched_to") %></label>
+        <%= f.datetime_local_field :ends_at, value: f.object.ends_at&.strftime("%Y-%m-%dT%H:%M"), class: "l-field" %>
+      </div>
+    </div>
+    <% sch = f.object.schedule || {} %>
+    <label class="l-label" style="margin-top:12px;"><%= t("merchant.rewards.sched_days") %></label>
+    <div style="display:flex; flex-wrap:wrap; gap:6px;">
+      <% Reward::WDAYS_VI.each_with_index do |lbl, wd| %>
+        <label class="l-daychip">
+          <%= check_box_tag "reward[schedule][days][]", wd, Array(sch["days"]).map(&:to_i).include?(wd), style: "display:none;" %>
+          <span><%= lbl %></span>
+        </label>
+      <% end %>
+    </div>
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-top:12px;">
+      <div>
+        <label class="l-label"><%= t("merchant.rewards.sched_from_hour") %></label>
+        <%= select_tag "reward[schedule][from_hour]", options_for_select((0..23).map { |h| ["#{format('%02d',h)}:00", h] }, sch["from_hour"]), include_blank: "—", class: "l-field" %>
+      </div>
+      <div>
+        <label class="l-label"><%= t("merchant.rewards.sched_to_hour") %></label>
+        <%= select_tag "reward[schedule][to_hour]", options_for_select((0..23).map { |h| ["#{format('%02d',h)}:59", h] }, sch["to_hour"]), include_blank: "—", class: "l-field" %>
+      </div>
+    </div>
+    <p style="color:var(--ink-2); font-size:12px; margin-top:8px;"><%= t("merchant.rewards.sched_hint") %></p>
+  </div>
+
   <label class="l-label" style="margin-top:12px;"><%= t("merchant.rewards.description") %></label>
   <%= f.text_area :description, class: "l-field", rows: 2, placeholder: t("merchant.rewards.description_ph") %>
 

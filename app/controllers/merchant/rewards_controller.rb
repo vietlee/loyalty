@@ -58,8 +58,23 @@ module Merchant
     end
 
     def reward_params
-      params.require(:reward).permit(:title, :description, :kind, :icon, :cost_points,
-                                     :value, :value_unit, :terms, :stock, :valid_days, :active)
+      p = params.require(:reward).permit(:title, :description, :kind, :icon, :cost_points,
+                                         :value, :value_unit, :terms, :stock, :valid_days, :active,
+                                         :starts_at, :ends_at)
+      p[:schedule] = build_schedule
+      p
+    end
+
+    # Recurring availability from the form: days[] (wday 0-6) + from_hour/to_hour.
+    def build_schedule
+      sch = params.dig(:reward, :schedule) || {}
+      days = Array(sch[:days]).map(&:to_i).select { |d| (0..6).cover?(d) }.uniq.sort
+      fh = sch[:from_hour].presence && sch[:from_hour].to_i
+      th = sch[:to_hour].presence && sch[:to_hour].to_i
+      out = {}
+      out["days"] = days if days.present?
+      out["from_hour"], out["to_hour"] = fh, th if fh && th
+      out
     end
   end
 end
