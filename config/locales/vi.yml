@@ -336,6 +336,7 @@ vi:
       delete_badge_confirm: "Xoá huy hiệu?"
       badge_name_ph: "Tên huy hiệu"
       threshold_ph: "Mốc"
+      badge_points_ph: "Điểm 🎁"
       add_badge_name_ph: "VD: Khách VIP"
       add_badge: "Thêm huy hiệu"
       badges_note: "Huy hiệu tự trao khi khách đạt điều kiện. Mốc = số lần mua hoặc số điểm tích luỹ (tuỳ loại điều kiện); loại “lần đầu” và “cú đêm” không cần mốc."

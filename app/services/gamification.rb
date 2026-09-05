@@ -50,7 +50,14 @@ module Gamification
     earned_ids = member.member_badges.pluck(:badge_id)
     ws.badges.where.not(id: earned_ids).each do |badge|
       next unless badge.earned_by?(member)
-      MemberBadge.create!(workspace: ws, member: member, badge: badge, earned_at: Time.current)
+      mb = MemberBadge.create!(workspace: ws, member: member, badge: badge, earned_at: Time.current)
+      # Bonus points for earning the badge (once), if the merchant set any.
+      if badge.reward_points.to_i.positive?
+        PointTransaction.create!(workspace: ws, member: member, kind: "mission",
+                                 amount: badge.reward_points, source: mb,
+                                 note: "🏅 #{badge.name}")
+        member.recompute_points!
+      end
     end
   end
 end

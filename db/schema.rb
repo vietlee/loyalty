@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2026_09_05_130000) do
+ActiveRecord::Schema[7.2].define(version: 2026_09_05_140000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -80,6 +80,7 @@ ActiveRecord::Schema[7.2].define(version: 2026_09_05_130000) do
     t.integer "position", default: 0, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "reward_points", default: 0, null: false
     t.index ["workspace_id", "key"], name: "index_badges_on_workspace_id_and_key", unique: true
     t.index ["workspace_id"], name: "index_badges_on_workspace_id"
   end

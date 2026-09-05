@@ -124,17 +124,18 @@
         <summary style="display:flex; align-items:center; gap:10px; padding:8px 0; cursor:pointer; list-style:none;">
           <span style="font-size:20px;"><%= b.display_icon %></span>
           <div style="flex:1;"><strong><%= b.name %></strong>
-            <div style="font-size:12px; color:var(--ink-2);"><%= crit[b.criteria_type] || b.criteria_type %><%= " · #{t('merchant.gami.threshold_word')} #{b.threshold}" if %w[purchases_count points_total].include?(b.criteria_type) %></div>
+            <div style="font-size:12px; color:var(--ink-2);"><%= crit[b.criteria_type] || b.criteria_type %><%= " · #{t('merchant.gami.threshold_word')} #{b.threshold}" if %w[purchases_count points_total].include?(b.criteria_type) %><%= " · #{t('merchant.gami.points_plus', n: b.reward_points)}" if b.reward_points.to_i.positive? %></div>
           </div>
           <span class="l-chip" style="font-size:11px;"><%= t("merchant.gami.edit_chip") %></span>
           <%= button_to "✕", merchant_badge_path(b), method: :delete, class: "l-btn l-btn-ghost", style: "padding:4px 10px;", form: { data: { turbo_confirm: t("merchant.gami.delete_badge_confirm") }, style: "display:inline;" } %>
         </summary>
         <%= form_with model: b, url: merchant_badge_path(b), method: :patch, scope: :badge do |f| %>
           <%= f.text_field :name, class: "l-field", style: "margin:4px 0 8px;", placeholder: t("merchant.gami.badge_name_ph") %>
-          <div style="display:grid; grid-template-columns:80px 1fr 110px; gap:8px;">
+          <div style="display:grid; grid-template-columns:70px 1fr 90px 100px; gap:8px;">
             <%= render "merchant/shared/icon_field", name: "badge[icon]", value: b.icon, placeholder: "🏅" %>
             <%= f.select :criteria_type, crit.map { |k, v| [v, k] }, {}, class: "l-field" %>
             <%= f.number_field :threshold, class: "l-field", min: 1, placeholder: t("merchant.gami.threshold_ph") %>
+            <%= f.number_field :reward_points, class: "l-field", min: 0, placeholder: t("merchant.gami.badge_points_ph") %>
           </div>
           <%= f.submit t("merchant.gami.save"), class: "l-btn l-btn-primary", style: "margin:10px 0 12px;" %>
         <% end %>
@@ -143,10 +144,11 @@
 
     <%= form_with url: merchant_badges_path, method: :post, scope: :badge do %>
       <input type="text" name="badge[name]" class="l-field" placeholder="<%= t("merchant.gami.add_badge_name_ph") %>" style="margin-top:12px;">
-      <div style="display:grid; grid-template-columns:80px 1fr 110px; gap:8px; margin-top:8px;">
+      <div style="display:grid; grid-template-columns:70px 1fr 90px 100px; gap:8px; margin-top:8px;">
         <%= render "merchant/shared/icon_field", name: "badge[icon]", placeholder: "🏅" %>
         <select name="badge[criteria_type]" class="l-field"><% crit.each { |k, v| %><option value="<%= k %>"><%= v %></option><% } %></select>
         <input type="number" name="badge[threshold]" class="l-field" value="1" min="1" placeholder="<%= t("merchant.gami.threshold_ph") %>">
+        <input type="number" name="badge[reward_points]" class="l-field" value="0" min="0" placeholder="<%= t("merchant.gami.badge_points_ph") %>">
       </div>
       <%= submit_tag t("merchant.gami.add_badge"), class: "l-btn l-btn-primary", style: "margin-top:10px;" %>
     <% end %>

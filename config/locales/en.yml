@@ -331,6 +331,7 @@ en:
       delete_badge_confirm: "Delete badge?"
       badge_name_ph: "Badge name"
       threshold_ph: "Target"
+      badge_points_ph: "Points 🎁"
       add_badge_name_ph: "e.g. VIP customer"
       add_badge: "Add badge"
       badges_note: "Badges are awarded automatically when a customer qualifies. Target = number of purchases or lifetime points (depending on the condition); the “first purchase” and “night owl” types need no target."
