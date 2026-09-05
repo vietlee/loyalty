@@ -13,9 +13,23 @@ class ClaudeService
   HAIKU  = "claude-haiku-4-5-20251001" # cheap + fast + vision — default
   SONNET = "claude-sonnet-5"           # better copy/reasoning
 
+  # Models that reject the `temperature` param (newer models deprecated it).
+  NO_TEMPERATURE = [SONNET].freeze
+
   class Error < StandardError; end
 
   def self.configured? = ENV["ANTHROPIC_API_KEY"].to_s.strip.present?
+
+  # Run an AI call defensively: returns the block's value, or `fallback` (nil by
+  # default) when the key is missing or Claude errors out. Every AI feature is
+  # optional — a failure must degrade to the manual/default path, never 500.
+  def self.safe_call(fallback: nil)
+    return fallback unless configured?
+    yield
+  rescue Error => e
+    Rails.logger.error("[ClaudeService] #{e.message}")
+    fallback
+  end
 
   def initialize(model: HAIKU, max_tokens: 1024, temperature: 0.7)
     @model = model
@@ -27,9 +41,11 @@ class ClaudeService
   # Anthropic content blocks (for vision).
   def text(content, system: nil)
     body = {
-      model: @model, max_tokens: @max_tokens, temperature: @temperature,
+      model: @model, max_tokens: @max_tokens,
       messages: [{ role: "user", content: content }]
     }
+    # Some models deprecated `temperature` and 400 if it's sent.
+    body[:temperature] = @temperature if @temperature && NO_TEMPERATURE.exclude?(@model)
     body[:system] = system if system.present?
     resp = post(body)
     Array(resp["content"]).map { |b| b["text"] }.compact.join.strip
@@ -81,9 +97,11 @@ class ClaudeService
   end
 
   def parse_json(raw)
-    JSON.parse(raw)
+    # Strip ```json … ``` code fences the model sometimes wraps around the JSON.
+    cleaned = raw.to_s.sub(/\A\s*```(?:json)?\s*/i, "").sub(/\s*```\s*\z/, "")
+    JSON.parse(cleaned)
   rescue JSON::ParserError
-    if (m = raw.match(/\{.*\}/m) || raw.match(/\[.*\]/m))
+    if (m = cleaned.match(/\{.*\}/m) || cleaned.match(/\[.*\]/m))
       JSON.parse(m[0]) rescue {}
     else
       {}

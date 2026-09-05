@@ -8,12 +8,28 @@ class Campaign < ApplicationRecord
   belongs_to :workspace
   belongs_to :reward, optional: true
   has_many :promo_codes, dependent: :destroy
+  has_many :broadcasts, dependent: :nullify
+  has_one_attached :banner
 
   validates :name, presence: true
   validates :campaign_type, inclusion: { in: TYPES }
   validates :status, inclusion: { in: STATUSES }
 
+  before_create :ensure_share_slug
+
   scope :recent, -> { order(created_at: :desc) }
+
+  # Stable public token for the shareable link (/c/:share_slug). Backfilled
+  # lazily for rows created before this column existed.
+  def ensure_share_slug
+    self.share_slug ||= SecureRandom.urlsafe_base64(9).tr("-_", "xy")
+  end
+
+  def share_token!
+    ensure_share_slug
+    save!(validate: false) if share_slug_changed?
+    share_slug
+  end
 
   TYPE_LABELS = {
     "promo_voucher" => "Phát voucher (QR)", "double_points" => "Nhân đôi điểm",

@@ -31,6 +31,7 @@ class Workspace < ApplicationRecord
   has_many :ratings, dependent: :destroy
   has_many :invoices, dependent: :destroy
   has_one  :loyalty_program, dependent: :destroy
+  has_many :workspace_insights, dependent: :destroy
 
   validates :name, :subdomain, presence: true
   validates :subdomain, uniqueness: true, format: { with: /\A[a-z0-9][a-z0-9-]*\z/ }

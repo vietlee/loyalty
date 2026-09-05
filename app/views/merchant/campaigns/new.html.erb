@@ -1,7 +1,9 @@
 <% content_for :title, t("merchant.nav.campaigns") %>
 <% content_for :title_en, "NEW CAMPAIGN" %>
 
-<div data-controller="campaign-preview" style="display:grid; grid-template-columns:1fr 360px; gap:20px; align-items:start;">
+<div data-controller="campaign-preview campaigngen"
+     data-campaigngen-url-value="<%= generate_content_merchant_campaigns_path %>"
+     style="display:grid; grid-template-columns:1fr 360px; gap:20px; align-items:start;">
   <%= form_with model: @campaign, url: merchant_campaigns_path, method: :post do |f| %>
     <div class="l-panel" style="margin-bottom:16px;">
       <h3 class="l-display" style="font-size:18px; margin-bottom:12px;"><%= t("merchant.campaigns.s1") %></h3>
@@ -10,25 +12,31 @@
       <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-top:12px;">
         <div>
           <label class="l-label"><%= t("merchant.campaigns.kind") %></label>
-          <%= f.select :campaign_type, Campaign::TYPE_LABELS.keys.map { |k| [t("merchant.campaign_types.#{k}"), k] }, {}, class: "l-field" %>
+          <%= f.select :campaign_type, Campaign::TYPE_LABELS.keys.map { |k| [t("merchant.campaign_types.#{k}"), k] }, {}, class: "l-field", data: { campaigngen_target: "type" } %>
         </div>
         <div>
           <label class="l-label"><%= t("merchant.campaigns.audience") %></label>
-          <%= f.select :audience, Campaign::AUDIENCE_LABELS.keys.map { |k| [t("merchant.campaign_audiences.#{k}"), k] }, {}, class: "l-field" %>
+          <%= f.select :audience, Campaign::AUDIENCE_LABELS.keys.map { |k| [t("merchant.campaign_audiences.#{k}"), k] }, {}, class: "l-field", data: { campaigngen_target: "audience" } %>
         </div>
       </div>
     </div>
 
     <div class="l-panel" style="margin-bottom:16px;">
-      <h3 class="l-display" style="font-size:18px; margin-bottom:12px;"><%= t("merchant.campaigns.s2") %></h3>
+      <div style="display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:12px;">
+        <h3 class="l-display" style="font-size:18px; margin:0;"><%= t("merchant.campaigns.s2") %></h3>
+        <button type="button" class="l-btn l-btn-soft" style="padding:6px 12px; font-size:13px; white-space:nowrap;"
+                data-campaigngen-target="button" data-action="campaigngen#generate">
+          ✨ <%= t("merchant.campaigns.ai_generate") %>
+        </button>
+      </div>
       <label class="l-label"><%= t("merchant.campaigns.title") %></label>
       <%= text_field_tag "campaign[content][title]", @campaign.content_value("title"), class: "l-field",
             placeholder: t("merchant.campaigns.title_ph"),
-            data: { campaign_preview_target: "title", action: "input->campaign-preview#update" } %>
+            data: { campaign_preview_target: "title", campaigngen_target: "title", action: "input->campaign-preview#update" } %>
       <label class="l-label" style="margin-top:12px;"><%= t("merchant.campaigns.body") %></label>
       <%= text_area_tag "campaign[content][body]", @campaign.content_value("body"), class: "l-field", rows: 2,
             placeholder: t("merchant.campaigns.body_ph"),
-            data: { campaign_preview_target: "body", action: "input->campaign-preview#update" } %>
+            data: { campaign_preview_target: "body", campaigngen_target: "body", action: "input->campaign-preview#update" } %>
     </div>
 
     <div class="l-panel" style="margin-bottom:16px;">
@@ -36,7 +44,7 @@
       <label class="l-label"><%= t("merchant.campaigns.reward") %></label>
       <%= f.select :reward_id, @rewards.map { |r| ["#{r.display_icon} #{r.title}", r.id] },
             { include_blank: t("merchant.campaigns.reward_none") }, class: "l-field",
-            data: { campaign_preview_target: "reward", action: "change->campaign-preview#update" } %>
+            data: { campaign_preview_target: "reward", campaigngen_target: "reward", action: "change->campaign-preview#update" } %>
       <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-top:12px;">
         <div><label class="l-label"><%= t("merchant.campaigns.starts") %></label><%= f.datetime_local_field :starts_at, class: "l-field" %></div>
         <div><label class="l-label"><%= t("merchant.campaigns.ends") %></label><%= f.datetime_local_field :ends_at, class: "l-field" %></div>

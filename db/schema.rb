@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2026_09_05_090000) do
+ActiveRecord::Schema[7.2].define(version: 2026_09_05_110000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -95,6 +95,8 @@ ActiveRecord::Schema[7.2].define(version: 2026_09_05_090000) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.datetime "scheduled_at"
+    t.bigint "campaign_id"
+    t.index ["campaign_id"], name: "index_broadcasts_on_campaign_id"
     t.index ["created_by_id"], name: "index_broadcasts_on_created_by_id"
     t.index ["scheduled_at"], name: "index_broadcasts_on_scheduled_at"
     t.index ["workspace_id"], name: "index_broadcasts_on_workspace_id"
@@ -113,7 +115,9 @@ ActiveRecord::Schema[7.2].define(version: 2026_09_05_090000) do
     t.jsonb "metrics", default: {}, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "share_slug"
     t.index ["reward_id"], name: "index_campaigns_on_reward_id"
+    t.index ["share_slug"], name: "index_campaigns_on_share_slug", unique: true
     t.index ["workspace_id", "status"], name: "index_campaigns_on_workspace_id_and_status"
     t.index ["workspace_id"], name: "index_campaigns_on_workspace_id"
   end
@@ -621,6 +625,20 @@ ActiveRecord::Schema[7.2].define(version: 2026_09_05_090000) do
     t.index ["workspace_id"], name: "index_vouchers_on_workspace_id"
   end
 
+  create_table "workspace_insights", force: :cascade do |t|
+    t.bigint "workspace_id", null: false
+    t.string "kind", null: false
+    t.text "body"
+    t.datetime "range_from"
+    t.datetime "range_to"
+    t.datetime "generated_at"
+    t.string "status", default: "ready", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["workspace_id", "kind"], name: "index_workspace_insights_on_workspace_id_and_kind", unique: true
+    t.index ["workspace_id"], name: "index_workspace_insights_on_workspace_id"
+  end
+
   create_table "workspaces", force: :cascade do |t|
     t.string "name", null: false
     t.string "slug", null: false
@@ -647,6 +665,7 @@ ActiveRecord::Schema[7.2].define(version: 2026_09_05_090000) do
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
   add_foreign_key "badges", "workspaces"
+  add_foreign_key "broadcasts", "campaigns"
   add_foreign_key "broadcasts", "users", column: "created_by_id"
   add_foreign_key "broadcasts", "workspaces"
   add_foreign_key "campaigns", "rewards"
@@ -714,4 +733,5 @@ ActiveRecord::Schema[7.2].define(version: 2026_09_05_090000) do
   add_foreign_key "vouchers", "rewards"
   add_foreign_key "vouchers", "users", column: "used_by_staff_id"
   add_foreign_key "vouchers", "workspaces"
+  add_foreign_key "workspace_insights", "workspaces"
 end

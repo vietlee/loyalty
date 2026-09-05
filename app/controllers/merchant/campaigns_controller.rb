@@ -1,7 +1,7 @@
 module Merchant
   class CampaignsController < BaseController
     before_action :require_manager!, except: [:index, :show]
-    before_action :set_campaign, only: [:show, :qr, :pause, :resume, :destroy]
+    before_action :set_campaign, only: [:show, :qr, :pause, :resume, :destroy, :generate_banner, :push]
 
     def index
       return render_locked_feature(:campaigns) if feature_locked?(:campaigns)
@@ -34,6 +34,45 @@ module Merchant
     def show
       @promo = @campaign.promo_codes.first
       @promo_url = helpers.customer_scan_url(current_workspace, promo: @promo.token) if @promo
+      @share_url = public_campaign_url(@campaign.share_token!)
+    end
+
+    # AI content suggestion (title + body) for the campaign draft. Returns JSON;
+    # the form fills the fields client-side. No campaign is persisted here.
+    def generate_content
+      data = ClaudeService.safe_call(fallback: {}) do
+        ClaudeService.new(model: ClaudeService::SONNET, max_tokens: 1200)
+                     .json(content_prompt)
+      end
+      if data.present? && (data["title"].present? || data["body"].present?)
+        render json: { ok: true, title: data["title"].to_s, body: data["body"].to_s }
+      else
+        render json: { ok: false, error: ClaudeService.configured? ? "ai_failed" : "not_configured" },
+               status: :service_unavailable
+      end
+    end
+
+    # Kick off (async) AI banner generation via OpenAI Images.
+    def generate_banner
+      unless AiImageService.configured?
+        return redirect_to merchant_campaign_path(@campaign), alert: t("merchant.campaigns.banner_no_key")
+      end
+      GenerateCampaignBannerJob.perform_later(@campaign.id)
+      redirect_to merchant_campaign_path(@campaign), notice: t("merchant.campaigns.banner_generating")
+    end
+
+    # Push the campaign announcement to its audience (logged as a Broadcast).
+    def push
+      title = @campaign.content_value("title").presence || @campaign.name
+      body  = @campaign.content_value("body").to_s
+      members = MemberSegments.resolve(@campaign.audience).to_a
+      broadcast = current_workspace.broadcasts.create!(
+        campaign: @campaign, segment_key: @campaign.audience,
+        title: title, body: body, created_by: current_user
+      )
+      broadcast.deliver!(members)
+      redirect_to merchant_campaign_path(@campaign),
+                  notice: t("merchant.campaigns.push_sent", n: members.size)
     end
 
     # Downloadable promo QR (SVG) for printing on posters / receipts.
@@ -76,6 +115,23 @@ module Merchant
       params.require(:campaign).permit(:name, :campaign_type, :audience, :reward_id,
                                        :starts_at, :ends_at, :status,
                                        content: [:title, :body, :tone])
+    end
+
+    # Prompt for the AI content generator, built from the in-progress form.
+    def content_prompt
+      ctype    = params[:campaign_type].to_s.presence_in(Campaign::TYPES) || "promo_voucher"
+      audience = params[:audience].to_s.presence_in(Campaign::AUDIENCES) || "all"
+      reward   = params[:reward_id].present? ? current_workspace.rewards.find_by(id: params[:reward_id]) : nil
+      tone     = current_workspace.branding_value("tone")
+      <<~PROMPT
+        Viết nội dung một chiến dịch marketing cho cửa hàng "#{current_workspace.name}".
+        Loại chiến dịch: #{I18n.t("merchant.campaign_types.#{ctype}", default: ctype)}.
+        Nhóm khách nhắm tới: #{I18n.t("merchant.campaign_audiences.#{audience}", default: audience)}.
+        #{reward ? "Ưu đãi kèm theo: #{reward.title} (#{reward.value_label})." : ''}
+        Giọng điệu: #{tone}. Viết tiếng Việt, hấp dẫn, NGẮN GỌN, phù hợp gửi cho khách qua app.
+        Bắt buộc: title tối đa 60 ký tự; body tối đa 180 ký tự, 1-2 câu. Không dùng markdown.
+        Chỉ trả về đúng một object JSON: {"title": "...", "body": "..."}.
+      PROMPT
     end
 
     def maybe_generate_promo!

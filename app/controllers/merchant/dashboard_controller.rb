@@ -29,6 +29,9 @@ module Merchant
         @member_growth   = monthly_member_growth
         @tier_counts     = @tiers.map { |t| [t, Member.where(tier_key: t.key).count] }
         @outlet_stats    = build_outlet_stats
+        @busy_hours      = busy_hour_matrix
+        @busiest_slot    = busiest_slot(@busy_hours)
+        @busy_insight    = current_workspace.workspace_insights.find_by(kind: "busy_hour")
         @has_checkin     = current_workspace.missions.active.exists?(mission_type: "checkin")
         @checkin_url     = helpers.customer_scan_url(current_workspace, checkin: Checkin.encode(current_workspace)) if @has_checkin
         @sub_warning     = subscription_warning(current_workspace)
@@ -45,6 +48,19 @@ module Merchant
       send_data helpers.qr_png(url, size: 720),
                 type: "image/png", disposition: "attachment",
                 filename: "checkin-#{current_workspace.subdomain}.png"
+    end
+
+    # Kick off (async) regeneration of the busy-hour AI insight for the active
+    # range. Marks the row "generating" so the panel can show a placeholder.
+    def refresh_busy_hour
+      @range = resolve_range
+      matrix = busy_hour_matrix
+      slot   = busiest_slot(matrix)
+      insight = current_workspace.workspace_insights.find_or_initialize_by(kind: "busy_hour")
+      insight.update!(status: "generating")
+      GenerateBusyHourInsightJob.perform_later(current_workspace.id, matrix, slot,
+                                               { from: @range[:from], to: @range[:to] })
+      redirect_to merchant_root_path(range: @range[:key]), notice: t("merchant.dashboard.busy_insight_generating_flash")
     end
 
     # Rotate the check-in token: the old printed QR stops working immediately.
@@ -132,6 +148,32 @@ module Merchant
         rows << row.call(nil, "Chưa gán chi nhánh")
       end
       rows.sort_by { |r| -r[:revenue] }
+    end
+
+    # Activity by weekday × hour-of-day over the active range. Bucketed in Ruby
+    # in the app timezone (Time.zone) so weekday + hour are locally correct —
+    # created_at is stored in UTC. Returns [{ dow: 0..6, hours: [24 ints] }, ...]
+    # (dow 0 = Sunday). Capped so a huge workspace can't load an unbounded set.
+    BUSY_HOUR_SAMPLE_CAP = 50_000
+    def busy_hour_matrix
+      rows = (0..6).map { |dow| { dow: dow, hours: Array.new(24, 0) } }
+      in_range(Purchase).order(created_at: :desc).limit(BUSY_HOUR_SAMPLE_CAP)
+                        .pluck(:created_at).each do |ts|
+        t = ts.in_time_zone
+        rows[t.wday][:hours][t.hour] += 1
+      end
+      rows
+    end
+
+    # The single busiest weekday+hour cell (nil when there's no activity).
+    def busiest_slot(matrix)
+      best = nil
+      matrix.each do |row|
+        row[:hours].each_with_index do |c, hr|
+          best = { dow: row[:dow], hour: hr, count: c } if c.positive? && (best.nil? || c > best[:count])
+        end
+      end
+      best
     end
 
     def nav_key = :dashboard

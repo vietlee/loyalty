@@ -31,8 +31,32 @@
   </div>
 <% end %>
 
+<% if current_membership&.can_manage? %>
+  <div class="l-panel" style="margin-bottom:16px;">
+    <div class="l-eyebrow" style="margin-bottom:10px;"><%= t("merchant.campaigns.share_push") %></div>
+    <div style="display:flex; gap:8px; flex-wrap:wrap; align-items:center;">
+      <input type="text" value="<%= @share_url %>" readonly onclick="this.select()"
+             class="l-field" style="flex:1; min-width:220px; font-size:13px;">
+      <a href="<%= @share_url %>" target="_blank" rel="noopener" class="l-btn l-btn-soft" style="padding:8px 14px; font-size:13px;">🔗 <%= t("merchant.campaigns.open_link") %></a>
+      <%= button_to t("merchant.campaigns.push_now"), push_merchant_campaign_path(@campaign), method: :post,
+            class: "l-btn l-btn-primary", style: "padding:8px 14px; font-size:13px;",
+            form: { style: "display:inline; margin:0;", data: { turbo_confirm: t("merchant.campaigns.push_confirm", audience: @campaign.audience_label) } } %>
+      <% if AiImageService.configured? %>
+        <%= button_to t("merchant.campaigns.gen_banner"), generate_banner_merchant_campaign_path(@campaign), method: :patch,
+              class: "l-btn l-btn-soft", style: "padding:8px 14px; font-size:13px;",
+              form: { style: "display:inline; margin:0;" } %>
+      <% end %>
+    </div>
+    <p style="font-size:12px; color:var(--ink-2); margin-top:8px;"><%= t("merchant.campaigns.share_note") %></p>
+  </div>
+<% end %>
+
 <div style="display:grid; grid-template-columns:<%= @promo ? '1fr 360px' : '1fr' %>; gap:20px; align-items:start;">
   <div class="l-panel">
+    <% if @campaign.banner.attached? %>
+      <%= image_tag @campaign.banner.variant(resize_to_limit: [800, 400]),
+            style: "width:100%; border-radius:14px; margin-bottom:14px; display:block;" %>
+    <% end %>
     <h2 class="l-display" style="font-size:22px;"><%= @campaign.name %></h2>
     <% if @campaign.content_value("title").present? %>
       <p style="font-weight:600; margin-top:10px;"><%= @campaign.content_value("title") %></p>

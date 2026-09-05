@@ -55,13 +55,16 @@ Rails.application.routes.draw do
     get "go/:token",      to: "quick_logins#create",    as: :quick_login
     get  "checkin_qr",        to: "dashboard#checkin_qr",     as: :checkin_qr
     post "checkin_qr/rotate", to: "dashboard#rotate_checkin", as: :rotate_checkin
+    post "insights/busy_hour/refresh", to: "dashboard#refresh_busy_hour", as: :refresh_busy_hour_insight
     # First-run onboarding wizard
     get   "onboarding",      to: "onboarding#show",   as: :onboarding
     patch "onboarding",      to: "onboarding#update"
     post  "onboarding/skip", to: "onboarding#skip",   as: :skip_onboarding
     post "switch_workspace/:id", to: "workspaces#switch", as: :switch_workspace
     resource :loyalty_program, only: [:show, :update], path: "program"
-    resource :appearance,      only: [:show, :update], path: "appearance"
+    resource :appearance,      only: [:show, :update], path: "appearance" do
+      post :suggest_theme # AI palette suggestion from the uploaded logo (JSON)
+    end
     resources :outlets do
       member { get :checkin_qr }
     end
@@ -83,10 +86,15 @@ Rails.application.routes.draw do
     resource :automations, only: [:show, :update], controller: "automations"
     resources :broadcasts, only: [:index, :new, :create]
     resources :campaigns, only: [:index, :new, :create, :show, :destroy] do
+      collection do
+        post :generate_content # AI content suggestion (title/body), no persisted campaign
+      end
       member do
         get   :qr      # downloadable promo QR (PNG)
         patch :pause   # running → paused (disables its promo QR)
         patch :resume  # paused → running
+        patch :generate_banner # AI banner image (OpenAI) — async
+        post  :push    # push the campaign to its audience
       end
     end
     # POS transaction QR (member self-scan / §6.2)
@@ -165,6 +173,9 @@ Rails.application.routes.draw do
     get   "review/:id/edit", to: "reviews#edit",   as: :edit_review
     patch "review/:id",      to: "reviews#update",  as: :review
   end
+
+  # ---- Public shareable campaign link (OG preview for social sharing) -----
+  get "/c/:share_slug", to: "public_campaigns#show", as: :public_campaign
 
   # Health check
   get "up" => "rails/health#show", as: :rails_health_check

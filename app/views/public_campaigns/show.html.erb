@@ -1,0 +1,57 @@
+<% title = @campaign.content_value("title").presence || @campaign.name
+   body  = @campaign.content_value("body").to_s
+   theme = @workspace.resolved_theme
+   og_img = @banner_url %><!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title><%= title %> · <%= @workspace.name %></title>
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="<%= title %>">
+  <meta property="og:description" content="<%= body.presence || @workspace.name %>">
+  <meta property="og:site_name" content="<%= @workspace.name %>">
+  <% if og_img %><meta property="og:image" content="<%= og_img %>"><% end %>
+  <meta name="twitter:card" content="<%= og_img ? 'summary_large_image' : 'summary' %>">
+  <meta name="twitter:title" content="<%= title %>">
+  <meta name="twitter:description" content="<%= body.presence || @workspace.name %>">
+  <% if og_img %><meta name="twitter:image" content="<%= og_img %>"><% end %>
+  <style>
+    :root{ --primary:<%= theme['primary'] %>; --primary-2:<%= theme['primary_2'] %>;
+           --surface:<%= theme['surface'] %>; --ink:<%= theme['ink'] %>; --ink-2:<%= theme['ink_2'] %>; }
+    *{ box-sizing:border-box; }
+    body{ margin:0; font-family:'Plus Jakarta Sans',ui-sans-serif,system-ui,sans-serif;
+          background:var(--surface); color:var(--ink); min-height:100vh;
+          display:flex; align-items:center; justify-content:center; padding:20px; }
+    .card{ max-width:440px; width:100%; background:#fff; border-radius:22px; overflow:hidden;
+           box-shadow:0 12px 40px rgba(0,0,0,.12); }
+    .banner{ height:200px; background:linear-gradient(135deg,var(--primary),var(--primary-2));
+             display:grid; place-items:center; color:#fff; font-size:56px; }
+    .banner img{ width:100%; height:100%; object-fit:cover; display:block; }
+    .pad{ padding:22px; }
+    .shop{ display:flex; align-items:center; gap:10px; margin-bottom:14px; }
+    .logo{ width:38px; height:38px; border-radius:11px; background:var(--primary); color:#fff;
+           display:grid; place-items:center; font-weight:800; }
+    h1{ font-size:22px; margin:0 0 8px; }
+    p{ color:var(--ink-2); font-size:15px; line-height:1.5; margin:0 0 20px; }
+    .cta{ display:block; text-align:center; text-decoration:none; padding:14px;
+          border-radius:14px; background:var(--primary); color:#fff; font-weight:700; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div class="banner">
+      <% if og_img %><img src="<%= og_img %>" alt="<%= title %>"><% else %>🎁<% end %>
+    </div>
+    <div class="pad">
+      <div class="shop">
+        <div class="logo"><%= @workspace.logo_initials %></div>
+        <strong><%= @workspace.name %></strong>
+      </div>
+      <h1><%= title %></h1>
+      <% if body.present? %><p><%= body %></p><% end %>
+      <a class="cta" href="<%= @shop_url %>">Nhận ưu đãi →</a>
+    </div>
+  </div>
+</body>
+</html>

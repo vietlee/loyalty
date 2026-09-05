@@ -1,7 +1,9 @@
 <% content_for :title, t("merchant.nav.appearance") %>
 <% content_for :title_en, "BRANDING" %>
 
-<div data-controller="theme-preview" style="display:grid; grid-template-columns:1fr 380px; gap:20px; align-items:start;">
+<div data-controller="theme-preview themeai"
+     data-themeai-url-value="<%= suggest_theme_merchant_appearance_path %>"
+     style="display:grid; grid-template-columns:1fr 380px; gap:20px; align-items:start;">
   <%# ---------------- Controls ---------------- %>
   <div>
     <div class="l-panel" style="margin-bottom:16px;">
@@ -23,8 +25,18 @@
 
     <%= form_with url: merchant_appearance_path, method: :patch, multipart: true do %>
       <div class="l-panel" style="margin-bottom:16px;">
-        <h3 class="l-display" style="font-size:18px; margin-bottom:2px;"><%= t("merchant.appearance.colors_title") %></h3>
-        <p style="color:var(--ink-2); font-size:13px; margin-bottom:12px;"><%= t("merchant.appearance.colors_note_html").html_safe %></p>
+        <div style="display:flex; align-items:flex-start; justify-content:space-between; gap:10px;">
+          <div>
+            <h3 class="l-display" style="font-size:18px; margin-bottom:2px;"><%= t("merchant.appearance.colors_title") %></h3>
+            <p style="color:var(--ink-2); font-size:13px; margin-bottom:12px;"><%= t("merchant.appearance.colors_note_html").html_safe %></p>
+          </div>
+          <% if current_workspace.logo.attached? %>
+            <button type="button" class="l-btn l-btn-soft" style="padding:6px 12px; font-size:13px; white-space:nowrap; flex:none;"
+                    data-action="themeai#suggest">
+              ✨ <%= t("merchant.appearance.ai_suggest") %>
+            </button>
+          <% end %>
+        </div>
         <div style="display:grid; grid-template-columns:1fr 1fr; gap:14px;">
           <% [["primary", t("merchant.appearance.c_primary")], ["primary_2", t("merchant.appearance.c_accent")], ["surface", t("merchant.appearance.c_surface")], ["ink", t("merchant.appearance.c_ink")]].each do |k, label| %>
             <div>

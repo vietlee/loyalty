@@ -1,6 +1,6 @@
 module Merchant
   class AppearancesController < BaseController
-    before_action :require_manager!, only: [:update]
+    before_action :require_manager!, only: [:update, :suggest_theme]
 
     # Built-in theme presets demonstrating dynamic branding on one layout.
     PRESETS = {
@@ -50,9 +50,55 @@ module Merchant
       end
     end
 
+    # AI palette suggestion derived from the shop's logo. Returns JSON; the form
+    # fills the colour pickers client-side. Nothing is saved until the merchant
+    # clicks Save (the existing update path).
+    def suggest_theme
+      ws = current_workspace
+      unless ws.logo.attached?
+        return render json: { ok: false, error: "no_logo" }, status: :unprocessable_entity
+      end
+
+      palette = ClaudeService.safe_call(fallback: {}) do
+        bytes = ws.logo.download
+        media = ws.logo.content_type.presence || "image/png"
+        ClaudeService.new(model: ClaudeService::HAIKU, max_tokens: 400, temperature: 0.4)
+                     .vision_json(theme_prompt, image_bytes: bytes, media_type: media)
+      end
+
+      colors = sanitize_palette(palette)
+      if colors.present?
+        render json: { ok: true, theme: colors }
+      else
+        render json: { ok: false, error: ClaudeService.configured? ? "ai_failed" : "not_configured" },
+               status: :service_unavailable
+      end
+    end
+
     private
 
     def nav_key = :appearance
+
+    def theme_prompt
+      <<~PROMPT
+        Đây là logo của cửa hàng "#{current_workspace.name}". Hãy đề xuất bảng màu thương hiệu
+        hài hoà, lấy cảm hứng từ màu chủ đạo của logo, cho một ứng dụng khách hàng thân thiết.
+        Yêu cầu tương phản tốt: chữ đọc rõ trên nền.
+        Trả về JSON đúng dạng, mỗi giá trị là mã hex (#RRGGBB):
+        {"primary":"#...", "primary_2":"#...", "surface":"#...", "ink":"#..."}
+        Trong đó: primary = màu thương hiệu chính (đậm), primary_2 = màu nhấn phụ,
+        surface = màu nền sáng dịu, ink = màu chữ tối dễ đọc trên surface.
+      PROMPT
+    end
+
+    HEX_RE = /\A#[0-9a-fA-F]{6}\z/
+    def sanitize_palette(palette)
+      return {} unless palette.is_a?(Hash)
+      %w[primary primary_2 surface ink].each_with_object({}) do |k, out|
+        v = palette[k].to_s.strip
+        out[k] = v if v.match?(HEX_RE)
+      end
+    end
 
     def theme_params
       params.fetch(:theme, {}).permit(:primary, :primary_2, :on_primary, :surface, :surface_2,
