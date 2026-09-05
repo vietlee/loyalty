@@ -24,6 +24,27 @@
     </div>
 
     <%= form_with url: merchant_appearance_path, method: :patch, multipart: true do %>
+      <%# ---- Logo (first: colours can be synced from it via AI) ---- %>
+      <div class="l-panel" style="margin-bottom:16px;">
+        <h3 class="l-display" style="font-size:18px; margin-bottom:2px;"><%= t("merchant.appearance.logo_title") %></h3>
+        <p style="color:var(--ink-2); font-size:13px; margin-bottom:12px;"><%= t("merchant.appearance.logo_note") %></p>
+        <div style="display:flex; align-items:center; gap:14px;" data-controller="upload">
+          <div data-upload-target="preview" style="width:64px; height:64px; border-radius:16px; overflow:hidden; background:var(--surface-2); display:grid; place-items:center; flex:none;">
+            <% if current_workspace.logo.attached? %>
+              <%= image_tag url_for(current_workspace.logo), style: "width:100%; height:100%; object-fit:cover;" %>
+            <% else %>
+              <span class="l-display" style="font-size:22px; color:var(--ink-2);"><%= current_workspace.logo_initials %></span>
+            <% end %>
+          </div>
+          <button type="button" class="l-upload" data-action="upload#pick" style="flex:1;">
+            <%= ui_icon(:launch, size: 18) %>
+            <span data-upload-target="name"><%= t("merchant.appearance.pick_logo") %></span>
+          </button>
+          <input type="file" name="logo" accept="image/png,image/jpeg,image/webp"
+                 data-upload-target="input" data-action="upload#changed" hidden>
+        </div>
+      </div>
+
       <div class="l-panel" style="margin-bottom:16px;">
         <div style="display:flex; align-items:flex-start; justify-content:space-between; gap:10px;">
           <div>
@@ -79,26 +100,6 @@
         <input type="text" name="branding[customer_term]" value="<%= current_workspace.branding_value('customer_term') %>" class="l-field" placeholder="<%= t("merchant.onboarding.customer_term_ph") %>">
         <label class="l-label" style="margin-top:12px;"><%= t("merchant.appearance.tagline") %></label>
         <input type="text" name="branding[tagline]" value="<%= current_workspace.branding_value('tagline') %>" class="l-field">
-      </div>
-
-      <div class="l-panel" style="margin-bottom:16px;">
-        <h3 class="l-display" style="font-size:18px; margin-bottom:2px;"><%= t("merchant.appearance.logo_title") %></h3>
-        <p style="color:var(--ink-2); font-size:13px; margin-bottom:12px;"><%= t("merchant.appearance.logo_note") %></p>
-        <div style="display:flex; align-items:center; gap:14px;" data-controller="upload">
-          <div data-upload-target="preview" style="width:64px; height:64px; border-radius:16px; overflow:hidden; background:var(--surface-2); display:grid; place-items:center; flex:none;">
-            <% if current_workspace.logo.attached? %>
-              <%= image_tag url_for(current_workspace.logo), style: "width:100%; height:100%; object-fit:cover;" %>
-            <% else %>
-              <span class="l-display" style="font-size:22px; color:var(--ink-2);"><%= current_workspace.logo_initials %></span>
-            <% end %>
-          </div>
-          <button type="button" class="l-upload" data-action="upload#pick" style="flex:1;">
-            <%= ui_icon(:launch, size: 18) %>
-            <span data-upload-target="name"><%= t("merchant.appearance.pick_logo") %></span>
-          </button>
-          <input type="file" name="logo" accept="image/png,image/jpeg,image/webp"
-                 data-upload-target="input" data-action="upload#changed" hidden>
-        </div>
       </div>
 
       <%= submit_tag t("merchant.appearance.save"), class: "l-btn l-btn-primary" %>

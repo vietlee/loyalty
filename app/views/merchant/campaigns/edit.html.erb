@@ -1,0 +1,8 @@
+<% content_for :title, @campaign.name %>
+<% content_for :title_en, "EDIT CAMPAIGN" %>
+
+<div style="margin-bottom:14px;">
+  <%= link_to t("merchant.campaigns.back"), merchant_campaign_path(@campaign), style: "color:var(--ink-2); font-size:13px; text-decoration:none;" %>
+</div>
+
+<%= render "form" %>

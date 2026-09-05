@@ -1,13 +1,16 @@
 import { Controller } from "@hotwired/stimulus"
 
-// Web Share API with clipboard fallback for the referral link.
+// Social share helpers for the social_share mission. `native` opens the device
+// share sheet (mobile) — the fastest way to post to any app; `copy` copies the
+// shop link so the customer can paste it into a network the sheet doesn't cover.
 export default class extends Controller {
-  static targets = ["copyBtn"]
+  static targets = ["copyLabel"]
   static values = { url: String, text: String }
 
   async native() {
+    const data = { title: this.textValue, text: this.textValue, url: this.urlValue }
     if (navigator.share) {
-      try { await navigator.share({ title: document.title, text: this.textValue, url: this.urlValue }) } catch (e) {}
+      try { await navigator.share(data) } catch (e) { /* user cancelled */ }
     } else {
       this.copy()
     }
@@ -16,13 +19,13 @@ export default class extends Controller {
   async copy() {
     try {
       await navigator.clipboard.writeText(this.urlValue)
-      if (this.hasCopyBtnTarget) {
-        const t = this.copyBtnTarget.textContent
-        this.copyBtnTarget.textContent = "✓ Đã sao chép"
-        setTimeout(() => (this.copyBtnTarget.textContent = t), 1600)
+      if (this.hasCopyLabelTarget) {
+        const el = this.copyLabelTarget, prev = el.textContent
+        el.textContent = "✓ Đã copy"
+        setTimeout(() => { el.textContent = prev }, 1600)
       }
     } catch (e) {
-      prompt("Sao chép link:", this.urlValue)
+      window.prompt("Sao chép link:", this.urlValue)
     }
   }
 }

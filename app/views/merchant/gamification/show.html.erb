@@ -27,7 +27,7 @@
             <%= f.number_field :target_count, class: "l-field" %>
             <%= f.select :reward_id, @rewards.map { |r| [t("merchant.gami.reward_opt", title: r.title), r.id] }, { include_blank: t("merchant.gami.reward_blank") }, class: "l-field" %>
           </div>
-          <%= f.text_field :icon, class: "l-field", placeholder: "Icon 🧋", style: "margin-top:8px;" %>
+          <div style="margin-top:8px;"><%= render "merchant/shared/icon_field", name: "stamp_card[icon]", value: c.icon, placeholder: "🧋" %></div>
           <%= f.submit t("merchant.gami.save"), class: "l-btn l-btn-primary", style: "margin:10px 0 12px;" %>
         <% end %>
       </details>
@@ -38,7 +38,7 @@
         <%= f.number_field :target_count, value: 9, class: "l-field", placeholder: t("merchant.gami.num") %>
         <%= f.select :reward_id, @rewards.map { |r| [t("merchant.gami.reward_opt", title: r.title), r.id] }, { include_blank: t("merchant.gami.reward_blank") }, class: "l-field" %>
       </div>
-      <input type="text" name="stamp_card[icon]" class="l-field" placeholder="Icon 🧋" style="margin-top:8px;">
+      <div style="margin-top:8px;"><%= render "merchant/shared/icon_field", name: "stamp_card[icon]", placeholder: "🧋" %></div>
       <%= f.hidden_field :active, value: true %>
       <%= f.submit t("merchant.gami.add_stamp"), class: "l-btn l-btn-primary", style: "margin-top:10px;" %>
     <% end %>
@@ -62,7 +62,10 @@
     <% end %>
     <%= form_with url: merchant_missions_path, method: :post, scope: :mission,
           data: { controller: "missionform" } do |f| %>
-      <input type="text" name="mission[title]" class="l-field" placeholder="<%= t("merchant.gami.mission_title_ph") %>" style="margin-top:12px;">
+      <div style="display:grid; grid-template-columns:1fr auto; gap:8px; margin-top:12px; align-items:start;">
+        <input type="text" name="mission[title]" class="l-field" placeholder="<%= t("merchant.gami.mission_title_ph") %>">
+        <div style="width:120px;"><%= render "merchant/shared/icon_field", name: "mission[icon]", placeholder: "🎯" %></div>
+      </div>
       <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-top:8px;">
         <%= f.select :mission_type,
               [["Check-in", "checkin"], [t("merchant.gami.mtype_spend"), "spend"], [t("merchant.gami.mtype_visit"), "visit"],
@@ -113,7 +116,7 @@
         <%= form_with model: b, url: merchant_badge_path(b), method: :patch, scope: :badge do |f| %>
           <%= f.text_field :name, class: "l-field", style: "margin:4px 0 8px;", placeholder: t("merchant.gami.badge_name_ph") %>
           <div style="display:grid; grid-template-columns:80px 1fr 110px; gap:8px;">
-            <%= f.text_field :icon, class: "l-field", placeholder: "🏅" %>
+            <%= render "merchant/shared/icon_field", name: "badge[icon]", value: b.icon, placeholder: "🏅" %>
             <%= f.select :criteria_type, crit.map { |k, v| [v, k] }, {}, class: "l-field" %>
             <%= f.number_field :threshold, class: "l-field", min: 1, placeholder: t("merchant.gami.threshold_ph") %>
           </div>
@@ -125,7 +128,7 @@
     <%= form_with url: merchant_badges_path, method: :post, scope: :badge do %>
       <input type="text" name="badge[name]" class="l-field" placeholder="<%= t("merchant.gami.add_badge_name_ph") %>" style="margin-top:12px;">
       <div style="display:grid; grid-template-columns:80px 1fr 110px; gap:8px; margin-top:8px;">
-        <input type="text" name="badge[icon]" class="l-field" placeholder="🏅">
+        <%= render "merchant/shared/icon_field", name: "badge[icon]", placeholder: "🏅" %>
         <select name="badge[criteria_type]" class="l-field"><% crit.each { |k, v| %><option value="<%= k %>"><%= v %></option><% } %></select>
         <input type="number" name="badge[threshold]" class="l-field" value="1" min="1" placeholder="<%= t("merchant.gami.threshold_ph") %>">
       </div>

@@ -1,7 +1,7 @@
 module Merchant
   class CampaignsController < BaseController
     before_action :require_manager!, except: [:index, :show]
-    before_action :set_campaign, only: [:show, :qr, :pause, :resume, :destroy, :generate_banner, :push]
+    before_action :set_campaign, only: [:show, :edit, :update, :qr, :pause, :resume, :destroy, :generate_banner, :push]
 
     def index
       return render_locked_feature(:campaigns) if feature_locked?(:campaigns)
@@ -35,6 +35,19 @@ module Merchant
       @promo = @campaign.promo_codes.first
       @promo_url = helpers.customer_scan_url(current_workspace, promo: @promo.token) if @promo
       @share_url = public_campaign_url(@campaign.share_token!)
+    end
+
+    def edit
+      @rewards = current_workspace.rewards.active.ordered.to_a
+    end
+
+    def update
+      if @campaign.update(campaign_params)
+        redirect_to merchant_campaign_path(@campaign), notice: "Đã cập nhật chiến dịch."
+      else
+        @rewards = current_workspace.rewards.active.ordered.to_a
+        render :edit, status: :unprocessable_entity
+      end
     end
 
     # AI content suggestion (title + body) for the campaign draft. Returns JSON;

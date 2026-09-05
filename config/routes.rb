@@ -85,7 +85,7 @@ Rails.application.routes.draw do
     patch "feedback", to: "feedback#update"
     resource :automations, only: [:show, :update], controller: "automations"
     resources :broadcasts, only: [:index, :new, :create]
-    resources :campaigns, only: [:index, :new, :create, :show, :destroy] do
+    resources :campaigns, only: [:index, :new, :create, :show, :edit, :update, :destroy] do
       collection do
         post :generate_content # AI content suggestion (title/body), no persisted campaign
       end

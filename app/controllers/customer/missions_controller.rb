@@ -13,6 +13,9 @@ module Customer
       @mission = current_workspace.missions.active.find(params[:id])
       redirect_to member_missions_path unless @mission.photo_proof?
       @progress = @mission.progress_for(current_member)
+      # Link + text the customer shares to their social profile (social_share).
+      @share_url  = member_root_url
+      @share_text = "#{current_workspace.name} — #{current_workspace.branding_value('tagline')}"
     end
 
     def create_submission

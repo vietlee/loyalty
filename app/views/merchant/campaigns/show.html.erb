@@ -18,6 +18,8 @@
 
 <% if current_membership&.can_manage? %>
   <div style="display:flex; gap:10px; margin-bottom:16px; flex-wrap:wrap;">
+    <%= link_to "✏️ #{t('merchant.campaigns.edit')}", edit_merchant_campaign_path(@campaign),
+          class: "l-btn l-btn-soft", style: "padding:8px 14px;" %>
     <% if @campaign.status == "running" %>
       <%= button_to "⏸ Tạm dừng", pause_merchant_campaign_path(@campaign), method: :patch,
             class: "l-btn l-btn-soft", style: "border-color:color-mix(in srgb, var(--btn-primary) 32%, transparent);", form: { style: "display:inline;" } %>
@@ -69,8 +71,30 @@
         <div class="body"><div style="font-weight:700;"><%= @campaign.reward.display_icon %> <%= @campaign.reward.title %></div></div>
       </div>
     <% end %>
-    <div style="margin-top:16px; color:var(--ink-2); font-size:13px;">
-      <%= t("merchant.campaigns.time") %>: <%= @campaign.starts_at ? l(@campaign.starts_at, format: :short) : "—" %> → <%= @campaign.ends_at ? l(@campaign.ends_at, format: :short) : t("merchant.campaigns.unlimited") %>
+    <%# ---- Full config summary (matches what was set at creation) ---- %>
+    <div style="margin-top:16px; display:grid; grid-template-columns:repeat(auto-fit,minmax(140px,1fr)); gap:12px; padding-top:14px; border-top:1px solid var(--line);">
+      <div>
+        <div style="font-size:11px; text-transform:uppercase; letter-spacing:.06em; color:var(--ink-2);"><%= t("merchant.campaigns.kind") %></div>
+        <div style="font-weight:600; font-size:14px;"><%= @campaign.type_label %></div>
+      </div>
+      <div>
+        <div style="font-size:11px; text-transform:uppercase; letter-spacing:.06em; color:var(--ink-2);"><%= t("merchant.campaigns.audience") %></div>
+        <div style="font-weight:600; font-size:14px;"><%= @campaign.audience_label %></div>
+      </div>
+      <div>
+        <div style="font-size:11px; text-transform:uppercase; letter-spacing:.06em; color:var(--ink-2);"><%= t("merchant.campaigns.time") %></div>
+        <div style="font-weight:600; font-size:13.5px;"><%= @campaign.starts_at ? l(@campaign.starts_at, format: :short) : "—" %> → <%= @campaign.ends_at ? l(@campaign.ends_at, format: :short) : t("merchant.campaigns.unlimited") %></div>
+      </div>
+      <% if @promo %>
+        <div>
+          <div style="font-size:11px; text-transform:uppercase; letter-spacing:.06em; color:var(--ink-2);"><%= t("merchant.campaigns.issued") %></div>
+          <div style="font-weight:600; font-size:14px;"><%= @promo.claims_count %><%= " / #{@promo.max_claims}" if @promo.max_claims %></div>
+        </div>
+        <div>
+          <div style="font-size:11px; text-transform:uppercase; letter-spacing:.06em; color:var(--ink-2);"><%= t("merchant.campaigns.used") %></div>
+          <div style="font-weight:600; font-size:14px;"><%= @promo.used_count %></div>
+        </div>
+      <% end %>
     </div>
   </div>
 

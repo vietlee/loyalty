@@ -1,0 +1,88 @@
+<div data-controller="campaign-preview campaigngen"
+     data-campaigngen-url-value="<%= generate_content_merchant_campaigns_path %>"
+     style="display:grid; grid-template-columns:1fr 360px; gap:20px; align-items:start;">
+  <%= form_with model: [:merchant, @campaign] do |f| %>
+    <% if @campaign.errors.any? %>
+      <div class="l-chip" style="background:#F3DDD7; color:#B4402F; margin-bottom:12px;"><%= @campaign.errors.full_messages.to_sentence %></div>
+    <% end %>
+    <div class="l-panel" style="margin-bottom:16px;">
+      <h3 class="l-display" style="font-size:18px; margin-bottom:12px;"><%= t("merchant.campaigns.s1") %></h3>
+      <label class="l-label"><%= t("merchant.campaigns.name") %></label>
+      <%= f.text_field :name, class: "l-field", placeholder: t("merchant.campaigns.name_ph") %>
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-top:12px;">
+        <div>
+          <label class="l-label"><%= t("merchant.campaigns.kind") %></label>
+          <%= f.select :campaign_type, Campaign::TYPE_LABELS.keys.map { |k| [t("merchant.campaign_types.#{k}"), k] }, {}, class: "l-field", data: { campaigngen_target: "type" } %>
+        </div>
+        <div>
+          <label class="l-label"><%= t("merchant.campaigns.audience") %></label>
+          <%= f.select :audience, Campaign::AUDIENCE_LABELS.keys.map { |k| [t("merchant.campaign_audiences.#{k}"), k] }, {}, class: "l-field", data: { campaigngen_target: "audience" } %>
+        </div>
+      </div>
+    </div>
+
+    <div class="l-panel" style="margin-bottom:16px;">
+      <div style="display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:12px;">
+        <h3 class="l-display" style="font-size:18px; margin:0;"><%= t("merchant.campaigns.s2") %></h3>
+        <button type="button" class="l-btn l-btn-soft" style="padding:6px 12px; font-size:13px; white-space:nowrap;"
+                data-campaigngen-target="button" data-action="campaigngen#generate">
+          ✨ <%= t("merchant.campaigns.ai_generate") %>
+        </button>
+      </div>
+      <label class="l-label"><%= t("merchant.campaigns.title") %></label>
+      <%= text_field_tag "campaign[content][title]", @campaign.content_value("title"), class: "l-field",
+            placeholder: t("merchant.campaigns.title_ph"),
+            data: { campaign_preview_target: "title", campaigngen_target: "title", action: "input->campaign-preview#update" } %>
+      <label class="l-label" style="margin-top:12px;"><%= t("merchant.campaigns.body") %></label>
+      <%= text_area_tag "campaign[content][body]", @campaign.content_value("body"), class: "l-field", rows: 2,
+            placeholder: t("merchant.campaigns.body_ph"),
+            data: { campaign_preview_target: "body", campaigngen_target: "body", action: "input->campaign-preview#update" } %>
+    </div>
+
+    <div class="l-panel" style="margin-bottom:16px;">
+      <h3 class="l-display" style="font-size:18px; margin-bottom:12px;"><%= t("merchant.campaigns.s3") %></h3>
+      <label class="l-label"><%= t("merchant.campaigns.reward") %></label>
+      <%= f.select :reward_id, @rewards.map { |r| ["#{r.display_icon} #{r.title}", r.id] },
+            { include_blank: t("merchant.campaigns.reward_none") }, class: "l-field",
+            data: { campaign_preview_target: "reward", campaigngen_target: "reward", action: "change->campaign-preview#update" } %>
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-top:12px;">
+        <div><label class="l-label"><%= t("merchant.campaigns.starts") %></label><%= f.datetime_local_field :starts_at, value: f.object.starts_at&.strftime("%Y-%m-%dT%H:%M"), class: "l-field" %></div>
+        <div><label class="l-label"><%= t("merchant.campaigns.ends") %></label><%= f.datetime_local_field :ends_at, value: f.object.ends_at&.strftime("%Y-%m-%dT%H:%M"), class: "l-field" %></div>
+      </div>
+    </div>
+
+    <% unless @campaign.persisted? %>
+      <div class="l-panel" style="margin-bottom:16px;">
+        <h3 class="l-display" style="font-size:18px; margin-bottom:8px;"><%= t("merchant.campaigns.s4") %></h3>
+        <label style="display:flex; align-items:center; gap:8px; font-size:14px;">
+          <%= check_box_tag "generate_qr", "1", true %> <%= t("merchant.campaigns.gen_qr") %>
+        </label>
+        <label class="l-label" style="margin-top:12px;"><%= t("merchant.campaigns.max_claims") %></label>
+        <%= number_field_tag "max_claims", 200, class: "l-field", style: "max-width:180px;" %>
+      </div>
+      <%= f.hidden_field :status, value: "running" %>
+    <% end %>
+
+    <%= f.submit(@campaign.persisted? ? t("merchant.campaigns.save") : t("merchant.campaigns.create"), class: "l-btn l-btn-primary") %>
+  <% end %>
+
+  <%# ---- Live customer preview ---- %>
+  <div style="position:sticky; top:90px;">
+    <div class="l-eyebrow" style="margin-bottom:8px;"><%= t("merchant.campaigns.preview_label") %></div>
+    <div class="l-tile" style="border-radius:20px;">
+      <div style="display:flex; align-items:center; gap:10px; margin-bottom:12px;">
+        <div style="width:34px; height:34px; border-radius:10px; background:var(--primary); color:#fff; display:grid; place-items:center; font-weight:700; font-family:var(--font-display);"><%= current_workspace.logo_initials %></div>
+        <strong style="font-size:14px;"><%= current_workspace.name %></strong>
+      </div>
+      <div style="border-radius:16px; overflow:hidden; border:1px solid var(--line);">
+        <div style="height:96px; background:linear-gradient(135deg, var(--primary), var(--primary-2)); display:grid; place-items:center; color:#fff; font-size:36px;">🎁</div>
+        <div style="padding:14px;">
+          <div data-campaign-preview-target="pvTitle" style="font-weight:700;"><%= @campaign.content_value("title").presence || t("merchant.campaigns.pv_title") %></div>
+          <div data-campaign-preview-target="pvBody" style="font-size:13px; color:var(--ink-2); margin-top:4px;"><%= @campaign.content_value("body").presence || t("merchant.campaigns.pv_body") %></div>
+          <div data-campaign-preview-target="pvReward" style="margin-top:10px;"></div>
+          <button style="margin-top:12px; width:100%; padding:10px; border:none; border-radius:12px; background:var(--primary); color:#fff; font-weight:600;"><%= t("merchant.campaigns.claim_btn") %></button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

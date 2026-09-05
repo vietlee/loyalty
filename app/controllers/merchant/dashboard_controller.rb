@@ -32,8 +32,8 @@ module Merchant
         @busy_hours      = busy_hour_matrix
         @busiest_slot    = busiest_slot(@busy_hours)
         @busy_insight    = current_workspace.workspace_insights.find_by(kind: "busy_hour")
-        @has_checkin     = current_workspace.missions.active.exists?(mission_type: "checkin")
-        @checkin_url     = helpers.customer_scan_url(current_workspace, checkin: Checkin.encode(current_workspace)) if @has_checkin
+        # Check-in QR is per-branch only (see Outlets); the merchant no longer has
+        # a workspace-level QR.
         @sub_warning     = subscription_warning(current_workspace)
       else
         @points_issued = @points_redeemed = @purchases_count = @redemption_rate = @active_members = 0
