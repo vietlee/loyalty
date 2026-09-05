@@ -84,6 +84,10 @@ vi:
       th_vouchers: "Ưu đãi dùng"
       loyalty_program: "Chương trình loyalty"
       mechanisms_on: "Cơ chế đang bật cho workspace này."
+      mech_points: "Tích điểm"
+      mech_tiers: "Hạng thành viên"
+      mech_stamp: "Thẻ tem"
+      mech_gamification: "Trò chơi"
       earn_rate: "Tỷ lệ tích điểm:"
       configure_program: "Cấu hình chương trình →"
       checkin_title: "Mã check-in tại quầy"
@@ -135,6 +139,11 @@ vi:
       prev: "← Trước"
       next: "Sau →"
       page: "Trang %{n}"
+    pagination:
+      prev: "← Trước"
+      next: "Sau →"
+      page: "Trang %{n}"
+      summary: "%{from}–%{to} / %{total}"
     customers:
       send_group: "✉ Gửi thông báo cho nhóm này"
       compose: "✉ Soạn thông báo"

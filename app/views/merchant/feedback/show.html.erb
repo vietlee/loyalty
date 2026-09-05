@@ -53,6 +53,19 @@
           <% if r.comment.present? %><div style="font-size:14px; margin-top:6px;"><%= r.comment %></div><% end %>
         </div>
       <% end %>
+
+      <%# ---- Pagination ---- %>
+      <% if @page > 1 || @has_more %>
+        <div style="display:flex; align-items:center; justify-content:space-between; margin-top:14px; padding-top:12px; border-top:1px solid var(--line);">
+          <% if @page > 1 %>
+            <%= link_to t("merchant.pagination.prev"), merchant_feedback_path(request.query_parameters.merge(page: @page - 1)), class: "l-btn l-btn-soft" %>
+          <% else %><span></span><% end %>
+          <span style="font-size:13px; color:var(--ink-2);"><%= t("merchant.pagination.page", n: @page) %></span>
+          <% if @has_more %>
+            <%= link_to t("merchant.pagination.next"), merchant_feedback_path(request.query_parameters.merge(page: @page + 1)), class: "l-btn l-btn-soft" %>
+          <% else %><span></span><% end %>
+        </div>
+      <% end %>
     <% end %>
   </div>
 </div>

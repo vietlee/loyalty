@@ -192,8 +192,8 @@
     <p style="color:var(--ink-2); font-size:14px; margin-bottom:16px;"><%= d.(:mechanisms_on) %></p>
     <% if @program %>
       <div style="display:flex; gap:8px; flex-wrap:wrap;">
-        <% { "Points" => @program.points_enabled, "Tiers" => @program.tiers_enabled, "Stamp" => @program.stamps_enabled, "Gamification" => @program.gamification_enabled }.each do |label, on| %>
-          <span class="l-chip <%= 'l-chip-brand' if on %>"><%= on ? "●" : "○" %> <%= label %></span>
+        <% { mech_points: @program.points_enabled, mech_tiers: @program.tiers_enabled, mech_stamp: @program.stamps_enabled, mech_gamification: @program.gamification_enabled }.each do |key, on| %>
+          <span class="l-chip <%= 'l-chip-brand' if on %>"><%= on ? "●" : "○" %> <%= d.(key) %></span>
         <% end %>
       </div>
       <p style="margin-top:16px; color:var(--ink-2);"><%= d.(:earn_rate) %> <strong><%= @program.earn_rate_label %></strong></p>

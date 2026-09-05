@@ -79,6 +79,10 @@ en:
       th_vouchers: "Rewards used"
       loyalty_program: "Loyalty program"
       mechanisms_on: "Mechanisms enabled for this shop."
+      mech_points: "Points"
+      mech_tiers: "Tiers"
+      mech_stamp: "Stamp"
+      mech_gamification: "Gamification"
       earn_rate: "Earn rate:"
       configure_program: "Configure program →"
       checkin_title: "Counter check-in code"
@@ -130,6 +134,11 @@ en:
       prev: "← Prev"
       next: "Next →"
       page: "Page %{n}"
+    pagination:
+      prev: "← Prev"
+      next: "Next →"
+      page: "Page %{n}"
+      summary: "%{from}–%{to} / %{total}"
     customers:
       send_group: "✉ Notify this group"
       compose: "✉ Compose broadcast"

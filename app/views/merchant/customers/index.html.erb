@@ -39,7 +39,7 @@
 <div class="l-panel">
   <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:8px;">
     <strong><%= MemberSegments.icon(@segment) %> <%= MemberSegments.label(@segment) %></strong>
-    <span style="color:var(--ink-2); font-size:13px;"><%= t("merchant.customers.count", n: @members.size) %></span>
+    <span style="color:var(--ink-2); font-size:13px;"><%= t("merchant.customers.count", n: @total) %></span>
   </div>
   <table style="width:100%; border-collapse:collapse;">
     <thead><tr style="text-align:left; color:var(--ink-2); font-size:12px; text-transform:uppercase; letter-spacing:.08em;">
@@ -60,4 +60,17 @@
       <% if @members.empty? %><tr><td colspan="7" style="padding:20px; text-align:center; color:var(--ink-2);"><%= t("merchant.customers.empty") %></td></tr><% end %>
     </tbody>
   </table>
+
+  <%# ---- Pagination ---- %>
+  <% if @page > 1 || @has_more %>
+    <div style="display:flex; align-items:center; justify-content:space-between; margin-top:14px; padding-top:12px; border-top:1px solid var(--line);">
+      <% if @page > 1 %>
+        <%= link_to t("merchant.pagination.prev"), merchant_customers_path(request.query_parameters.merge(page: @page - 1)), class: "l-btn l-btn-soft" %>
+      <% else %><span></span><% end %>
+      <span style="font-size:13px; color:var(--ink-2);"><%= t("merchant.pagination.page", n: @page) %></span>
+      <% if @has_more %>
+        <%= link_to t("merchant.pagination.next"), merchant_customers_path(request.query_parameters.merge(page: @page + 1)), class: "l-btn l-btn-soft" %>
+      <% else %><span></span><% end %>
+    </div>
+  <% end %>
 </div>

@@ -3,6 +3,8 @@ module Merchant
     before_action :set_member, only: [:show, :adjust]
     before_action :require_manager!, only: [:adjust]
 
+    PER_PAGE = 50
+
     def index
       @segment = MemberSegments::PRESETS.key?(params[:segment]) ? params[:segment] : "all"
       @counts  = MemberSegments.counts
@@ -18,9 +20,11 @@ module Merchant
         @applied_outlet = @outlet
       end
 
-      scope = MemberSegments.audience(segment: @segment, outlet_id: @applied_outlet&.id, q: @q)
-      scope = apply_sort(scope, @sort)
-      @members = scope.limit(100).to_a
+      base = MemberSegments.audience(segment: @segment, outlet_id: @applied_outlet&.id, q: @q)
+      @total = base.count # count on the ungrouped scope (sort may GROUP BY for "spend")
+      @page  = [params[:page].to_i, 1].max
+      @members  = apply_sort(base, @sort).limit(PER_PAGE).offset((@page - 1) * PER_PAGE).to_a
+      @has_more = @total > @page * PER_PAGE
 
       # Filters to carry into "Soạn thông báo" so the broadcast targets exactly the
       # audience shown here (segment + branch + search), not the whole segment.
