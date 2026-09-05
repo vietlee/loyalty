@@ -10,6 +10,13 @@ module Merchant
       # Branch staff only see customers who transacted at their outlet.
       if branch_scoped?
         scope = scope.where(id: Purchase.where(outlet_id: scoped_outlet.id).select(:member_id))
+      else
+        # Owner/manager: optional branch filter (Toàn merchant vs a branch).
+        @branches = current_workspace.outlets.order(:name).to_a
+        if params[:outlet].present? && (o = @branches.find { |x| x.id.to_s == params[:outlet].to_s })
+          @outlet = o
+          scope = scope.where(id: Purchase.where(outlet_id: o.id).select(:member_id))
+        end
       end
       @q, @sort = params[:q].to_s.strip, params[:sort]
       scope = apply_search(scope, @q)

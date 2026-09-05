@@ -3,7 +3,7 @@
 
 <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap; margin-bottom:16px;">
   <% MemberSegments::PRESETS.each do |key, meta| %>
-    <%= link_to merchant_customers_path(segment: key),
+    <%= link_to merchant_customers_path(segment: key, outlet: params[:outlet]),
           class: "l-chip #{'l-chip-brand' if @segment == key}" do %>
       <%= meta[:icon] %> <%= meta[:label] %> · <%= @counts[key] %>
     <% end %>
@@ -21,6 +21,14 @@
   <input type="hidden" name="segment" value="<%= @segment %>">
   <div style="display:flex; gap:10px; margin-bottom:16px; flex-wrap:wrap;">
     <input type="search" name="q" value="<%= @q %>" placeholder="<%= t('merchant.segments.search_ph') %>" class="l-field" style="flex:1; min-width:220px;">
+    <% if @branches.present? %>
+      <select name="outlet" class="l-field" style="max-width:220px;" onchange="this.form.requestSubmit()" aria-label="<%= t('merchant.customers.branch_filter') %>">
+        <option value=""><%= t('merchant.customers.branch_all') %></option>
+        <% @branches.each do |o| %>
+          <option value="<%= o.id %>" <%= 'selected' if @outlet&.id == o.id %>><%= o.name %></option>
+        <% end %>
+      </select>
+    <% end %>
     <select name="sort" class="l-field" style="max-width:200px;" onchange="this.form.requestSubmit()" aria-label="<%= t('merchant.segments.sort_label') %>">
       <option value="recent" <%= 'selected' unless %w[points spend].include?(@sort) %>><%= t('merchant.segments.sort_recent') %></option>
       <option value="points" <%= 'selected' if @sort == 'points' %>><%= t('merchant.segments.sort_points') %></option>

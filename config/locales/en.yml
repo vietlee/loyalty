@@ -113,6 +113,8 @@ en:
       th_joined: "Joined"
       view: "View →"
       empty: "No customers in this group."
+      branch_filter: "Filter by branch"
+      branch_all: "All branches"
     customer:
       joined: "Joined %{date}"
       kpi_balance: "Current points"
@@ -206,6 +208,7 @@ en:
       unit_item: "Item"
       stock: "Stock (blank = unlimited)"
       valid_days: "Validity after redemption (days)"
+      valid_days_hint: "Counted from when the customer redeems — separate from the Availability schedule (when it's open to redeem). They don't conflict."
       sched_title: "Availability schedule"
       sched_from: "Available from"
       sched_to: "Ends"

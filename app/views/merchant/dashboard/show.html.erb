@@ -28,14 +28,17 @@
 
 <%# ---- Branch scope selector (owner/manager): merchant total or one branch ---- %>
 <% if @branches.present? %>
-  <div class="l-panel" style="margin-bottom:16px; display:flex; align-items:center; gap:10px; flex-wrap:wrap;">
+  <div class="l-panel" style="margin-bottom:16px; display:flex; align-items:center; gap:12px; flex-wrap:wrap;">
     <span style="font-size:11px; text-transform:uppercase; letter-spacing:.06em; color:var(--ink-2); font-weight:700;"><%= d.(:view_scope) %></span>
-    <div style="display:flex; gap:6px; flex-wrap:wrap;">
-      <%= link_to d.(:all_branches), merchant_root_path(range: @range[:key]), class: "l-chip #{'l-chip-brand' unless @branch}" %>
-      <% @branches.each do |o| %>
-        <%= link_to o.name, merchant_root_path(range: @range[:key], outlet: o.id), class: "l-chip #{'l-chip-brand' if @branch&.id == o.id}" %>
-      <% end %>
-    </div>
+    <%= form_with url: merchant_root_path, method: :get, data: { turbo: false }, style: "margin:0;" do %>
+      <input type="hidden" name="range" value="<%= @range[:key] %>">
+      <select name="outlet" class="l-field" style="max-width:300px; padding-top:9px; padding-bottom:9px;" onchange="this.form.requestSubmit()">
+        <option value="" <%= 'selected' unless @branch %>><%= d.(:all_branches) %></option>
+        <% @branches.each do |o| %>
+          <option value="<%= o.id %>" <%= 'selected' if @branch&.id == o.id %>><%= o.name %></option>
+        <% end %>
+      </select>
+    <% end %>
   </div>
 <% end %>
 

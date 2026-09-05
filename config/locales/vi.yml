@@ -118,6 +118,8 @@ vi:
       th_joined: "Tham gia"
       view: "Xem →"
       empty: "Không có khách trong nhóm này."
+      branch_filter: "Lọc theo chi nhánh"
+      branch_all: "Tất cả chi nhánh"
     customer:
       joined: "Tham gia %{date}"
       kpi_balance: "Điểm hiện tại"
@@ -211,6 +213,7 @@ vi:
       unit_item: "Sản phẩm"
       stock: "Tồn kho (trống = không giới hạn)"
       valid_days: "Hạn dùng sau khi đổi (ngày)"
+      valid_days_hint: "Tính từ lúc khách đổi — khác với Lịch phát hành (thời gian mở để đổi). Hai cái không xung đột."
       sched_title: "Lịch phát hành"
       sched_from: "Bắt đầu từ"
       sched_to: "Kết thúc"
