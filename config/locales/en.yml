@@ -529,6 +529,7 @@ en:
       ai_generate: "Generate with AI"
       share_push: "Share & notify"
       open_link: "Open link"
+      copy_link: "Copy"
       push_now: "📣 Send notification"
       push_confirm: "Send this campaign notification to the “%{audience}” group?"
       push_sent: "Notification sent to %{n} customers."

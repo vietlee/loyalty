@@ -39,6 +39,11 @@
     <div style="display:flex; gap:8px; flex-wrap:wrap; align-items:center;">
       <input type="text" value="<%= @share_url %>" readonly onclick="this.select()"
              class="l-field" style="flex:1; min-width:220px; font-size:13px;">
+      <span data-controller="clipboard" data-clipboard-text-value="<%= @share_url %>">
+        <button type="button" class="l-btn l-btn-soft" style="padding:8px 14px; font-size:13px;" data-action="clipboard#copy">
+          📋 <span data-clipboard-target="label"><%= t("merchant.campaigns.copy_link") %></span>
+        </button>
+      </span>
       <a href="<%= @share_url %>" target="_blank" rel="noopener" class="l-btn l-btn-soft" style="padding:8px 14px; font-size:13px;">🔗 <%= t("merchant.campaigns.open_link") %></a>
       <%= button_to t("merchant.campaigns.push_now"), push_merchant_campaign_path(@campaign), method: :post,
             class: "l-btn l-btn-primary", style: "padding:8px 14px; font-size:13px;",

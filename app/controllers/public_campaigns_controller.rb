@@ -10,7 +10,15 @@ class PublicCampaignsController < ActionController::Base
 
     @workspace = @campaign.workspace
     ActsAsTenant.with_tenant(@workspace) do
-      @banner_url = url_for(@campaign.banner) if @campaign.banner.attached?
+      if @campaign.banner.attached?
+        # og:image must be an ABSOLUTE, directly-served URL so social crawlers
+        # (Facebook/Zalo) can fetch it — use the proxy (no signed redirect/expiry).
+        @banner_url = rails_storage_proxy_url(
+          @campaign.banner,
+          host: request.host_with_port,
+          protocol: request.ssl? ? "https" : "http"
+        )
+      end
       @promo = @campaign.promo_codes.where(active: true).first
     end
     @shop_url = shop_url_for(@workspace)

@@ -534,6 +534,7 @@ vi:
       ai_generate: "Tạo nội dung bằng AI"
       share_push: "Chia sẻ & Gửi thông báo"
       open_link: "Mở link"
+      copy_link: "Copy"
       push_now: "📣 Gửi thông báo"
       push_confirm: "Gửi thông báo chiến dịch này tới nhóm “%{audience}”?"
       push_sent: "Đã gửi thông báo tới %{n} khách."
