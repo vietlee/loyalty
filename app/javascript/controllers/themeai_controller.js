@@ -5,7 +5,15 @@ import { Controller } from "@hotwired/stimulus"
 // input events so the existing theme-preview controller updates live. Nothing
 // is saved until the merchant clicks Save.
 export default class extends Controller {
+  static targets = ["button"]
   static values = { url: String }
+
+  // Reveal the AI palette button the moment a logo file is picked.
+  logoPicked(event) {
+    if (this.hasButtonTarget && event.target.files && event.target.files.length) {
+      this.buttonTarget.hidden = false
+    }
+  }
 
   async suggest(event) {
     const btn = event.currentTarget

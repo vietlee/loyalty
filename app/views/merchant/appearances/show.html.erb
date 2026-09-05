@@ -41,7 +41,7 @@
             <span data-upload-target="name"><%= t("merchant.appearance.pick_logo") %></span>
           </button>
           <input type="file" name="logo" accept="image/png,image/jpeg,image/webp"
-                 data-upload-target="input" data-action="upload#changed" hidden>
+                 data-upload-target="input" data-action="upload#changed themeai#logoPicked" hidden>
         </div>
       </div>
 
@@ -49,9 +49,11 @@
         <h3 class="l-display" style="font-size:18px; margin-bottom:2px;"><%= t("merchant.appearance.colors_title") %></h3>
         <p style="color:var(--ink-2); font-size:13px; margin-bottom:12px;"><%= t("merchant.appearance.colors_note_html").html_safe %></p>
 
-        <%# AI: derive the whole palette (primary/accent/surface/ink) from the logo %>
+        <%# AI: derive the whole palette from the logo. Only shown when a logo
+            exists; revealed via JS the moment a logo file is picked. %>
         <button type="button" class="l-btn l-btn-primary" style="width:100%; margin-bottom:14px;"
-                data-action="themeai#suggest">
+                data-themeai-target="button" data-action="themeai#suggest"
+                <%= "hidden" unless current_workspace.logo.attached? %>>
           ✨ <%= t("merchant.appearance.ai_suggest") %>
         </button>
 

@@ -170,6 +170,9 @@ vi:
     scan:
       selling_branch: "Chi nhánh đang bán"
       branch_prefix: "Chi nhánh"
+      open_scanner: "Mở máy quét"
+      launcher_hint: "Bấm để mở máy quét — tích điểm hoặc xác thực ưu đãi cho khách."
+      logout: "Đăng xuất"
       tab_earn: "① Tích điểm"
       tab_redeem: "② Xác thực ưu đãi"
       tab_pos: "③ Tạo mã quầy"
@@ -368,7 +371,7 @@ vi:
       th_threshold: "Ngưỡng điểm"
       th_multiplier: "Hệ số điểm"
       th_benefits: "Quyền lợi"
-      benefits_ph: "VD: Giảm 10%, Ưu tiên đặt chỗ (cách nhau bằng dấu phẩy)"
+      benefits_ph: "Mỗi dòng một quyền lợi. VD:\nGiảm 10%\nƯu tiên đặt chỗ"
       th_colors: "Màu"
       multiplier_hint: "Hệ số điểm: khách ở hạng này tích điểm nhân với hệ số (VD 1.5 = +50%)."
       save: "Lưu hạng"

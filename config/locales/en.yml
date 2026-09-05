@@ -165,6 +165,9 @@ en:
     scan:
       selling_branch: "Selling branch"
       branch_prefix: "Branch"
+      open_scanner: "Open scanner"
+      launcher_hint: "Tap to open the scanner — earn points or verify offers for customers."
+      logout: "Log out"
       tab_earn: "① Earn"
       tab_redeem: "② Verify reward"
       tab_pos: "③ Counter code"
@@ -363,7 +366,7 @@ en:
       th_threshold: "Threshold"
       th_multiplier: "Multiplier"
       th_benefits: "Benefits"
-      benefits_ph: "e.g. 10% off, Priority booking (comma-separated)"
+      benefits_ph: "One benefit per line. e.g.\n10% off\nPriority booking"
       th_colors: "Colors"
       multiplier_hint: "Multiplier: members at this tier earn points times this factor (e.g. 1.5 = +50%)."
       save: "Save tiers"

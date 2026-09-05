@@ -8,7 +8,8 @@ module Merchant
       current_workspace.tiers.find_each do |tier|
         attrs = rows[tier.id.to_s]
         next if attrs.blank?
-        benefits = attrs[:benefits].to_s.split(",").map(&:strip).reject(&:blank?)
+        # One perk per line (newline-separated).
+        benefits = attrs[:benefits].to_s.split(/[\r\n]+/).map(&:strip).reject(&:blank?)
         tier.update(
           name:             attrs[:name].presence || tier.name,
           threshold_points: attrs[:threshold_points].to_i,

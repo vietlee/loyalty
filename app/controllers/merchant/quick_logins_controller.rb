@@ -11,7 +11,9 @@ module Merchant
       end
       sign_in(:user, user)
       session[:workspace_id] = ws.id
-      redirect_to merchant_scanner_path, notice: t("merchant.quick_login.welcome")
+      # Land on the minimal staff-mobile launcher (logo + one scanner button),
+      # not the full merchant dashboard webview.
+      redirect_to merchant_scan_home_path, notice: t("merchant.quick_login.welcome")
     end
   end
 end

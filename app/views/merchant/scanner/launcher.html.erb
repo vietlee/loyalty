@@ -1,0 +1,32 @@
+<%= render "layouts/merchant_theme_vars" %>
+<% content_for :title, current_workspace.name %>
+
+<div style="min-height:100dvh; display:flex; flex-direction:column; align-items:center; justify-content:center;
+            padding:28px 22px; background:var(--surface); color:var(--ink); text-align:center; gap:8px;">
+  <%# ---- Merchant identity ---- %>
+  <div style="width:96px; height:96px; border-radius:26px; overflow:hidden; display:grid; place-items:center;
+              background:var(--primary); color:var(--on-primary); box-shadow:0 10px 30px rgba(0,0,0,.14);">
+    <% if current_workspace.logo.attached? %>
+      <%= image_tag url_for(current_workspace.logo), style: "width:100%; height:100%; object-fit:cover;" %>
+    <% else %>
+      <span style="font-family:var(--font-display); font-size:34px; font-weight:800;"><%= current_workspace.logo_initials %></span>
+    <% end %>
+  </div>
+  <h1 class="l-display" style="font-size:24px; margin:14px 0 0;"><%= current_workspace.name %></h1>
+  <div style="font-size:13px; color:var(--ink-2);">
+    <%= current_user&.name %><% if current_outlet %> · <%= current_outlet.name %><% end %>
+  </div>
+
+  <%# ---- The one action: open the counter scanner ---- %>
+  <%= link_to merchant_scanner_path, data: { turbo: false },
+        style: "margin-top:28px; width:100%; max-width:360px; padding:22px; border-radius:22px; background:var(--primary);
+                color:var(--on-primary); text-decoration:none; font-weight:800; font-size:19px; display:flex;
+                align-items:center; justify-content:center; gap:12px; box-shadow:0 12px 34px rgba(0,0,0,.16);" do %>
+    <%= ui_icon(:scan, size: 26) %> <%= t("merchant.scan.open_scanner") %>
+  <% end %>
+  <p style="font-size:12.5px; color:var(--ink-2); max-width:320px; margin-top:12px;"><%= t("merchant.scan.launcher_hint") %></p>
+
+  <%= button_to t("merchant.scan.logout"), destroy_user_session_path, method: :delete,
+        form: { data: { turbo: false } },
+        style: "margin-top:24px; background:none; border:none; color:var(--ink-2); font-size:13px; text-decoration:underline; cursor:pointer;" %>
+</div>
