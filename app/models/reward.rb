@@ -28,7 +28,9 @@ class Reward < ApplicationRecord
                     if: -> { value_unit == "percent" && value.present? }
 
   scope :active,   -> { where(active: true) }
+  scope :listed,   -> { where(archived_at: nil) } # hide archived (soft-deleted) rewards
   scope :ordered,  -> { order(:position, :id) }
+  def archived? = archived_at.present?
   # Rewards a member can redeem with points right now.
   scope :redeemable, -> { active.where.not(cost_points: nil) }
 

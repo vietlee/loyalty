@@ -4,7 +4,7 @@ module Merchant
     before_action :set_reward, only: [:edit, :update, :destroy]
 
     def index
-      @rewards = current_workspace.rewards.ordered.to_a
+      @rewards = current_workspace.rewards.listed.ordered.to_a
       @reward  = Reward.new(kind: "voucher", value_unit: "vnd", valid_days: 30, active: true)
     end
 
@@ -17,7 +17,7 @@ module Merchant
       if @reward.save
         redirect_to merchant_rewards_path, notice: "Đã thêm ưu đãi “#{@reward.title}”."
       else
-        @rewards = current_workspace.rewards.ordered.to_a
+        @rewards = current_workspace.rewards.listed.ordered.to_a
         render :index, status: :unprocessable_entity
       end
     end
@@ -33,11 +33,19 @@ module Merchant
     end
 
     def destroy
-      if @reward.destroy
-        redirect_to merchant_rewards_path, notice: "Đã xoá ưu đãi."
-      else
+      if @reward.stamp_cards.exists? || @reward.campaigns.exists? || @reward.promo_codes.exists?
+        # Deleting would break a stamp card / campaign — make the merchant detach first.
         redirect_to merchant_rewards_path,
-          alert: "Không thể xoá vì ưu đãi đang được sử dụng (voucher đã phát, thẻ tem hoặc chiến dịch). Hãy tắt phát hành thay vì xoá."
+          alert: "Ưu đãi đang gắn với thẻ tem hoặc chiến dịch. Hãy gỡ/xoá chúng trước khi xoá ưu đãi."
+      elsif @reward.vouchers.exists?
+        # Voucher đã phát cho khách → không xoá cứng được (mất lịch sử/ví khách).
+        # Lưu trữ: ẩn khỏi danh sách + ngừng phát hành, giữ nguyên voucher cũ.
+        @reward.update(active: false, archived_at: Time.current)
+        redirect_to merchant_rewards_path,
+          notice: "Đã lưu trữ ưu đãi (còn voucher đã phát nên giữ lịch sử; đã ẩn khỏi danh sách và ngừng phát hành)."
+      else
+        @reward.destroy
+        redirect_to merchant_rewards_path, notice: "Đã xoá ưu đãi."
       end
     end
 
