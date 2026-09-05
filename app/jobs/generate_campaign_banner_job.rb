@@ -26,10 +26,11 @@ class GenerateCampaignBannerJob < ApplicationJob
       A clean, modern promotional banner for a loyalty campaign at a shop named
       "#{c.workspace.name}". Campaign: "#{title}" (#{c.type_label}).
       Use a warm, inviting palette around #{theme['primary']} and #{theme['primary_2']}.
-      Flat vector marketing style, tasteful, uncluttered, room for text overlay,
-      no watermark, no lorem ipsum, no gibberish text.
-      IMPORTANT: do NOT draw any QR code, barcode, or phone screen showing a
-      scannable code — a real scannable QR is added separately by the system.
+      Flat vector marketing style, tasteful, uncluttered — decorative background
+      imagery only, with clear open space.
+      IMPORTANT: do NOT render ANY text, letters, words, numbers, logos, QR codes,
+      barcodes, or phone screens with codes. The title and a scannable QR are
+      added separately by the system on top of this image, so keep it text-free.
     PROMPT
   end
 end

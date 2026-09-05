@@ -19,7 +19,7 @@ class RedeemReward
       voucher = Voucher.create!(
         workspace: @member.workspace, member: @member, reward: @reward,
         source: "redeem", state: "active", points_spent: @reward.cost_points,
-        expires_at: @reward.valid_days.days.from_now
+        expires_at: @reward.voucher_expiry_from
       )
       PointTransaction.create!(
         workspace: @member.workspace, member: @member, kind: "redeem",

@@ -1,7 +1,7 @@
 module Merchant
   class RewardsController < BaseController
     before_action :require_manager!, except: [:index]
-    before_action :set_reward, only: [:edit, :update, :destroy]
+    before_action :set_reward, only: [:edit, :update, :destroy, :toggle]
 
     def index
       scope = current_workspace.rewards.listed
@@ -42,6 +42,13 @@ module Merchant
       end
     end
 
+    # Quick enable/disable issuing (without editing or deleting).
+    def toggle
+      @reward.update(active: !@reward.active)
+      redirect_to merchant_rewards_path(request.query_parameters),
+                  notice: @reward.active? ? "Đã bật ưu đãi." : "Đã tắt ưu đãi."
+    end
+
     def destroy
       if @reward.stamp_cards.exists? || @reward.campaigns.exists? || @reward.promo_codes.exists?
         # Deleting would break a stamp card / campaign — make the merchant detach first.
@@ -70,8 +77,11 @@ module Merchant
     def reward_params
       p = params.require(:reward).permit(:title, :description, :kind, :icon, :cost_points,
                                          :value, :value_unit, :terms, :stock, :valid_days, :active,
-                                         :starts_at, :ends_at)
+                                         :starts_at, :ends_at, :expires_at)
       p[:schedule] = build_schedule
+      # Voucher validity mode: "relative" (N days after claim) clears any fixed
+      # expiry so the two never conflict; "fixed" uses expires_at.
+      p[:expires_at] = nil if params.dig(:reward, :expiry_mode) == "relative"
       p
     end
 

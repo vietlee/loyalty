@@ -60,6 +60,9 @@
               <div style="font-weight:700;"><%= r.title %></div>
               <div style="font-size:12px; color:var(--ink-2);"><%= r.value_label %> · <%= r.kind %></div>
             </div>
+            <span class="l-chip" style="font-size:11px; flex:none; <%= r.active? ? 'background:var(--good-soft,#DEEBE1); color:var(--good);' : 'color:var(--ink-2);' %>">
+              <%= r.active? ? t("merchant.rewards.status_active") : t("merchant.rewards.status_inactive") %>
+            </span>
           </div>
           <div style="display:flex; gap:8px; margin-top:12px; flex-wrap:wrap;">
             <% if r.cost_points %><span class="l-chip l-chip-brand"><%= t("merchant.rewards.points_n", n: number_with_delimiter(r.cost_points)) %></span><% end %>
@@ -67,9 +70,12 @@
             <span class="l-chip"><%= t("merchant.rewards.redeemed", n: r.vouchers.count) %></span><span class="l-chip"><%= t("merchant.rewards.used", n: r.vouchers.where(state: "used").count) %></span>
             <% if r.schedule_summary %><span class="l-chip" style="background:var(--primary)18; color:var(--primary-ink);">🕒 <%= r.schedule_summary %></span><% end %>
           </div>
-          <div style="display:flex; gap:8px; margin-top:12px;">
+          <div style="display:flex; gap:8px; margin-top:12px; flex-wrap:wrap;">
             <%= link_to t("merchant.rewards.edit"), edit_merchant_reward_path(r), class: "l-btn l-btn-ghost",
                   style: "padding:6px 12px; font-size:13px;", data: { turbo_frame: "reward_form", action: "modal#open" } %>
+            <%= button_to (r.active? ? t("merchant.rewards.turn_off") : t("merchant.rewards.turn_on")),
+                  toggle_merchant_reward_path(r, request.query_parameters), method: :patch,
+                  class: "l-btn l-btn-ghost", style: "padding:6px 12px; font-size:13px;", form: { style: "display:inline; margin:0;" } %>
             <%= button_to t("merchant.rewards.delete"), merchant_reward_path(r), method: :delete, form: { data: { turbo_confirm: t("merchant.rewards.delete_confirm") } },
                   class: "l-btn l-btn-ghost", style: "padding:6px 12px; font-size:13px; color:var(--warn);" %>
           </div>

@@ -108,7 +108,9 @@ Rails.application.routes.draw do
     # Counter scanner — Xác thực ưu đãi (redeem/verify)
     post "redeem/lookup", to: "redeem#lookup", as: :redeem_lookup
     post "redeem",        to: "redeem#create", as: :redeem
-    resources :rewards, only: [:index, :new, :create, :edit, :update, :destroy]
+    resources :rewards, only: [:index, :new, :create, :edit, :update, :destroy] do
+      member { patch :toggle } # bật/tắt phát hành nhanh
+    end
     # Gamification management
     get   "gamification",      to: "gamification#show"
     patch "gamification/wheel", to: "gamification#update_wheel", as: :wheel_config

@@ -48,6 +48,12 @@ class Reward < ApplicationRecord
   end
   def available?(now = Time.current) = active? && in_stock? && within_window?(now)
 
+  # Expiry for a voucher issued now: a fixed offer-level date if set, otherwise
+  # valid_days after the claim.
+  def voucher_expiry_from(now = Time.current)
+    expires_at.presence || (valid_days.to_i.positive? ? valid_days.days.since(now) : 30.days.since(now))
+  end
+
   WDAYS_VI = %w[CN T2 T3 T4 T5 T6 T7].freeze # fallback; index = wday (0=Sun)
 
   # Locale-aware short weekday labels (index = wday, 0=Sun). Falls back to VI.

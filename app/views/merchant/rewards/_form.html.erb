@@ -46,32 +46,52 @@
     </div>
   </div>
 
-  <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-top:12px;">
-    <div>
-      <label class="l-label"><%= t("merchant.rewards.stock") %></label>
-      <%= f.number_field :stock, class: "l-field", placeholder: "∞" %>
-    </div>
-    <div>
-      <label class="l-label"><%= t("merchant.rewards.valid_days") %></label>
-      <%= f.number_field :valid_days, class: "l-field" %>
-      <p style="color:var(--ink-2); font-size:11.5px; margin-top:5px; line-height:1.35;"><%= t("merchant.rewards.valid_days_hint") %></p>
-    </div>
+  <div style="margin-top:12px;">
+    <label class="l-label"><%= t("merchant.rewards.stock") %></label>
+    <%= f.number_field :stock, class: "l-field", placeholder: "∞" %>
   </div>
 
-  <%# ---- Availability schedule ---- %>
-  <div style="margin-top:14px; padding:12px 14px; border:1px solid var(--line); border-radius:12px;">
-    <div class="l-eyebrow" style="margin-bottom:8px;"><%= t("merchant.rewards.sched_title") %></div>
+  <%# ---- Time: availability window + voucher validity ---- %>
+  <div style="margin-top:14px; padding:12px 14px; border:1px solid var(--line); border-radius:12px;"
+       data-controller="expirymode">
+    <div class="l-eyebrow" style="margin-bottom:8px;"><%= t("merchant.rewards.time_title") %></div>
+
+    <%# 1) Availability window: when customers can redeem this offer %>
+    <label class="l-label"><%= t("merchant.rewards.avail_window") %></label>
     <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
       <div>
-        <label class="l-label"><%= t("merchant.rewards.sched_from") %></label>
+        <label class="l-sublabel" style="font-size:11.5px; color:var(--ink-2);"><%= t("merchant.rewards.sched_from") %></label>
         <%= f.datetime_local_field :starts_at, value: f.object.starts_at&.strftime("%Y-%m-%dT%H:%M"), class: "l-field" %>
       </div>
       <div>
-        <label class="l-label"><%= t("merchant.rewards.sched_to") %></label>
+        <label class="l-sublabel" style="font-size:11.5px; color:var(--ink-2);"><%= t("merchant.rewards.sched_to") %></label>
         <%= f.datetime_local_field :ends_at, value: f.object.ends_at&.strftime("%Y-%m-%dT%H:%M"), class: "l-field" %>
       </div>
     </div>
-    <label class="l-label" style="margin-top:12px;"><%= t("merchant.rewards.sched_days") %></label>
+    <p style="color:var(--ink-2); font-size:11.5px; margin:5px 0 0;"><%= t("merchant.rewards.avail_hint") %></p>
+
+    <%# 2) Voucher validity after claiming: relative (N days) or a fixed date %>
+    <% fixed = f.object.expires_at.present? %>
+    <label class="l-label" style="margin-top:14px;"><%= t("merchant.rewards.validity_title") %></label>
+    <div style="display:flex; flex-direction:column; gap:8px;">
+      <label style="display:flex; align-items:center; gap:8px; font-size:13.5px;">
+        <input type="radio" name="reward[expiry_mode]" value="relative" <%= "checked" unless fixed %>
+               data-expirymode-target="radio" data-action="expirymode#switch">
+        <%= t("merchant.rewards.validity_relative_pre") %>
+        <%= f.number_field :valid_days, value: (f.object.valid_days || 30), class: "l-field",
+              style: "width:80px; padding:6px 8px;", data: { expirymode_target: "relativeInput" }, disabled: fixed %>
+        <%= t("merchant.rewards.validity_relative_suf") %>
+      </label>
+      <label style="display:flex; align-items:center; gap:8px; font-size:13.5px; flex-wrap:wrap;">
+        <input type="radio" name="reward[expiry_mode]" value="fixed" <%= "checked" if fixed %>
+               data-expirymode-target="radio" data-action="expirymode#switch">
+        <%= t("merchant.rewards.validity_fixed_pre") %>
+        <%= f.datetime_local_field :expires_at, value: f.object.expires_at&.strftime("%Y-%m-%dT%H:%M"), class: "l-field",
+              style: "width:auto; padding:6px 8px;", data: { expirymode_target: "fixedInput" }, disabled: !fixed %>
+      </label>
+    </div>
+
+    <label class="l-label" style="margin-top:14px;"><%= t("merchant.rewards.sched_days") %></label>
     <% windows = f.object.schedule_windows %>
     <% windows = [{}] if windows.empty? %>
     <div data-controller="schedwindows">
