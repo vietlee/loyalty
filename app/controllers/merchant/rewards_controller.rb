@@ -33,8 +33,12 @@ module Merchant
     end
 
     def destroy
-      @reward.destroy
-      redirect_to merchant_rewards_path, notice: "Đã xoá ưu đãi."
+      if @reward.destroy
+        redirect_to merchant_rewards_path, notice: "Đã xoá ưu đãi."
+      else
+        redirect_to merchant_rewards_path,
+          alert: "Không thể xoá vì ưu đãi đang được sử dụng (voucher đã phát, thẻ tem hoặc chiến dịch). Hãy tắt phát hành thay vì xoá."
+      end
     end
 
     private

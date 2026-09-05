@@ -1,7 +1,7 @@
 module Merchant
   class CampaignsController < BaseController
     before_action :require_manager!, except: [:index, :show]
-    before_action :set_campaign, only: [:show, :qr]
+    before_action :set_campaign, only: [:show, :qr, :pause, :resume, :destroy]
 
     def index
       return render_locked_feature(:campaigns) if feature_locked?(:campaigns)
@@ -43,6 +43,25 @@ module Merchant
       url = helpers.customer_scan_url(current_workspace, promo: promo.token)
       png = helpers.qr_png(url, color: "1A1A1A", size: 720)
       send_data png, type: "image/png", filename: "promo-#{promo.token}.png", disposition: "attachment"
+    end
+
+    # Pause: stops the campaign and disables its promo QR (khách hết quét nhận được).
+    def pause
+      @campaign.update(status: "paused")
+      @campaign.promo_codes.update_all(active: false)
+      redirect_to merchant_campaign_path(@campaign), notice: "Đã tạm dừng chiến dịch."
+    end
+
+    def resume
+      @campaign.update(status: "running")
+      @campaign.promo_codes.update_all(active: true)
+      redirect_to merchant_campaign_path(@campaign), notice: "Đã tiếp tục chiến dịch."
+    end
+
+    # Xoá cả chiến dịch + mã QR/lượt nhận của nó (voucher đã phát cho khách giữ nguyên).
+    def destroy
+      @campaign.destroy
+      redirect_to merchant_campaigns_path, notice: "Đã xoá chiến dịch."
     end
 
     private

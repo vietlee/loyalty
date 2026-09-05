@@ -78,8 +78,12 @@ Rails.application.routes.draw do
     patch "feedback", to: "feedback#update"
     resource :automations, only: [:show, :update], controller: "automations"
     resources :broadcasts, only: [:index, :new, :create]
-    resources :campaigns, only: [:index, :new, :create, :show] do
-      member { get :qr } # downloadable promo QR (SVG)
+    resources :campaigns, only: [:index, :new, :create, :show, :destroy] do
+      member do
+        get   :qr      # downloadable promo QR (PNG)
+        patch :pause   # running → paused (disables its promo QR)
+        patch :resume  # paused → running
+      end
     end
     # POS transaction QR (member self-scan / §6.2)
     post "pos", to: "pos#create", as: :pos_charges

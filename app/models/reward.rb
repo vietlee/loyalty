@@ -5,7 +5,15 @@ class Reward < ApplicationRecord
   VALUE_UNITS = %w[vnd percent item].freeze
 
   belongs_to :workspace
-  has_many :vouchers, dependent: :destroy
+  # Refuse deletion while the reward is in use — deleting it would wipe issued
+  # vouchers from customers' wallets or break a stamp card / campaign. Merchants
+  # deactivate (active: false) instead. destroy returns false + adds an error.
+  has_many :vouchers,     dependent: :restrict_with_error
+  has_many :stamp_cards,  dependent: :restrict_with_error
+  has_many :campaigns,    dependent: :restrict_with_error
+  has_many :promo_codes,  dependent: :restrict_with_error
+
+  def in_use? = vouchers.exists? || stamp_cards.exists? || campaigns.exists? || promo_codes.exists?
 
   # Gifts/items don't need a numeric value → default a blank one to 0 so it
   # never hits the NOT NULL column. For voucher/discount a blank value fails
