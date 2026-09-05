@@ -1,0 +1,30 @@
+<%# One reward time-window. `w` = window hash, `idx` = index (integer or "IDX" in the template). %>
+<% dnames = Reward.wday_labels %>
+<div class="l-schedrow" data-schedwindows-target="row" style="padding:10px 12px; border:1px solid var(--line); border-radius:10px; background:var(--surface-2);">
+  <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+    <span style="font-size:12px; color:var(--ink-2); font-weight:700;"><%= t("merchant.rewards.sched_window") %></span>
+    <button type="button" data-action="schedwindows#remove" class="l-btn l-btn-ghost" style="padding:2px 9px; font-size:12px; color:var(--warn);">✕</button>
+  </div>
+  <div style="display:flex; flex-wrap:wrap; gap:6px; margin-bottom:10px;">
+    <% dnames.each_index do |wd| %>
+      <label class="l-daychip">
+        <%= check_box_tag "reward[schedule][windows][#{idx}][days][]", wd, Array(w["days"]).map(&:to_i).include?(wd), id: nil, style: "display:none;" %>
+        <span><%= dnames[wd] %></span>
+      </label>
+    <% end %>
+  </div>
+  <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+    <div>
+      <label class="l-label"><%= t("merchant.rewards.sched_from_hour") %></label>
+      <%= select_tag "reward[schedule][windows][#{idx}][from_hour]",
+            options_for_select((0..23).map { |h| ["#{format('%02d', h)}:00", h] }, w["from_hour"]),
+            include_blank: "—", class: "l-field" %>
+    </div>
+    <div>
+      <label class="l-label"><%= t("merchant.rewards.sched_to_hour") %></label>
+      <%= select_tag "reward[schedule][windows][#{idx}][to_hour]",
+            options_for_select((0..23).map { |h| ["#{format('%02d', h)}:59", h] }, w["to_hour"]),
+            include_blank: "—", class: "l-field" %>
+    </div>
+  </div>
+</div>

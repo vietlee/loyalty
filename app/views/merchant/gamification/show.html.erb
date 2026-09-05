@@ -46,7 +46,13 @@
 
   <%# ---- Missions ---- %>
   <div class="l-panel">
-    <h3 class="l-display" style="font-size:18px; margin-bottom:10px;"><%= t("merchant.gami.missions") %></h3>
+    <div style="display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:10px;">
+      <h3 class="l-display" style="font-size:18px; margin:0;"><%= t("merchant.gami.missions") %></h3>
+      <% pending = MissionProgress.where(mission_id: current_workspace.missions.where(mission_type: Mission::PHOTO_PROOF_TYPES).select(:id), approval_status: "pending").count %>
+      <%= link_to merchant_mission_submissions_path, class: "l-btn l-btn-soft", style: "padding:6px 12px; font-size:13px; white-space:nowrap;" do %>
+        📋 <%= t("merchant.gami.review_queue") %><%= " · #{pending}" if pending.positive? %>
+      <% end %>
+    </div>
     <% @missions.each do |m| %>
       <div style="display:flex; align-items:center; gap:10px; padding:8px 0; border-bottom:1px solid var(--line);">
         <span style="font-size:20px;"><%= m.display_icon %></span>
@@ -54,16 +60,37 @@
         <%= button_to "✕", merchant_mission_path(m), method: :delete, class: "l-btn l-btn-ghost", style: "padding:4px 10px;", form: { data: { turbo_confirm: t("merchant.gami.delete_mission_confirm") } } %>
       </div>
     <% end %>
-    <%= form_with url: merchant_missions_path, method: :post, scope: :mission do |f| %>
+    <%= form_with url: merchant_missions_path, method: :post, scope: :mission,
+          data: { controller: "missionform" } do |f| %>
       <input type="text" name="mission[title]" class="l-field" placeholder="<%= t("merchant.gami.mission_title_ph") %>" style="margin-top:12px;">
       <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-top:8px;">
-        <%= f.select :mission_type, [["Check-in", "checkin"], [t("merchant.gami.mtype_spend"), "spend"], [t("merchant.gami.mtype_visit"), "visit"]], {}, class: "l-field" %>
+        <%= f.select :mission_type,
+              [["Check-in", "checkin"], [t("merchant.gami.mtype_spend"), "spend"], [t("merchant.gami.mtype_visit"), "visit"],
+               [t("merchant.gami.mtype_review"), "review"], [t("merchant.gami.mtype_social"), "social_share"]],
+              {}, class: "l-field",
+              data: { missionform_target: "type", action: "change->missionform#typeChanged" } %>
         <%= f.select :period, [[t("merchant.gami.daily"), "daily"], [t("merchant.gami.weekly"), "weekly"]], {}, class: "l-field" %>
       </div>
       <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-top:8px;">
-        <%= f.number_field :goal, value: 1, class: "l-field", placeholder: t("merchant.gami.goal_ph") %>
+        <div data-missionform-target="goalWrap">
+          <%= f.number_field :goal, value: 1, class: "l-field", placeholder: t("merchant.gami.goal_ph") %>
+        </div>
         <%= f.number_field :reward_points, value: 20, class: "l-field", placeholder: t("merchant.gami.points_ph") %>
       </div>
+
+      <%# Per-platform points (only for social_share) %>
+      <div data-missionform-target="platforms" hidden style="margin-top:10px; padding:10px 12px; border:1px solid var(--line); border-radius:10px;">
+        <div class="l-eyebrow" style="margin-bottom:8px;"><%= t("merchant.gami.platform_points") %></div>
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px;">
+          <% Mission::PROOF_PLATFORMS.each do |plat| %>
+            <label style="display:flex; align-items:center; gap:6px; font-size:13px;">
+              <span style="width:78px;"><%= Mission::PLATFORM_LABELS[plat] %></span>
+              <input type="number" name="mission[proof_config][platforms][<%= plat %>]" min="0" class="l-field" placeholder="—" style="padding:6px 8px;">
+            </label>
+          <% end %>
+        </div>
+      </div>
+
       <%= f.hidden_field :active, value: true %>
       <%= f.submit t("merchant.gami.add_mission"), class: "l-btn l-btn-primary", style: "margin-top:10px;" %>
     <% end %>

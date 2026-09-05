@@ -77,6 +77,7 @@ Rails.application.routes.draw do
     resources :customers, only: [:index, :show] do
       member { post :adjust }
     end
+    resources :transactions, only: [:index]
     get   "feedback", to: "feedback#show",   as: :feedback
     patch "feedback", to: "feedback#update"
     resource :automations, only: [:show, :update], controller: "automations"
@@ -103,6 +104,12 @@ Rails.application.routes.draw do
     patch "gamification/wheel", to: "gamification#update_wheel", as: :wheel_config
     resources :stamp_cards, only: [:create, :update, :destroy]
     resources :missions,    only: [:create, :destroy]
+    resources :mission_submissions, only: [:index] do
+      member do
+        patch :approve
+        patch :reject
+      end
+    end
     resources :badges,      only: [:create, :update, :destroy]
   end
 
@@ -138,6 +145,8 @@ Rails.application.routes.draw do
     # Gamification
     get  "stamps",  to: "stamps#index",  as: :stamps
     get  "missions", to: "missions#index", as: :missions
+    get  "missions/:id/submit", to: "missions#new_submission",    as: :new_mission_submission
+    post "missions/:id/submit", to: "missions#create_submission", as: :mission_submission
     get  "badges",  to: "badges#index",  as: :badges
     get  "wheel",   to: "wheel#show",    as: :wheel
     post "wheel/spin", to: "wheel#spin",  as: :wheel_spin

@@ -35,31 +35,66 @@ class Reward < ApplicationRecord
   scope :redeemable, -> { active.where.not(cost_points: nil) }
 
   def in_stock?  = stock.nil? || stock > redeemed_count
-  def within_window?
-    now = Time.current
+
+  # A reward is available now when: inside its date range AND (no time-windows, or
+  # the current weekday+hour falls inside ANY of its windows). Merchants can add
+  # several windows (different weekdays/hours) — the scanner uses this same check.
+  def within_window?(now = Time.current)
     return false unless starts_at.nil? || starts_at <= now
     return false unless ends_at.nil?   || ends_at >= now
-    sch = schedule || {}
-    days = Array(sch["days"]).map(&:to_i)
-    return false if days.present? && !days.include?(now.wday)   # 0=CN … 6=T7
-    fh, th = sch["from_hour"], sch["to_hour"]
-    if fh.present? && th.present?
-      return false unless (fh.to_i..th.to_i).cover?(now.hour)
-    end
-    true
+    wins = schedule_windows
+    return true if wins.empty?
+    wins.any? { |w| window_matches?(w, now) }
   end
-  def available? = active? && in_stock? && within_window?
+  def available?(now = Time.current) = active? && in_stock? && within_window?(now)
 
-  WDAYS_VI = %w[CN T2 T3 T4 T5 T6 T7].freeze # index = wday (0=Sun)
-  # Human summary of the recurring schedule (nil when always-on within window).
-  def schedule_summary
-    sch = schedule || {}
-    parts = []
-    days = Array(sch["days"]).map(&:to_i).sort
-    parts << days.map { |d| WDAYS_VI[d] }.join(", ") if days.present?
-    parts << "#{format('%02d', sch['from_hour'])}:00–#{format('%02d', sch['to_hour'])}:59" if sch["from_hour"].present? && sch["to_hour"].present?
-    parts.join(" · ").presence
+  WDAYS_VI = %w[CN T2 T3 T4 T5 T6 T7].freeze # fallback; index = wday (0=Sun)
+
+  # Locale-aware short weekday labels (index = wday, 0=Sun). Falls back to VI.
+  def self.wday_labels
+    labels = I18n.t("merchant.rewards.wday_short", default: nil)
+    labels.is_a?(Array) && labels.size == 7 ? labels : WDAYS_VI
   end
+
+  # Normalised list of time-windows. Supports the legacy single-window shape
+  # ({days,from_hour,to_hour}) by wrapping it as one window.
+  def schedule_windows
+    sch = schedule || {}
+    if sch["windows"].is_a?(Array)
+      sch["windows"]
+    elsif sch["days"].present? || sch["from_hour"].present?
+      [{ "days" => sch["days"], "from_hour" => sch["from_hour"], "to_hour" => sch["to_hour"] }]
+    else
+      []
+    end
+  end
+
+  # Human summary of all windows (nil when always-on within the date range).
+  def schedule_summary
+    labels = schedule_windows.map { |w| window_label(w) }.compact
+    labels.presence && labels.join(" · ")
+  end
+
+  private
+
+  def window_matches?(w, now)
+    days = Array(w["days"]).map(&:to_i)
+    return false if days.present? && !days.include?(now.wday)   # 0=CN … 6=T7
+    fh, th = w["from_hour"], w["to_hour"]
+    return true unless fh.present? && th.present?
+    (fh.to_i..th.to_i).cover?(now.hour)
+  end
+
+  def window_label(w)
+    parts = []
+    days = Array(w["days"]).map(&:to_i).sort
+    labels = self.class.wday_labels
+    parts << days.map { |d| labels[d] }.join(",") if days.present?
+    parts << "#{format('%02d', w['from_hour'])}h–#{format('%02d', w['to_hour'])}h" if w["from_hour"].present? && w["to_hour"].present?
+    parts.join(" ").presence
+  end
+
+  public
 
   def remaining
     stock.nil? ? nil : [stock - redeemed_count, 0].max

@@ -1,0 +1,111 @@
+<% content_for :title, t("merchant.transactions.title") %>
+<% content_for :title_en, "TRANSACTIONS" %>
+<% tx = ->(k, **o) { t("merchant.transactions.#{k}", **o) } %>
+
+<%# ---- Filters ---- %>
+<%= form_with url: merchant_transactions_path, method: :get, data: { turbo: false } do %>
+  <div style="display:flex; gap:10px; margin-bottom:16px; flex-wrap:wrap; align-items:center;">
+    <input type="search" name="q" value="<%= @q %>" placeholder="<%= tx.(:search_ph) %>"
+           class="l-field" style="flex:1; min-width:220px;">
+
+    <select name="range" class="l-field" style="max-width:170px;" onchange="this.form.requestSubmit()"
+            aria-label="<%= t('merchant.dashboard.range_label') %>">
+      <% %w[7d 30d 90d mtd all].each do |rk| %>
+        <option value="<%= rk %>" <%= 'selected' if @range[:key] == rk %>><%= t("merchant.dashboard.range_#{rk}") %></option>
+      <% end %>
+      <% if @range[:key] == 'custom' %>
+        <option value="custom" selected><%= @range[:label] %></option>
+      <% end %>
+    </select>
+
+    <% if @branches.present? %>
+      <select name="outlet" class="l-field" style="max-width:200px;" onchange="this.form.requestSubmit()"
+              aria-label="<%= t('merchant.customers.branch_filter') %>">
+        <option value=""><%= t('merchant.dashboard.all_branches') %></option>
+        <% @branches.each do |o| %>
+          <option value="<%= o.id %>" <%= 'selected' if @outlet&.id == o.id %>><%= o.name %></option>
+        <% end %>
+      </select>
+    <% end %>
+
+    <select name="kind" class="l-field" style="max-width:180px;" onchange="this.form.requestSubmit()"
+            aria-label="<%= tx.(:th_kind) %>">
+      <option value=""><%= tx.(:all_kinds) %></option>
+      <% PointTransaction::KINDS.each do |k| %>
+        <option value="<%= k %>" <%= 'selected' if @kind == k %>>
+          <%= PointTransaction::ICONS[k] %> <%= t("customer.tx.#{k}", default: k.humanize) %>
+        </option>
+      <% end %>
+    </select>
+
+    <%= submit_tag "🔍", class: "l-btn l-btn-soft", style: "flex:none;" %>
+  </div>
+
+  <%# Custom range date inputs (kept beside the preset dropdown for precise ranges) %>
+  <div style="display:flex; gap:8px; margin-bottom:16px; flex-wrap:wrap; align-items:center; font-size:13px; color:var(--ink-2);">
+    <span><%= t('merchant.dashboard.range_from') %></span>
+    <input type="date" name="from" value="<%= @range[:key] == 'custom' ? @range[:from].to_date.iso8601 : '' %>"
+           class="l-field" style="width:auto; padding:6px 10px;" onchange="this.form.requestSubmit()">
+    <span><%= t('merchant.dashboard.range_to') %></span>
+    <input type="date" name="to" value="<%= @range[:key] == 'custom' ? @range[:to].to_date.iso8601 : '' %>"
+           class="l-field" style="width:auto; padding:6px 10px;" onchange="this.form.requestSubmit()">
+  </div>
+<% end %>
+
+<%# ---- Summary KPIs ---- %>
+<div class="l-kpis" style="margin-bottom:16px;">
+  <div class="l-kpi"><div class="k"><%= tx.(:earned) %></div><div class="v" style="color:var(--primary);">+<%= number_with_delimiter(@earned) %></div></div>
+  <div class="l-kpi"><div class="k"><%= tx.(:spent) %></div><div class="v">−<%= number_with_delimiter(@spent) %></div></div>
+  <div class="l-kpi"><div class="k"><%= tx.(:total) %></div><div class="v"><%= number_with_delimiter(@total) %></div></div>
+</div>
+
+<%# ---- Ledger table ---- %>
+<div class="l-panel">
+  <div style="overflow-x:auto;">
+    <table style="width:100%; border-collapse:collapse; font-size:13.5px; min-width:720px;">
+      <thead><tr style="text-align:left; color:var(--ink-2); font-size:11px; text-transform:uppercase; letter-spacing:.06em;">
+        <th style="padding:8px 10px;"><%= tx.(:th_time) %></th>
+        <th><%= tx.(:th_customer) %></th>
+        <th><%= tx.(:th_kind) %></th>
+        <th><%= tx.(:th_detail) %></th>
+        <th><%= tx.(:th_branch) %></th>
+        <th><%= tx.(:th_staff) %></th>
+        <th style="text-align:right;"><%= tx.(:th_amount) %></th>
+      </tr></thead>
+      <tbody>
+        <% @transactions.each do |t| %>
+          <tr style="border-top:1px solid var(--line);">
+            <td style="padding:11px 10px; white-space:nowrap; color:var(--ink-2);"><%= l(t.created_at, format: :short) %></td>
+            <td style="font-weight:600;">
+              <%= link_to t.member.display_name, merchant_customer_path(t.member),
+                    style: "color:var(--primary-ink); text-decoration:none;" %>
+            </td>
+            <td style="white-space:nowrap;"><%= t.icon %> <%= t("customer.tx.#{t.kind}", default: t.kind.humanize) %></td>
+            <td style="color:var(--ink-2);"><%= t.note.presence || "—" %></td>
+            <td style="color:var(--ink-2);"><%= t.outlet&.name || tx.(:no_branch) %></td>
+            <td style="color:var(--ink-2);"><%= t.staff&.name || "—" %></td>
+            <td style="text-align:right; font-weight:700; font-variant-numeric:tabular-nums; color:<%= t.credit? ? 'var(--primary)' : 'var(--ink)' %>;">
+              <%= t.credit? ? "+" : "−" %><%= number_with_delimiter(t.amount.abs) %>
+            </td>
+          </tr>
+        <% end %>
+        <% if @transactions.empty? %>
+          <tr><td colspan="7" style="padding:20px; text-align:center; color:var(--ink-2);"><%= tx.(:empty) %></td></tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+
+  <%# ---- Pagination ---- %>
+  <% if @page > 1 || @has_more %>
+    <div style="display:flex; align-items:center; justify-content:space-between; margin-top:14px; padding-top:12px; border-top:1px solid var(--line);">
+      <% if @page > 1 %>
+        <%= link_to tx.(:prev), merchant_transactions_path(request.query_parameters.merge(page: @page - 1)), class: "l-btn l-btn-soft" %>
+      <% else %><span></span><% end %>
+      <span style="font-size:13px; color:var(--ink-2);"><%= tx.(:page, n: @page) %></span>
+      <% if @has_more %>
+        <%= link_to tx.(:next), merchant_transactions_path(request.query_parameters.merge(page: @page + 1)), class: "l-btn l-btn-soft" %>
+      <% else %><span></span><% end %>
+    </div>
+  <% end %>
+</div>

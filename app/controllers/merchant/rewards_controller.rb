@@ -4,7 +4,19 @@ module Merchant
     before_action :set_reward, only: [:edit, :update, :destroy]
 
     def index
-      @rewards = current_workspace.rewards.listed.ordered.to_a
+      scope = current_workspace.rewards.listed
+      @q = params[:q].to_s.strip
+      if @q.present?
+        scope = scope.where("title ILIKE :q OR description ILIKE :q", q: "%#{@q}%")
+      end
+      @kind = params[:kind].to_s.presence_in(Reward::KINDS)
+      scope = scope.where(kind: @kind) if @kind
+      @status = params[:status].to_s
+      case @status
+      when "active"   then scope = scope.where(active: true)
+      when "inactive" then scope = scope.where(active: false)
+      end
+      @rewards = scope.ordered.to_a
     end
 
     def new
@@ -63,16 +75,23 @@ module Merchant
       p
     end
 
-    # Recurring availability from the form: days[] (wday 0-6) + from_hour/to_hour.
+    # Recurring availability from the multi-window form. Rails parses
+    # reward[schedule][windows][<idx>][...] as a Hash keyed by the (dynamic,
+    # timestamp-based) index — so iterate its .values, not as an Array.
+    # Each window: days[] (wday 0-6) + optional from_hour/to_hour.
     def build_schedule
-      sch = params.dig(:reward, :schedule) || {}
-      days = Array(sch[:days]).map(&:to_i).select { |d| (0..6).cover?(d) }.uniq.sort
-      fh = sch[:from_hour].presence && sch[:from_hour].to_i
-      th = sch[:to_hour].presence && sch[:to_hour].to_i
-      out = {}
-      out["days"] = days if days.present?
-      out["from_hour"], out["to_hour"] = fh, th if fh && th
-      out
+      windows_param = params.dig(:reward, :schedule, :windows)
+      return {} if windows_param.blank?
+      windows = windows_param.values.filter_map do |w|
+        days = Array(w[:days]).map(&:to_i).select { |d| (0..6).cover?(d) }.uniq.sort
+        fh = w[:from_hour].presence && w[:from_hour].to_i
+        th = w[:to_hour].presence && w[:to_hour].to_i
+        win = {}
+        win["days"] = days if days.present?
+        win["from_hour"], win["to_hour"] = fh, th if fh && th
+        win.presence
+      end
+      { "windows" => windows }
     end
   end
 end

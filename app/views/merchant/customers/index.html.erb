@@ -1,26 +1,16 @@
 <% content_for :title, t("merchant.nav.customers") %>
 <% content_for :title_en, "CUSTOMERS" %>
 
-<div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap; margin-bottom:16px;">
-  <% MemberSegments::PRESETS.each do |key, meta| %>
-    <%= link_to merchant_customers_path(segment: key, outlet: params[:outlet]),
-          class: "l-chip #{'l-chip-brand' if @segment == key}" do %>
-      <%= meta[:icon] %> <%= meta[:label] %> · <%= @counts[key] %>
-    <% end %>
-  <% end %>
-  <% if @segment != "all" %>
-    <%= link_to t("merchant.customers.send_group"), new_merchant_broadcast_path(segment: @segment),
-          class: "l-btn l-btn-primary", style: "margin-left:auto; padding:8px 14px; font-size:13px;" %>
-  <% else %>
-    <%= link_to t("merchant.customers.compose"), new_merchant_broadcast_path,
-          class: "l-btn l-btn-soft", style: "margin-left:auto; padding:8px 14px; font-size:13px;" %>
-  <% end %>
-</div>
-
 <%= form_with url: merchant_customers_path, method: :get, data: { turbo: false } do %>
-  <input type="hidden" name="segment" value="<%= @segment %>">
-  <div style="display:flex; gap:10px; margin-bottom:16px; flex-wrap:wrap;">
-    <input type="search" name="q" value="<%= @q %>" placeholder="<%= t('merchant.segments.search_ph') %>" class="l-field" style="flex:1; min-width:220px;">
+  <div style="display:flex; gap:10px; margin-bottom:16px; flex-wrap:wrap; align-items:center;">
+    <select name="segment" class="l-field" style="max-width:260px;" onchange="this.form.requestSubmit()" aria-label="<%= t('merchant.nav.customers') %>">
+      <% MemberSegments::PRESETS.each do |key, meta| %>
+        <option value="<%= key %>" <%= 'selected' if @segment == key %>>
+          <%= meta[:icon] %> <%= meta[:label] %> · <%= @counts[key] %>
+        </option>
+      <% end %>
+    </select>
+    <input type="search" name="q" value="<%= @q %>" placeholder="<%= t('merchant.segments.search_ph') %>" class="l-field" style="flex:1; min-width:200px;">
     <% if @branches.present? %>
       <select name="outlet" class="l-field" style="max-width:220px;" onchange="this.form.requestSubmit()" aria-label="<%= t('merchant.customers.branch_filter') %>">
         <option value=""><%= t('merchant.customers.branch_all') %></option>
@@ -35,6 +25,13 @@
       <option value="spend"  <%= 'selected' if @sort == 'spend' %>><%= t('merchant.segments.sort_spend') %></option>
     </select>
     <%= submit_tag "🔍", class: "l-btn l-btn-soft", style: "flex:none;" %>
+    <% if @segment != "all" %>
+      <%= link_to t("merchant.customers.send_group"), new_merchant_broadcast_path(segment: @segment),
+            class: "l-btn l-btn-primary", style: "margin-left:auto; padding:8px 14px; font-size:13px; flex:none;" %>
+    <% else %>
+      <%= link_to t("merchant.customers.compose"), new_merchant_broadcast_path,
+            class: "l-btn l-btn-soft", style: "margin-left:auto; padding:8px 14px; font-size:13px; flex:none;" %>
+    <% end %>
   </div>
 <% end %>
 

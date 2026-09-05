@@ -1,0 +1,51 @@
+<% content_for :title, t("customer.missions.submit_title") %>
+<% content_for :tab, "" %>
+<header class="l-appbar">
+  <%= link_to "←", member_missions_path, style: "font-size:22px; text-decoration:none; color:var(--ink);" %>
+  <div class="nm l-display" style="font-size:20px;"><%= @mission.title %></div>
+</header>
+
+<div class="l-screen">
+  <% if @progress.rejected? && @progress.note.present? %>
+    <div class="l-panel" style="background:#F3DDD7; color:#B4402F; margin-bottom:14px;">
+      <strong><%= t("customer.missions.rejected_reason") %>:</strong> <%= @progress.note %>
+    </div>
+  <% end %>
+
+  <%= form_with url: member_mission_submission_path(@mission), method: :post,
+        html: { multipart: true }, data: { controller: "upload" } do %>
+    <div class="l-panel">
+      <label class="l-label"><%= t("customer.missions.submit_photo_label") %></label>
+      <p style="font-size:12px; color:var(--ink-2); margin:2px 0 10px;"><%= t("customer.missions.submit_photo_hint") %></p>
+
+      <div data-upload-target="preview"
+           style="width:100%; aspect-ratio:3/4; max-height:340px; border-radius:14px; overflow:hidden;
+                  background:var(--surface-2); display:flex; align-items:center; justify-content:center;
+                  color:var(--ink-2); font-size:40px; margin-bottom:10px;">📷</div>
+
+      <input type="file" name="submission[photo]" accept="image/*" required
+             data-upload-target="input" data-action="change->upload#changed"
+             style="display:none;">
+      <button type="button" class="l-btn l-btn-soft" data-action="upload#pick" style="width:100%;">
+        📎 <%= t("customer.missions.choose_photo") %>
+      </button>
+      <div data-upload-target="name" style="font-size:12px; color:var(--ink-2); margin-top:6px; text-align:center;"></div>
+
+      <% if @mission.mission_type == "social_share" %>
+        <label class="l-label" style="margin-top:14px;"><%= t("customer.missions.submit_platform_label") %></label>
+        <select name="submission[platform]" class="l-field">
+          <% Mission::PROOF_PLATFORMS.each do |p| %>
+            <option value="<%= p %>"><%= Mission::PLATFORM_LABELS[p] %></option>
+          <% end %>
+        </select>
+      <% end %>
+
+      <label class="l-label" style="margin-top:14px;"><%= t("customer.missions.submit_note_label") %></label>
+      <textarea name="submission[note]" class="l-field" rows="2"></textarea>
+
+      <button type="submit" class="l-btn l-btn-primary" style="width:100%; margin-top:16px;">
+        <%= t("customer.missions.submit_cta") %>
+      </button>
+    </div>
+  <% end %>
+</div>

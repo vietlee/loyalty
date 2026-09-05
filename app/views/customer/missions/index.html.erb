@@ -25,6 +25,14 @@
           <div style="flex:none; text-align:right;">
             <% if mp.completed? %>
               <span class="l-chip" style="background:var(--good-soft,#DEEBE1); color:var(--good);"><%= t("customer.missions.done") %></span>
+            <% elsif m.photo_proof? %>
+              <% if mp.pending? %>
+                <span class="l-chip" style="font-size:11px;"><%= t("customer.missions.pending_review") %></span>
+              <% else %>
+                <%= link_to (mp.rejected? ? t("customer.missions.resubmit") : t("customer.missions.submit_proof")),
+                      new_member_mission_submission_path(m), class: "l-btn l-btn-primary",
+                      style: "padding:8px 14px; font-size:13px; white-space:nowrap;" %>
+              <% end %>
             <% elsif m.mission_type == "checkin" %>
               <%= link_to t("customer.common.checkin"), member_scan_path, class: "l-btn l-btn-primary", style: "padding:8px 14px; font-size:13px; white-space:nowrap;" %>
             <% elsif m.mission_type == "refer" %>

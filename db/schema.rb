@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2026_09_05_080000) do
+ActiveRecord::Schema[7.2].define(version: 2026_09_05_090000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -235,6 +235,14 @@ ActiveRecord::Schema[7.2].define(version: 2026_09_05_080000) do
     t.datetime "claimed_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "approval_status"
+    t.datetime "submitted_at"
+    t.string "platform"
+    t.text "note"
+    t.jsonb "ai_verdict", default: {}, null: false
+    t.datetime "reviewed_at"
+    t.bigint "reviewed_by_id"
+    t.index ["approval_status"], name: "index_mission_progresses_on_approval_status"
     t.index ["member_id", "mission_id", "period_key"], name: "idx_mission_progress_unique", unique: true
     t.index ["member_id"], name: "index_mission_progresses_on_member_id"
     t.index ["mission_id"], name: "index_mission_progresses_on_mission_id"
@@ -253,6 +261,7 @@ ActiveRecord::Schema[7.2].define(version: 2026_09_05_080000) do
     t.integer "position", default: 0, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.jsonb "proof_config", default: {}, null: false
     t.index ["workspace_id"], name: "index_missions_on_workspace_id"
   end
 

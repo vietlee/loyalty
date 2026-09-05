@@ -71,25 +71,21 @@
         <%= f.datetime_local_field :ends_at, value: f.object.ends_at&.strftime("%Y-%m-%dT%H:%M"), class: "l-field" %>
       </div>
     </div>
-    <% sch = f.object.schedule || {} %>
     <label class="l-label" style="margin-top:12px;"><%= t("merchant.rewards.sched_days") %></label>
-    <div style="display:flex; flex-wrap:wrap; gap:6px;">
-      <% Reward::WDAYS_VI.each_with_index do |lbl, wd| %>
-        <label class="l-daychip">
-          <%= check_box_tag "reward[schedule][days][]", wd, Array(sch["days"]).map(&:to_i).include?(wd), style: "display:none;" %>
-          <span><%= lbl %></span>
-        </label>
-      <% end %>
-    </div>
-    <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-top:12px;">
-      <div>
-        <label class="l-label"><%= t("merchant.rewards.sched_from_hour") %></label>
-        <%= select_tag "reward[schedule][from_hour]", options_for_select((0..23).map { |h| ["#{format('%02d',h)}:00", h] }, sch["from_hour"]), include_blank: "—", class: "l-field" %>
+    <% windows = f.object.schedule_windows %>
+    <% windows = [{}] if windows.empty? %>
+    <div data-controller="schedwindows">
+      <div data-schedwindows-target="list" style="display:flex; flex-direction:column; gap:10px;">
+        <% windows.each_with_index do |w, i| %>
+          <%= render "merchant/rewards/window_row", w: w, idx: i %>
+        <% end %>
       </div>
-      <div>
-        <label class="l-label"><%= t("merchant.rewards.sched_to_hour") %></label>
-        <%= select_tag "reward[schedule][to_hour]", options_for_select((0..23).map { |h| ["#{format('%02d',h)}:59", h] }, sch["to_hour"]), include_blank: "—", class: "l-field" %>
-      </div>
+      <template data-schedwindows-target="template">
+        <%= render "merchant/rewards/window_row", w: {}, idx: "IDX" %>
+      </template>
+      <button type="button" data-action="schedwindows#add" class="l-btn l-btn-soft" style="margin-top:10px; font-size:13px;">
+        ➕ <%= t("merchant.rewards.sched_add_window") %>
+      </button>
     </div>
     <p style="color:var(--ink-2); font-size:12px; margin-top:8px;"><%= t("merchant.rewards.sched_hint") %></p>
   </div>

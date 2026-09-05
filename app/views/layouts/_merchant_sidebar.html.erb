@@ -40,6 +40,9 @@
   <%= link_to merchant_customers_path, class: "l-nav-item #{'active' if nav == :customers}" do %>
     <span>☺</span><span><%= t("merchant.nav.customers") %></span>
   <% end %>
+  <%= link_to merchant_transactions_path, class: "l-nav-item #{'active' if nav == :transactions}" do %>
+    <span>≡</span><span><%= t("merchant.nav.transactions") %></span>
+  <% end %>
   <% if current_membership&.can_manage? %>
   <%= link_to merchant_broadcasts_path, class: "l-nav-item #{'active' if nav == :broadcasts}" do %>
     <span>✉</span><span><%= t("merchant.nav.broadcasts") %></span>

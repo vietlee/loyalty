@@ -1,5 +1,7 @@
 module Merchant
   class DashboardController < BaseController
+    include DateRangeFilterable
+
     before_action :require_manager!, only: [:rotate_checkin]
 
     def show
@@ -54,45 +56,10 @@ module Merchant
 
     private
 
-    RANGE_PRESETS = %w[7d 30d 90d mtd all].freeze
-
-    # Resolve the active date range from ?range= preset or ?from=/?to= custom dates.
-    # Flow metrics (points earned/redeemed, purchases, branch performance) honour this;
-    # state metrics (member count, outstanding liability, tiers) stay lifetime.
-    def resolve_range
-      from = parse_range_date(params[:from])
-      to   = parse_range_date(params[:to])
-      if from || to
-        f = (from || Date.new(2000, 1, 1)).beginning_of_day
-        t = (to || Date.current).end_of_day
-        f, t = t, f if f > t
-        return { key: "custom", from: f, to: t,
-                 label: "#{f.to_date.strftime('%d/%m/%y')} – #{t.to_date.strftime('%d/%m/%y')}" }
-      end
-      key = params[:range].to_s.presence_in(RANGE_PRESETS) || "30d"
-      now = Time.current
-      spec =
-        case key
-        when "7d"  then { from: 7.days.ago.beginning_of_day, to: now }
-        when "90d" then { from: 90.days.ago.beginning_of_day, to: now }
-        when "mtd" then { from: now.beginning_of_month, to: now }
-        when "all" then { from: nil, to: nil }
-        else            { from: 30.days.ago.beginning_of_day, to: now }
-        end
-      spec.merge(key: key, label: I18n.t("merchant.dashboard.range_#{key}"))
-    end
-
-    def parse_range_date(raw)
-      return nil if raw.blank?
-      Date.iso8601(raw.to_s)
-    rescue ArgumentError, TypeError
-      nil
-    end
-
-    # Scope a relation to the active range (no-op for the "all" preset).
-    def in_range(rel)
-      @range && @range[:from] ? rel.where(created_at: @range[:from]..@range[:to]) : rel
-    end
+    # Date-range helpers (resolve_range / parse_range_date / in_range) are provided
+    # by DateRangeFilterable. Flow metrics (points earned/redeemed, purchases, branch
+    # performance) honour the range; state metrics (member count, outstanding
+    # liability, tiers) stay lifetime.
 
     GRACE_DAYS = 10 # days after expiry before the workspace is locked
 
