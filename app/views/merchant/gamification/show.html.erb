@@ -9,9 +9,20 @@
   </div>
 <% end %>
 
-<div style="display:grid; grid-template-columns:1fr 1fr; gap:20px; align-items:start;">
+<div data-controller="tabs" data-tabs-key-value="gamification">
+  <%# ---- Tab bar ---- %>
+  <div role="tablist" style="display:flex; gap:8px; flex-wrap:wrap; margin-bottom:16px;">
+    <% [["stamps", t("merchant.gami.stamps")], ["missions", t("merchant.gami.missions")],
+        ["badges", t("merchant.gami.badges")], ["wheel", t("merchant.gami.wheel")]].each do |key, label| %>
+      <button type="button" class="l-chip" data-tabs-target="tab" data-tab="<%= key %>"
+              data-action="tabs#select" style="cursor:pointer; border:none; font-size:14px; padding:9px 16px;">
+        <%= label %>
+      </button>
+    <% end %>
+  </div>
+
   <%# ---- Stamp cards ---- %>
-  <div class="l-panel">
+  <div class="l-panel" data-tabs-target="panel" data-tab="stamps">
     <h3 class="l-display" style="font-size:18px; margin-bottom:10px;"><%= t("merchant.gami.stamps") %></h3>
     <% @stamp_cards.each do |c| %>
       <details class="l-editrow">
@@ -45,7 +56,7 @@
   </div>
 
   <%# ---- Missions ---- %>
-  <div class="l-panel">
+  <div class="l-panel" data-tabs-target="panel" data-tab="missions" hidden>
     <div style="display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:10px;">
       <h3 class="l-display" style="font-size:18px; margin:0;"><%= t("merchant.gami.missions") %></h3>
       <% pending = MissionProgress.where(mission_id: current_workspace.missions.where(mission_type: Mission::PHOTO_PROOF_TYPES).select(:id), approval_status: "pending").count %>
@@ -106,7 +117,7 @@
 
   <%# ---- Badges (editable) ---- %>
   <% crit = { "first_purchase" => t("merchant.gami.crit_first"), "purchases_count" => t("merchant.gami.crit_count"), "points_total" => t("merchant.gami.crit_points"), "night_owl" => t("merchant.gami.crit_night") } %>
-  <div class="l-panel">
+  <div class="l-panel" data-tabs-target="panel" data-tab="badges" hidden>
     <h3 class="l-display" style="font-size:18px; margin-bottom:10px;"><%= t("merchant.gami.badges") %></h3>
     <% @badges.each do |b| %>
       <details class="l-editrow">
@@ -143,7 +154,7 @@
   </div>
 
   <%# ---- Lucky wheel (editable prizes) ---- %>
-  <div class="l-panel">
+  <div class="l-panel" data-tabs-target="panel" data-tab="wheel" hidden>
     <h3 class="l-display" style="font-size:18px; margin-bottom:4px;"><%= t("merchant.gami.wheel") %></h3>
     <p style="color:var(--ink-2); font-size:13px; margin-bottom:14px;"><%= t("merchant.gami.wheel_note") %></p>
     <% rows = @wheel.resolved_segments.dup; rows << {} while rows.size < 2 %>
