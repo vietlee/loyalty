@@ -62,7 +62,7 @@ module Merchant
       palette = ClaudeService.safe_call(fallback: {}) do
         bytes = ws.logo.download
         media = ws.logo.content_type.presence || "image/png"
-        ClaudeService.new(model: ClaudeService::HAIKU, max_tokens: 400, temperature: 0.4)
+        ClaudeService.new(model: ClaudeService::OPUS, max_tokens: 400)
                      .vision_json(theme_prompt, image_bytes: bytes, media_type: media)
       end
 

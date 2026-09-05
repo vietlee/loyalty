@@ -10,9 +10,9 @@ class ClaudeService
   API_URL = "https://api.anthropic.com/v1/messages"
   API_VERSION = "2023-06-01"
 
-  HAIKU  = "claude-haiku-4-5-20251001" # cheap + fast + vision — default
+  HAIKU  = "claude-haiku-4-5-20251001" # cheap + fast + vision
   SONNET = "claude-sonnet-5"           # better copy/reasoning
-  OPUS   = "claude-opus-5"             # best copy/reasoning (marketing content)
+  OPUS   = "claude-opus-4-8"           # most capable — used for every AI task here
 
   # Models that reject the `temperature` param (newer models deprecated it).
   NO_TEMPERATURE = [SONNET, OPUS].freeze

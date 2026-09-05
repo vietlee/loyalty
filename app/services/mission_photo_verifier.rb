@@ -19,7 +19,7 @@ class MissionPhotoVerifier
     verdict = ClaudeService.safe_call(fallback: nil) do
       bytes = @mp.photo.download
       media = @mp.photo.content_type.presence || "image/jpeg"
-      ClaudeService.new(model: ClaudeService::HAIKU, max_tokens: 400, temperature: 0.2)
+      ClaudeService.new(model: ClaudeService::OPUS, max_tokens: 400)
                    .vision_json(prompt, image_bytes: bytes, media_type: media)
     end
 

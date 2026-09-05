@@ -37,7 +37,7 @@ class BusyHourInsight
       và một hành động nên làm (ví dụ: bố trí nhân sự, mở happy hour giờ vắng, đẩy khuyến mãi).
       Chỉ trả về câu văn, không markdown, không tiêu đề.
     PROMPT
-    text = ClaudeService.new(model: ClaudeService::HAIKU, max_tokens: 220, temperature: 0.5).text(prompt)
+    text = ClaudeService.new(model: ClaudeService::OPUS, max_tokens: 300).text(prompt)
     text.presence || heuristic_body
   end
 
