@@ -4,7 +4,7 @@
 # callers fall back to the manual-upload / gradient placeholder path.
 class AiImageService
   API_URL = "https://api.openai.com/v1/images/generations"
-  MODEL   = "gpt-image-1"
+  MODEL   = "gpt-image-2"
 
   class Error < StandardError; end
 

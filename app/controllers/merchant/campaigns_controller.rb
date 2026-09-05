@@ -41,7 +41,7 @@ module Merchant
     # the form fills the fields client-side. No campaign is persisted here.
     def generate_content
       data = ClaudeService.safe_call(fallback: {}) do
-        ClaudeService.new(model: ClaudeService::SONNET, max_tokens: 1200)
+        ClaudeService.new(model: ClaudeService::OPUS, max_tokens: 1200)
                      .json(content_prompt)
       end
       if data.present? && (data["title"].present? || data["body"].present?)

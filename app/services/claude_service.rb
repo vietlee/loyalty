@@ -12,9 +12,10 @@ class ClaudeService
 
   HAIKU  = "claude-haiku-4-5-20251001" # cheap + fast + vision — default
   SONNET = "claude-sonnet-5"           # better copy/reasoning
+  OPUS   = "claude-opus-5"             # best copy/reasoning (marketing content)
 
   # Models that reject the `temperature` param (newer models deprecated it).
-  NO_TEMPERATURE = [SONNET].freeze
+  NO_TEMPERATURE = [SONNET, OPUS].freeze
 
   class Error < StandardError; end
 
