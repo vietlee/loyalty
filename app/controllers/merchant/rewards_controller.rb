@@ -5,7 +5,6 @@ module Merchant
 
     def index
       @rewards = current_workspace.rewards.listed.ordered.to_a
-      @reward  = Reward.new(kind: "voucher", value_unit: "vnd", valid_days: 30, active: true)
     end
 
     def new
@@ -17,8 +16,7 @@ module Merchant
       if @reward.save
         redirect_to merchant_rewards_path, notice: "Đã thêm ưu đãi “#{@reward.title}”."
       else
-        @rewards = current_workspace.rewards.listed.ordered.to_a
-        render :index, status: :unprocessable_entity
+        render :new, status: :unprocessable_entity
       end
     end
 

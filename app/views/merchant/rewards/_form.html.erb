@@ -1,4 +1,4 @@
-<%= form_with model: reward, url: url, method: method, data: { controller: "rewardform",
+<%= form_with model: reward, url: url, method: method, data: { controller: "rewardform", turbo_frame: "_top",
       rewardform_vnd_label_value: t("merchant.reward_units.vnd_label"),
       rewardform_percent_label_value: t("merchant.reward_units.percent_label"),
       rewardform_item_label_value: t("merchant.reward_units.item_label"),
@@ -17,10 +17,11 @@
       <%= f.select :kind, [["Voucher", "voucher"], [t("merchant.rewards.kind_gift"), "gift"], [t("merchant.rewards.kind_discount"), "discount"]], {},
             class: "l-field", data: { rewardform_target: "kind", action: "change->rewardform#kindChanged" } %>
     </div>
-    <div data-controller="iconpick">
+    <div data-controller="iconpick" style="position:relative;">
       <label class="l-label"><%= t("merchant.rewards.icon") %></label>
-      <%= f.text_field :icon, class: "l-field", placeholder: "🎁", data: { iconpick_target: "input" } %>
-      <div class="l-iconpick">
+      <%= f.text_field :icon, class: "l-field", placeholder: "🎁",
+            data: { iconpick_target: "input", action: "focus->iconpick#show click->iconpick#show" } %>
+      <div class="l-iconpick" data-iconpick-target="panel" hidden>
         <% %w[🎁 ☕ 🧋 🍰 🥐 🍩 🍔 🍜 🥤 🍺 🎟️ 🏷️ 🛍️ 👜 ✨ 💆 ⭐ 🔥 🎉 💎].each do |e| %>
           <button type="button" class="l-iconpick-btn" data-action="iconpick#pick" data-emoji="<%= e %>"><%= e %></button>
         <% end %>

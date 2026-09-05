@@ -1,6 +1,11 @@
 <% content_for :title, t("merchant.rewards.edit_title") %>
 <% content_for :title_en, "EDIT REWARD" %>
-<div class="l-panel" style="max-width:520px;">
-  <%= render "form", reward: @reward, url: merchant_reward_path(@reward), method: :patch, submit_label: t("merchant.rewards.save") %>
-  <%= link_to t("merchant.rewards.back"), merchant_rewards_path, style: "display:inline-block; margin-top:12px; color:var(--ink-2); font-size:13px;" %>
-</div>
+<%= turbo_frame_tag "reward_form", data: { modal_target: "frame" } do %>
+  <div class="l-modal-card">
+    <div class="l-modal-head">
+      <h3 class="l-display" style="font-size:20px; margin:0;"><%= t("merchant.rewards.edit_title") %></h3>
+      <button type="button" class="l-modal-x" data-action="modal#close" aria-label="<%= t("merchant.rewards.cancel") %>">✕</button>
+    </div>
+    <%= render "form", reward: @reward, url: merchant_reward_path(@reward), method: :patch, submit_label: t("merchant.rewards.save") %>
+  </div>
+<% end %>

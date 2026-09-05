@@ -1,0 +1,11 @@
+<% content_for :title, t("merchant.rewards.add") %>
+<% content_for :title_en, "ADD REWARD" %>
+<%= turbo_frame_tag "reward_form", data: { modal_target: "frame" } do %>
+  <div class="l-modal-card">
+    <div class="l-modal-head">
+      <h3 class="l-display" style="font-size:20px; margin:0;"><%= t("merchant.rewards.add") %></h3>
+      <button type="button" class="l-modal-x" data-action="modal#close" aria-label="<%= t("merchant.rewards.cancel") %>">✕</button>
+    </div>
+    <%= render "form", reward: @reward, url: merchant_rewards_path, method: :post, submit_label: t("merchant.rewards.create") %>
+  </div>
+<% end %>

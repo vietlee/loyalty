@@ -235,11 +235,25 @@ a.l-chip-lg:hover, button.l-chip-lg:hover { background:#fff; color:var(--ink);
 .l-nav-scan:hover { transform:translateY(-1px); box-shadow:0 9px 22px rgba(0,0,0,.24); }
 .l-nav-scan.active { outline:2px solid rgba(255,255,255,.85); }
 .l-nav-scan svg { flex:none; }
-/* Emoji quick-pick under an icon field */
-.l-iconpick { display:flex; flex-wrap:wrap; gap:6px; margin-top:8px; }
-.l-iconpick-btn { font-size:18px; line-height:1; padding:6px 8px; border:1px solid var(--line);
+/* Emoji quick-pick popover — only shown when the icon field is focused/clicked */
+.l-iconpick { position:absolute; z-index:30; left:0; right:0; top:100%; margin-top:6px;
+  display:grid; grid-template-columns:repeat(6,1fr); gap:6px; padding:10px;
+  background:var(--surface); border:1px solid var(--line); border-radius:14px;
+  box-shadow:0 16px 40px rgba(30,20,12,.22); max-height:210px; overflow-y:auto; }
+.l-iconpick[hidden] { display:none; }
+.l-iconpick-btn { font-size:18px; line-height:1; padding:6px 0; border:1px solid var(--line);
   border-radius:9px; background:var(--surface); cursor:pointer; transition:border-color .12s, transform .12s; }
 .l-iconpick-btn:hover { border-color:var(--primary); transform:translateY(-1px); }
+/* Reward create/edit modal */
+.l-modal { border:none; border-radius:22px; padding:0; width:min(600px, calc(100vw - 32px));
+  background:var(--surface); color:var(--ink); box-shadow:0 30px 70px rgba(20,12,8,.32); }
+.l-modal::backdrop { background:rgba(24,15,9,.45); }
+.l-modal-card { padding:24px 24px 26px; max-height:calc(100dvh - 60px); overflow-y:auto; }
+.l-modal-head { display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:16px; }
+.l-modal-x { border:none; background:var(--surface-2,#eee); color:var(--ink-2); width:34px; height:34px;
+  border-radius:50%; font-size:15px; cursor:pointer; line-height:1; flex:none; }
+.l-modal-x:hover { background:var(--line); color:var(--ink); }
+.l-modal-loading { padding:64px 24px; text-align:center; color:var(--ink-2); }
 /* Weekday selector chips for reward schedule */
 .l-daychip { cursor:pointer; }
 .l-daychip span { display:inline-block; padding:6px 11px; border:1px solid var(--line); border-radius:9px;
