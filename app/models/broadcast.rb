@@ -14,9 +14,15 @@ class Broadcast < ApplicationRecord
 
   def scheduled? = scheduled_at.present? && sent_at.nil?
 
-  # Resolve the segment now and deliver (used by the scheduled-delivery job).
+  # Display name for the audience — the saved filtered-group label, or the plain
+  # segment label for older/unfiltered broadcasts.
+  def audience_display = audience_label.presence || MemberSegments.label(segment_key)
+
+  # Resolve the audience now and deliver (used by the scheduled-delivery job).
+  # Honors the saved branch/search filters so a scheduled broadcast reaches exactly
+  # the group it was composed for.
   def deliver_to_segment!
-    deliver!(MemberSegments.resolve(segment_key).to_a)
+    deliver!(MemberSegments.audience(segment: segment_key, outlet_id: audience_outlet_id, q: audience_query).to_a)
   end
 
   # Fan out an in-app notification to every member in the segment.

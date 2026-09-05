@@ -51,10 +51,16 @@ export default class extends Controller {
   bindTooltip() {
     const cells = this.panelTarget.querySelectorAll("rect[data-count]")
     cells.forEach((cell) => {
-      cell.addEventListener("mouseenter", (e) => this.showTip(e, cell))
+      cell.addEventListener("mouseenter", (e) => { this.highlight(cell, true); this.showTip(e, cell) })
       cell.addEventListener("mousemove", (e) => this.moveTip(e))
-      cell.addEventListener("mouseleave", () => this.hideTip())
+      cell.addEventListener("mouseleave", () => { this.highlight(cell, false); this.hideTip() })
     })
+  }
+
+  // Outline + lift the hovered cell so it's clearly the one being read.
+  highlight(cell, on) {
+    cell.setAttribute("stroke", on ? "var(--ink, #2A211C)" : "transparent")
+    cell.style.filter = on ? "brightness(1.06)" : ""
   }
 
   tip() {

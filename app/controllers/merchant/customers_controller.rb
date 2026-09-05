@@ -6,22 +6,25 @@ module Merchant
     def index
       @segment = MemberSegments::PRESETS.key?(params[:segment]) ? params[:segment] : "all"
       @counts  = MemberSegments.counts
-      scope = MemberSegments.resolve(@segment)
-      # Branch staff only see customers who transacted at their outlet.
+      @q, @sort = params[:q].to_s.strip, params[:sort]
+
       if branch_scoped?
-        scope = scope.where(id: Purchase.where(outlet_id: scoped_outlet.id).select(:member_id))
+        # Branch staff only see customers who transacted at their outlet.
+        @applied_outlet = scoped_outlet
       else
         # Owner/manager: optional branch filter (Toàn merchant vs a branch).
         @branches = current_workspace.outlets.order(:name).to_a
-        if params[:outlet].present? && (o = @branches.find { |x| x.id.to_s == params[:outlet].to_s })
-          @outlet = o
-          scope = scope.where(id: Purchase.where(outlet_id: o.id).select(:member_id))
-        end
+        @outlet = @branches.find { |x| x.id.to_s == params[:outlet].to_s } if params[:outlet].present?
+        @applied_outlet = @outlet
       end
-      @q, @sort = params[:q].to_s.strip, params[:sort]
-      scope = apply_search(scope, @q)
+
+      scope = MemberSegments.audience(segment: @segment, outlet_id: @applied_outlet&.id, q: @q)
       scope = apply_sort(scope, @sort)
       @members = scope.limit(100).to_a
+
+      # Filters to carry into "Soạn thông báo" so the broadcast targets exactly the
+      # audience shown here (segment + branch + search), not the whole segment.
+      @compose_params = { segment: @segment, outlet: @applied_outlet&.id, q: @q.presence }.compact
     end
 
     def show
@@ -53,12 +56,6 @@ module Merchant
 
     def set_member
       @member = Member.find(params[:id])
-    end
-
-    def apply_search(scope, q)
-      return scope if q.blank?
-      like = "%#{q}%"
-      scope.where("members.name ILIKE :q OR members.email ILIKE :q OR members.phone ILIKE :q", q: like)
     end
 
     def apply_sort(scope, sort)

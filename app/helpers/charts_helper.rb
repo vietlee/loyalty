@@ -63,8 +63,7 @@ module ChartsHelper
         c = c.to_i
         x = left + hr * (cell + gap)
         op = c.zero? ? 0.06 : (0.15 + 0.85 * (c.to_f / max)).round(3)
-        title = "#{label} #{hr}h–#{hr + 1}h · #{c} lượt mua"
-        parts << %(<rect x="#{x}" y="#{y}" width="#{cell}" height="#{cell}" rx="4" fill="#{color}" fill-opacity="#{op}" style="cursor:default;" data-count="#{c}" data-slot="#{ERB::Util.html_escape(label)} #{hr}h"><title>#{ERB::Util.html_escape(title)}</title></rect>)
+        parts << %(<rect x="#{x}" y="#{y}" width="#{cell}" height="#{cell}" rx="4" fill="#{color}" fill-opacity="#{op}" stroke="transparent" stroke-width="2" style="cursor:pointer; transition:fill-opacity .1s;" data-count="#{c}" data-slot="#{ERB::Util.html_escape(label)} #{hr}h–#{hr + 1}h"></rect>)
       end
     end
 

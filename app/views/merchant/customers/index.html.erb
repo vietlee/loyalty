@@ -25,11 +25,12 @@
       <option value="spend"  <%= 'selected' if @sort == 'spend' %>><%= t('merchant.segments.sort_spend') %></option>
     </select>
     <%= submit_tag "🔍", class: "l-btn l-btn-soft", style: "flex:none;" %>
-    <% if @segment != "all" %>
-      <%= link_to t("merchant.customers.send_group"), new_merchant_broadcast_path(segment: @segment),
+    <% filtered = @applied_outlet.present? || @q.present? %>
+    <% if @segment != "all" || filtered %>
+      <%= link_to t("merchant.customers.send_group"), new_merchant_broadcast_path(@compose_params),
             class: "l-btn l-btn-primary", style: "margin-left:auto; padding:8px 14px; font-size:13px; flex:none;" %>
     <% else %>
-      <%= link_to t("merchant.customers.compose"), new_merchant_broadcast_path,
+      <%= link_to t("merchant.customers.compose"), new_merchant_broadcast_path(@compose_params),
             class: "l-btn l-btn-soft", style: "margin-left:auto; padding:8px 14px; font-size:13px; flex:none;" %>
     <% end %>
   </div>

@@ -7,15 +7,20 @@ module Merchant
     end
 
     def new
-      @segment = MemberSegments::PRESETS.key?(params[:segment]) ? params[:segment] : "all"
-      @count   = MemberSegments.resolve(@segment).count
+      load_audience(params[:segment], params[:outlet], params[:q])
+      @count     = @audience_scope.count
       @broadcast = Broadcast.new(segment_key: @segment)
     end
 
     def create
-      @segment = MemberSegments::PRESETS.key?(params[:broadcast][:segment_key]) ? params[:broadcast][:segment_key] : "all"
-      @broadcast = current_workspace.broadcasts.new(broadcast_params.merge(segment_key: @segment, created_by: current_user))
-      members = MemberSegments.resolve(@segment).to_a
+      bp = params[:broadcast] || {}
+      load_audience(bp[:segment_key], bp[:audience_outlet_id], bp[:audience_query])
+      @broadcast = current_workspace.broadcasts.new(
+        broadcast_params.merge(segment_key: @segment, created_by: current_user,
+                               audience_label: @audience_label,
+                               audience_outlet_id: @outlet&.id, audience_query: @q.presence)
+      )
+      members = @audience_scope.to_a
       @count  = members.size
 
       if members.empty?
@@ -40,6 +45,18 @@ module Merchant
     private
 
     def nav_key = :broadcasts
+
+    # Resolve the filtered audience (segment + branch + search) once, and build the
+    # display name, from whichever params the request carries (query on :new, nested
+    # broadcast[...] hidden fields on :create). Sets @segment, @outlet, @q,
+    # @audience_scope and @audience_label.
+    def load_audience(segment, outlet_id, q)
+      @segment = MemberSegments::PRESETS.key?(segment) ? segment : "all"
+      @outlet  = current_workspace.outlets.find_by(id: outlet_id) if outlet_id.present?
+      @q       = q.to_s.strip
+      @audience_scope = MemberSegments.audience(segment: @segment, outlet_id: @outlet&.id, q: @q)
+      @audience_label = MemberSegments.audience_label(segment: @segment, outlet: @outlet, q: @q)
+    end
 
     def broadcast_params
       params.require(:broadcast).permit(:title, :body)

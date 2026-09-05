@@ -22,7 +22,7 @@
         </div>
         <div style="text-align:right;">
           <% if b.scheduled? %><div class="l-chip" style="background:var(--surface-2);"><%= t("merchant.broadcasts.scheduled_chip", time: l(b.scheduled_at, format: :short)) %></div><% else %><div class="l-chip l-chip-brand"><%= t("merchant.broadcasts.count", n: b.sent_count) %></div><% end %>
-          <div style="font-size:11px; color:var(--ink-2); margin-top:4px;"><%= MemberSegments.label(b.segment_key) %> · <%= l(b.created_at, format: :short) %></div>
+          <div style="font-size:11px; color:var(--ink-2); margin-top:4px;"><%= b.audience_display %> · <%= l(b.created_at, format: :short) %></div>
         </div>
       </div>
     <% end %>
