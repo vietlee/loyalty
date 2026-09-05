@@ -37,6 +37,7 @@ Rails.application.routes.draw do
     get "monitoring", to: "monitoring#show"
     get "billing",    to: "billing#show"
     resources :plans, only: [:index, :update]
+    patch "tiers",   to: "tiers#update",    as: :tiers
     get   "account", to: "account#edit",   as: :account
     patch "account", to: "account#update"
   end

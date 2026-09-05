@@ -272,6 +272,17 @@ vi:
       sm_both: "Cho phép cả hai"
       tier_cycle: "Chu kỳ tính hạng (tháng)"
       save: "Lưu cấu hình"
+    tiers:
+      title: "Hạng thành viên"
+      note: "Cấu hình tên, ngưỡng điểm, hệ số nhân điểm và màu cho từng hạng."
+      th_tier: "Hạng"
+      th_name: "Tên"
+      th_threshold: "Ngưỡng điểm"
+      th_multiplier: "Hệ số điểm"
+      th_colors: "Màu"
+      multiplier_hint: "Hệ số điểm: khách ở hạng này tích điểm nhân với hệ số (VD 1.5 = +50%)."
+      save: "Lưu hạng"
+      saved: "Đã lưu cấu hình hạng."
     account:
       info: "Thông tin"
       email_role: "Email: %{email} · Vai trò: %{role}"

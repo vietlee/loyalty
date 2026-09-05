@@ -5,6 +5,7 @@ module Merchant
     def show
       @program = current_program
       @program.save! if @program.new_record?
+      @tiers = current_workspace.tiers.ordered.to_a
     end
 
     def update

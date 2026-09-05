@@ -267,6 +267,17 @@ en:
       sm_both: "Allow both"
       tier_cycle: "Tier cycle (months)"
       save: "Save settings"
+    tiers:
+      title: "Membership tiers"
+      note: "Configure each tier's name, points threshold, earn multiplier and colors."
+      th_tier: "Tier"
+      th_name: "Name"
+      th_threshold: "Threshold"
+      th_multiplier: "Multiplier"
+      th_colors: "Colors"
+      multiplier_hint: "Multiplier: members at this tier earn points times this factor (e.g. 1.5 = +50%)."
+      save: "Save tiers"
+      saved: "Tier settings saved."
     account:
       info: "Info"
       email_role: "Email: %{email} · Role: %{role}"
