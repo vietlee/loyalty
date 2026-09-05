@@ -17,9 +17,14 @@
       <%= f.select :kind, [["Voucher", "voucher"], [t("merchant.rewards.kind_gift"), "gift"], [t("merchant.rewards.kind_discount"), "discount"]], {},
             class: "l-field", data: { rewardform_target: "kind", action: "change->rewardform#kindChanged" } %>
     </div>
-    <div>
+    <div data-controller="iconpick">
       <label class="l-label"><%= t("merchant.rewards.icon") %></label>
-      <%= f.text_field :icon, class: "l-field", placeholder: "🎁" %>
+      <%= f.text_field :icon, class: "l-field", placeholder: "🎁", data: { iconpick_target: "input" } %>
+      <div class="l-iconpick">
+        <% %w[🎁 ☕ 🧋 🍰 🥐 🍩 🍔 🍜 🥤 🍺 🎟️ 🏷️ 🛍️ 👜 ✨ 💆 ⭐ 🔥 🎉 💎].each do |e| %>
+          <button type="button" class="l-iconpick-btn" data-action="iconpick#pick" data-emoji="<%= e %>"><%= e %></button>
+        <% end %>
+      </div>
     </div>
   </div>
 

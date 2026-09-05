@@ -898,6 +898,8 @@ en:
       hint_paid: "Free spin used — extra spins cost %{n} pts."
     referrals:
       title: "Refer friends"
+      only_new_members: "The referral reward is for new members only — you are already a member of this shop."
+      login_to_claim: "Log in to receive the referral reward 🎁"
       invite_both: "Invite friends — both get rewarded"
       per_friend: "for each friend who completes their first purchase"
       your_code: "Your referral code"

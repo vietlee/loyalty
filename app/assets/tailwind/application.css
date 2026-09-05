@@ -228,6 +228,18 @@ a.l-chip-lg:hover, button.l-chip-lg:hover { background:#fff; color:var(--ink);
 .l-nav-item:hover { background:rgba(255,255,255,.07); }
 .l-nav-item.active { background:rgba(255,255,255,.1); box-shadow: inset 3px 0 0 var(--primary-2); }
 .l-nav-item .en { display:block; font-size:8.5px; letter-spacing:.1em; text-transform:uppercase; opacity:.5; }
+/* Prominent counter-scanner CTA in the merchant sidebar — the most-used action. */
+.l-nav-scan { display:flex; align-items:center; gap:10px; padding:13px 14px; margin-bottom:10px;
+  border-radius:13px; background:#fff; color:var(--primary); font-weight:800; font-size:15.5px;
+  text-decoration:none; box-shadow:0 6px 16px rgba(0,0,0,.18); transition:transform .12s ease, box-shadow .12s ease; }
+.l-nav-scan:hover { transform:translateY(-1px); box-shadow:0 9px 22px rgba(0,0,0,.24); }
+.l-nav-scan.active { outline:2px solid rgba(255,255,255,.85); }
+.l-nav-scan svg { flex:none; }
+/* Emoji quick-pick under an icon field */
+.l-iconpick { display:flex; flex-wrap:wrap; gap:6px; margin-top:8px; }
+.l-iconpick-btn { font-size:18px; line-height:1; padding:6px 8px; border:1px solid var(--line);
+  border-radius:9px; background:var(--surface); cursor:pointer; transition:border-color .12s, transform .12s; }
+.l-iconpick-btn:hover { border-color:var(--primary); transform:translateY(-1px); }
 .l-side .foot { margin-top:auto; display:flex; align-items:center; gap:10px; padding:11px 8px; border-top:1px solid rgba(255,255,255,.1); }
 .l-side .foot .av { width:32px; height:32px; border-radius:9px; background:rgba(255,255,255,.14); display:grid; place-items:center; font-size:12px; font-weight:600; }
 

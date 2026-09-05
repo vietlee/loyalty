@@ -26,6 +26,9 @@
   <% end %>
 
   <div class="l-navgrp"><%= t("merchant.nav.group_ops") %></div>
+  <%= link_to merchant_scanner_path, class: "l-nav-scan #{'active' if nav == :scanner}" do %>
+    <%= ui_icon(:scan, size: 20) %><span><%= t("merchant.nav.scanner") %></span>
+  <% end %>
   <%= link_to merchant_root_path, class: "l-nav-item #{'active' if nav == :dashboard}" do %>
     <span>▣</span><span><%= t("merchant.nav.dashboard") %></span>
   <% end %>
@@ -33,9 +36,6 @@
     <%= link_to merchant_outlets_path, class: "l-nav-item #{'active' if nav == :outlets}" do %>
       <span>⌂</span><span><%= t("merchant.nav.outlets") %></span>
     <% end %>
-  <% end %>
-  <%= link_to merchant_scanner_path, class: "l-nav-item #{'active' if nav == :scanner}" do %>
-    <span>⧉</span><span><%= t("merchant.nav.scanner") %></span>
   <% end %>
   <%= link_to merchant_customers_path, class: "l-nav-item #{'active' if nav == :customers}" do %>
     <span>☺</span><span><%= t("merchant.nav.customers") %></span>

@@ -941,6 +941,8 @@ vi:
       hint_paid: "Đã dùng lượt miễn phí — quay thêm tốn %{n} điểm."
     referrals:
       title: "Giới thiệu bạn bè"
+      only_new_members: "Ưu đãi giới thiệu chỉ áp dụng cho thành viên mới. Bạn đã là thành viên của quán rồi."
+      login_to_claim: "Đăng nhập để nhận ưu đãi giới thiệu 🎁"
       invite_both: "Mời bạn — cả hai cùng nhận"
       per_friend: "cho mỗi người bạn hoàn thành giao dịch đầu tiên"
       your_code: "Mã giới thiệu của bạn"

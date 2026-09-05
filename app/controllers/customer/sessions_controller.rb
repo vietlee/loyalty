@@ -4,8 +4,14 @@ module Customer
 
     # Referral join link: stash the code, then go to login.
     def join
+      # Referral reward is for NEW members only. An existing member of this shop
+      # scanning the shop's own referral gets a clear notice instead of a login
+      # prompt / claim they can't receive.
+      if member_signed_in? && current_member&.workspace_id == current_workspace.id
+        return redirect_to member_root_path, alert: t("customer.referrals.only_new_members")
+      end
       session[:ref_code] = params[:code].to_s.upcase
-      redirect_to member_login_path, notice: "Đăng nhập để nhận ưu đãi giới thiệu 🎁"
+      redirect_to member_login_path, notice: t("customer.referrals.login_to_claim")
     end
 
     # Step 1 — enter email
