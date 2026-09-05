@@ -56,8 +56,6 @@
           <%= f.number_field :earn_per_amount, class: "l-field", style: "max-width:140px;" %>
           <span style="color:var(--ink-2);">đ</span>
         </div>
-        <label class="l-label" style="margin-top:14px;"><%= t("merchant.onboarding.scan_mode") %></label>
-        <%= f.select :scan_mode, [[t("merchant.program.sm_staff"), "staff_scans_member"], [t("merchant.program.sm_member"), "member_scans_pos"], [t("merchant.onboarding.sm_both"), "both"]], {}, class: "l-field" %>
         <%= f.submit t("merchant.onboarding.continue"), class: "l-btn l-btn-primary", style: "margin-top:18px;" %>
       <% end %>
     </div>

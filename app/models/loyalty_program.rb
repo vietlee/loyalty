@@ -18,8 +18,11 @@ class LoyaltyProgram < ApplicationRecord
   # When points earned now would lapse (nil = never).
   def points_expire_at(from = Time.current) = points_expire? ? from + points_expiry_months.months : nil
 
-  def scan_staff?  = %w[staff_scans_member both].include?(scan_mode)
-  def scan_member? = %w[member_scans_pos both].include?(scan_mode)
+  # Counter earning is staff-scans-member only. The customer-self-scan-POS mode
+  # was removed (confusing vs the check-in QR), so scan_member? is always off
+  # regardless of any legacy stored scan_mode value.
+  def scan_staff?  = true
+  def scan_member? = false
 
   def earn_rate_label
     amt = "#{ActiveSupport::NumberHelper.number_to_delimited(earn_per_amount)}#{currency == 'VND' ? 'đ' : ' ' + currency}"
