@@ -37,7 +37,6 @@ Rails.application.routes.draw do
     get "monitoring", to: "monitoring#show"
     get "billing",    to: "billing#show"
     resources :plans, only: [:index, :update]
-    patch "tiers",   to: "tiers#update",    as: :tiers
     get   "account", to: "account#edit",   as: :account
     patch "account", to: "account#update"
   end
@@ -50,6 +49,7 @@ Rails.application.routes.draw do
   namespace :merchant do
     root "dashboard#show"
     get  "choose",            to: "choose#show",              as: :choose
+    patch "tiers",            to: "tiers#update",             as: :tiers
     resource :account, only: [:show, :update], controller: "account"
     get  "checkin_qr",        to: "dashboard#checkin_qr",     as: :checkin_qr
     post "checkin_qr/rotate", to: "dashboard#rotate_checkin", as: :rotate_checkin
