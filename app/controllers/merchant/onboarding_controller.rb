@@ -69,6 +69,7 @@ module Merchant
 
     def finish!
       @workspace = current_workspace
+      @workspace.ensure_default_outlet!
       @workspace.update!(settings: @workspace.settings.merge("onboarded" => true))
       redirect_to merchant_root_path, notice: "Thiết lập hoàn tất! Chào mừng đến với bảng điều khiển 🎉"
     end

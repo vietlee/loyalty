@@ -31,7 +31,17 @@ module WorkspaceBootstrap
         workspace.create_spin_wheel!(segments: SpinWheel::DEFAULT_SEGMENTS.map(&:stringify_keys),
                                      daily_free: true, cost_points: 100, active: true)
       end
+
+      # A default check-in mission so the branch check-in QR awards points from
+      # day one (merchants can edit/remove it later).
+      if program.gamification_enabled && !workspace.missions.exists?(mission_type: "checkin")
+        workspace.missions.create!(title: "Check-in hôm nay", icon: "📍", mission_type: "checkin",
+                                   period: "daily", goal: 1, reward_points: 20, position: 0)
+      end
     end
+
+    # Every shop needs at least one branch — the check-in QR lives on branches.
+    workspace.ensure_default_outlet!
     workspace
   end
 end

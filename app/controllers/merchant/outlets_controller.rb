@@ -18,8 +18,9 @@ module Merchant
       @vouchers  = Voucher.where(used_outlet_id: oid, state: "used").count
       @recent    = PointTransaction.where(outlet_id: oid).includes(:member).order(created_at: :desc).limit(15).to_a
       @staff     = current_workspace.memberships.where(outlet_id: oid).includes(:user).to_a
-      @has_checkin = current_workspace.missions.active.exists?(mission_type: "checkin")
-      @checkin_url = helpers.customer_scan_url(current_workspace, checkin: Checkin.encode(current_workspace, @outlet)) if @has_checkin
+      # Every branch always has a check-in QR (independent of whether a check-in
+      # mission exists — the QR is the branch's identity for check-in/earn).
+      @checkin_url = helpers.customer_scan_url(current_workspace, checkin: Checkin.encode(current_workspace, @outlet))
     end
 
     # Printable per-branch check-in QR (attributes check-ins to this outlet).

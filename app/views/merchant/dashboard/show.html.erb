@@ -168,38 +168,19 @@
     <% end %>
   </div>
 
-  <% if @has_checkin %>
-    <div class="l-panel">
-      <h3 class="l-display" style="font-size:18px; margin-bottom:4px;"><%= d.(:checkin_title) %></h3>
-      <div style="display:flex; gap:14px; align-items:center; margin-top:10px;">
-        <%= render "merchant/shared/qr_zoom", url: @checkin_url, size: 104,
-              title: d.(:checkin_title), note: d.(:checkin_note) %>
-        <p style="color:var(--ink-2); font-size:12.5px;"><%= d.(:checkin_desc) %></p>
+  <div class="l-panel">
+    <h3 class="l-display" style="font-size:18px; margin-bottom:10px;"><%= d.(:tiers) %></h3>
+    <% @tiers.each do |t| %>
+      <div style="display:flex; align-items:center; gap:10px; padding:8px 0; border-bottom:1px solid var(--line);">
+        <span style="width:26px; height:26px; border-radius:8px; background:<%= t.gradient_css %>;"></span>
+        <strong><%= t.name %></strong>
+        <span style="margin-left:auto; color:var(--ink-2);"><%= d.(:points_n, n: number_with_delimiter(t.threshold_points)) %></span>
       </div>
-      <div style="display:flex; gap:8px; flex-wrap:wrap; margin-top:12px;">
-        <%= link_to merchant_checkin_qr_path, class: "l-btn l-btn-soft", data: { turbo: false } do %>
-          <%= ui_icon(:launch, size: 16) %> <%= d.(:download_code) %>
-        <% end %>
-        <% if current_membership&.can_manage? %>
-          <%= button_to merchant_rotate_checkin_path, method: :post, class: "l-btn l-btn-ghost",
-                form: { data: { turbo_confirm: d.(:refresh_confirm) } } do %>
-            <%= ui_icon(:history, size: 16) %> <%= d.(:refresh_code) %>
-          <% end %>
-        <% end %>
-      </div>
+    <% end %>
+    <div style="margin-top:12px; padding-top:10px; border-top:1px solid var(--line);">
+      <%= link_to d.(:branch_qr_hint), merchant_outlets_path, style: "color:var(--primary-ink); font-weight:600; font-size:13px; text-decoration:none;" %>
     </div>
-  <% else %>
-    <div class="l-panel">
-      <h3 class="l-display" style="font-size:18px; margin-bottom:10px;"><%= d.(:tiers) %></h3>
-      <% @tiers.each do |t| %>
-        <div style="display:flex; align-items:center; gap:10px; padding:8px 0; border-bottom:1px solid var(--line);">
-          <span style="width:26px; height:26px; border-radius:8px; background:<%= t.gradient_css %>;"></span>
-          <strong><%= t.name %></strong>
-          <span style="margin-left:auto; color:var(--ink-2);"><%= d.(:points_n, n: number_with_delimiter(t.threshold_points)) %></span>
-        </div>
-      <% end %>
-    </div>
-  <% end %>
+  </div>
 </div>
 
 <% end %>

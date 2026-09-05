@@ -58,6 +58,16 @@ class Workspace < ApplicationRecord
   def start_trial!(days = TRIAL_DAYS)
     update!(status: "trial", paid_until: days.days.from_now)
   end
+
+  # Every shop must have at least one branch (the check-in QR lives on branches).
+  # Auto-create one from the shop's own info; the owner edits it later.
+  def ensure_default_outlet!
+    ActsAsTenant.with_tenant(self) do
+      return outlets.first if outlets.exists?
+      outlets.create!(code: "MAIN", name: name.presence || "Chi nhánh chính",
+                      address: branding_value("address").presence, active: true)
+    end
+  end
   def pending? = status == "pending"
   def onboarded? = settings["onboarded"] == true
 

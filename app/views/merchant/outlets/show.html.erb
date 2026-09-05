@@ -10,6 +10,21 @@
     </div>
   </div>
 
+  <%# ---- Branch check-in QR — prominent, easy to open/print ---- %>
+  <div class="l-panel" style="margin-bottom:16px; display:flex; gap:18px; align-items:center; flex-wrap:wrap;">
+    <%= render "merchant/shared/qr_zoom", url: @checkin_url, size: 128,
+          title: "#{t('merchant.outlets.checkin_title')} — #{@outlet.name}",
+          note: t("merchant.dashboard.checkin_note") %>
+    <div style="flex:1; min-width:220px;">
+      <div class="l-eyebrow"><%= t("merchant.outlets.checkin_title") %></div>
+      <h3 class="l-display" style="font-size:18px; margin:2px 0 4px;"><%= @outlet.name %></h3>
+      <p style="color:var(--ink-2); font-size:13px; margin-bottom:12px;"><%= t("merchant.outlets.checkin_desc_html", name: @outlet.name).html_safe %></p>
+      <%= link_to checkin_qr_merchant_outlet_path(@outlet), class: "l-btn l-btn-primary", data: { turbo: false } do %>
+        <%= ui_icon(:launch, size: 16) %> <%= t("merchant.dashboard.download_code") %>
+      <% end %>
+    </div>
+  </div>
+
   <div class="l-kpis">
     <div class="l-kpi"><div class="k"><%= t("merchant.dashboard.revenue") %></div><div class="v"><%= number_with_delimiter(@revenue) %>đ</div><div class="d"><%= t("merchant.dashboard.transactions", n: @purchases) %></div></div>
     <div class="l-kpi"><div class="k"><%= t("merchant.dashboard.points_issued") %></div><div class="v"><%= number_with_delimiter(@points) %></div></div>
@@ -55,18 +70,4 @@
     </div>
   </div>
 
-  <% if @has_checkin %>
-    <div class="l-panel" style="margin-top:16px; display:flex; gap:18px; align-items:center; flex-wrap:wrap;">
-      <%= render "merchant/shared/qr_zoom", url: @checkin_url, size: 120,
-            title: "#{t('merchant.outlets.checkin_title')} — #{@outlet.name}",
-            note: t("merchant.dashboard.checkin_note") %>
-      <div style="flex:1; min-width:220px;">
-        <h3 class="l-display" style="font-size:17px; margin-bottom:4px;"><%= t("merchant.outlets.checkin_title") %></h3>
-        <p style="color:var(--ink-2); font-size:13px; margin-bottom:12px;"><%= t("merchant.outlets.checkin_desc_html", name: @outlet.name).html_safe %></p>
-        <%= link_to checkin_qr_merchant_outlet_path(@outlet), class: "l-btn l-btn-soft", data: { turbo: false } do %>
-          <%= ui_icon(:launch, size: 16) %> <%= t("merchant.dashboard.download_code") %>
-        <% end %>
-      </div>
-    </div>
-  <% end %>
 </div>
