@@ -29,9 +29,7 @@ module Merchant
         @member_growth   = monthly_member_growth
         @tier_counts     = @tiers.map { |t| [t, Member.where(tier_key: t.key).count] }
         @outlet_stats    = build_outlet_stats
-        @busy_hours      = busy_hour_matrix
-        @busiest_slot    = busiest_slot(@busy_hours)
-        @busy_insight    = current_workspace.workspace_insights.find_by(kind: "busy_hour")
+        load_busy_hour(nil) # busy-hour panel: all-merchant by default, own branch switcher
         # Check-in QR is per-branch only (see Outlets); the merchant no longer has
         # a workspace-level QR.
         @sub_warning     = subscription_warning(current_workspace)
@@ -50,17 +48,25 @@ module Merchant
                 filename: "checkin-#{current_workspace.subdomain}.png"
     end
 
-    # Kick off (async) regeneration of the busy-hour AI insight for the active
-    # range. Marks the row "generating" so the panel can show a placeholder.
+    # AJAX: return the busy-hour panel for the chosen branch + range (no reload).
+    def busy_hour
+      @range = resolve_range
+      load_busy_hour(params[:outlet])
+      render partial: "merchant/dashboard/busy_hour", layout: false
+    end
+
+    # AJAX: (re)generate the AI insight synchronously for the chosen branch, then
+    # return the refreshed panel. Synchronous keeps it simple and reliable — no
+    # background job to get stuck; the button shows a spinner while it runs.
     def refresh_busy_hour
       @range = resolve_range
-      matrix = busy_hour_matrix
-      slot   = busiest_slot(matrix)
-      insight = current_workspace.workspace_insights.find_or_initialize_by(kind: "busy_hour")
-      insight.update!(status: "generating")
-      GenerateBusyHourInsightJob.perform_later(current_workspace.id, matrix, slot,
-                                               { from: @range[:from], to: @range[:to] })
-      redirect_to merchant_root_path(range: @range[:key]), notice: t("merchant.dashboard.busy_insight_generating_flash")
+      load_busy_hour(params[:outlet])
+      oid = @busy_outlet&.id
+      BusyHourInsight.new(current_workspace, matrix: @busy_hours, busiest_slot: @busiest_slot,
+                          outlet: @busy_outlet, range: { from: @range[:from], to: @range[:to] }).generate!
+      # reload the freshly-written insight
+      @busy_insight = current_workspace.workspace_insights.find_by(kind: busy_hour_kind(oid))
+      render partial: "merchant/dashboard/busy_hour", layout: false
     end
 
     # Rotate the check-in token: the old printed QR stops working immediately.
@@ -155,14 +161,35 @@ module Merchant
     # created_at is stored in UTC. Returns [{ dow: 0..6, hours: [24 ints] }, ...]
     # (dow 0 = Sunday). Capped so a huge workspace can't load an unbounded set.
     BUSY_HOUR_SAMPLE_CAP = 50_000
-    def busy_hour_matrix
+    def busy_hour_matrix(outlet_id = nil)
       rows = (0..6).map { |dow| { dow: dow, hours: Array.new(24, 0) } }
-      in_range(Purchase).order(created_at: :desc).limit(BUSY_HOUR_SAMPLE_CAP)
-                        .pluck(:created_at).each do |ts|
+      scope = in_range(Purchase)
+      scope = scope.where(outlet_id: outlet_id) if outlet_id.present?
+      scope.order(created_at: :desc).limit(BUSY_HOUR_SAMPLE_CAP)
+           .pluck(:created_at).each do |ts|
         t = ts.in_time_zone
         rows[t.wday][:hours][t.hour] += 1
       end
       rows
+    end
+
+    # Cache key (WorkspaceInsight#kind) for a busy-hour insight: workspace-wide,
+    # or scoped to one branch.
+    def busy_hour_kind(outlet_id) = outlet_id.present? ? "busy_hour_o#{outlet_id}" : "busy_hour"
+
+    # Resolve the outlet chosen for the busy-hour panel (owner/manager only; branch
+    # staff are locked to their own outlet), then load matrix + insight for it.
+    def load_busy_hour(outlet_param)
+      @busy_branches = branch_scoped? ? [] : current_workspace.outlets.order(:name).to_a
+      @busy_outlet   = if branch_scoped?
+        scoped_outlet
+      elsif outlet_param.present?
+        @busy_branches.find { |o| o.id.to_s == outlet_param.to_s }
+      end
+      oid = @busy_outlet&.id
+      @busy_hours   = busy_hour_matrix(oid)
+      @busiest_slot = busiest_slot(@busy_hours)
+      @busy_insight = current_workspace.workspace_insights.find_by(kind: busy_hour_kind(oid))
     end
 
     # The single busiest weekday+hour cell (nil when there's no activity).

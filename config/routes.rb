@@ -55,6 +55,7 @@ Rails.application.routes.draw do
     get "go/:token",      to: "quick_logins#create",    as: :quick_login
     get  "checkin_qr",        to: "dashboard#checkin_qr",     as: :checkin_qr
     post "checkin_qr/rotate", to: "dashboard#rotate_checkin", as: :rotate_checkin
+    get  "insights/busy_hour",         to: "dashboard#busy_hour",         as: :busy_hour_insight
     post "insights/busy_hour/refresh", to: "dashboard#refresh_busy_hour", as: :refresh_busy_hour_insight
     # First-run onboarding wizard
     get   "onboarding",      to: "onboarding#show",   as: :onboarding

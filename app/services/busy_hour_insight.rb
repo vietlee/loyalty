@@ -3,20 +3,21 @@
 # the result on a WorkspaceInsight row. Falls back to a static heuristic sentence
 # when Claude isn't configured or errors, so the panel is never empty.
 class BusyHourInsight
-  KIND = "busy_hour"
-
-  def initialize(workspace, matrix:, busiest_slot:, range: nil)
+  def initialize(workspace, matrix:, busiest_slot:, range: nil, outlet: nil)
     @workspace = workspace
     @matrix = matrix
     @slot = busiest_slot
     @range = range
+    @outlet = outlet
   end
 
-  # Run synchronously (called from a job). Persists the insight and returns it.
+  def kind = @outlet ? "busy_hour_o#{@outlet.id}" : "busy_hour"
+
+  # Run synchronously. Persists the insight and returns it.
   def generate!
     body = ClaudeService.safe_call(fallback: nil) { ai_body } || heuristic_body
 
-    insight = WorkspaceInsight.find_or_initialize_by(workspace: @workspace, kind: KIND)
+    insight = WorkspaceInsight.find_or_initialize_by(workspace: @workspace, kind: kind)
     insight.update!(body: body, generated_at: Time.current, status: "ready",
                     range_from: @range&.dig(:from), range_to: @range&.dig(:to))
     insight
@@ -28,8 +29,9 @@ class BusyHourInsight
 
   def ai_body
     return heuristic_body if @slot.nil?
+    scope_label = @outlet ? %(Cửa hàng "#{@workspace.name}" — chi nhánh "#{@outlet.name}") : %(Cửa hàng "#{@workspace.name}" (toàn bộ chi nhánh))
     prompt = <<~PROMPT
-      Cửa hàng "#{@workspace.name}" có dữ liệu lượt mua theo thứ trong tuần và giờ trong ngày như sau
+      #{scope_label} có dữ liệu lượt mua theo thứ trong tuần và giờ trong ngày như sau
       (mảng 7 dòng, mỗi dòng là 24 số đếm theo giờ 0–23, dòng 0 = Chủ Nhật):
       #{@matrix.map { |r| r[:hours] }.inspect}
       Khung đông nhất: #{DOW_VI[@slot[:dow]]} lúc #{@slot[:hour]}h (#{@slot[:count]} lượt).

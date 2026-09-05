@@ -28,6 +28,8 @@ class GenerateCampaignBannerJob < ApplicationJob
       Use a warm, inviting palette around #{theme['primary']} and #{theme['primary_2']}.
       Flat vector marketing style, tasteful, uncluttered, room for text overlay,
       no watermark, no lorem ipsum, no gibberish text.
+      IMPORTANT: do NOT draw any QR code, barcode, or phone screen showing a
+      scannable code — a real scannable QR is added separately by the system.
     PROMPT
   end
 end

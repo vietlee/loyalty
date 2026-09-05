@@ -11,8 +11,12 @@ class PublicCampaignsController < ActionController::Base
     @workspace = @campaign.workspace
     ActsAsTenant.with_tenant(@workspace) do
       @banner_url = url_for(@campaign.banner) if @campaign.banner.attached?
+      @promo = @campaign.promo_codes.where(active: true).first
     end
     @shop_url = shop_url_for(@workspace)
+    # Real, scannable promo QR (the customer scans it to claim). Built on the
+    # shop's own host so it resolves to the customer app.
+    @promo_scan_url = "#{@shop_url.chomp('/')}/scan/resolve?promo=#{@promo.token}" if @promo
     render layout: false
   rescue ActsAsTenant::Errors::NoTenantSet
     head :not_found

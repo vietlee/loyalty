@@ -46,18 +46,15 @@
       </div>
 
       <div class="l-panel" style="margin-bottom:16px;">
-        <div style="display:flex; align-items:flex-start; justify-content:space-between; gap:10px;">
-          <div>
-            <h3 class="l-display" style="font-size:18px; margin-bottom:2px;"><%= t("merchant.appearance.colors_title") %></h3>
-            <p style="color:var(--ink-2); font-size:13px; margin-bottom:12px;"><%= t("merchant.appearance.colors_note_html").html_safe %></p>
-          </div>
-          <% if current_workspace.logo.attached? %>
-            <button type="button" class="l-btn l-btn-soft" style="padding:6px 12px; font-size:13px; white-space:nowrap; flex:none;"
-                    data-action="themeai#suggest">
-              ✨ <%= t("merchant.appearance.ai_suggest") %>
-            </button>
-          <% end %>
-        </div>
+        <h3 class="l-display" style="font-size:18px; margin-bottom:2px;"><%= t("merchant.appearance.colors_title") %></h3>
+        <p style="color:var(--ink-2); font-size:13px; margin-bottom:12px;"><%= t("merchant.appearance.colors_note_html").html_safe %></p>
+
+        <%# AI: derive the whole palette (primary/accent/surface/ink) from the logo %>
+        <button type="button" class="l-btn l-btn-primary" style="width:100%; margin-bottom:14px;"
+                data-action="themeai#suggest">
+          ✨ <%= t("merchant.appearance.ai_suggest") %>
+        </button>
+
         <div style="display:grid; grid-template-columns:1fr 1fr; gap:14px;">
           <% [["primary", t("merchant.appearance.c_primary")], ["primary_2", t("merchant.appearance.c_accent")], ["surface", t("merchant.appearance.c_surface")], ["ink", t("merchant.appearance.c_ink")]].each do |k, label| %>
             <div>

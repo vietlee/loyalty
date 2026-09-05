@@ -45,7 +45,7 @@
     <p style="color:var(--ink-2); font-size:13px; margin-bottom:14px;"><%= t("merchant.tiers.note") %></p>
     <%= form_with url: merchant_tiers_path, method: :patch do %>
       <div style="overflow-x:auto;">
-        <table style="width:100%; border-collapse:collapse; font-size:13.5px; min-width:560px;">
+        <table style="width:100%; border-collapse:separate; border-spacing:0 12px; font-size:13.5px; min-width:560px;">
           <thead><tr style="text-align:left; color:var(--ink-2); font-size:11px; text-transform:uppercase; letter-spacing:.05em;">
             <th style="padding:6px 8px;"><%= t("merchant.tiers.th_tier") %></th>
             <th><%= t("merchant.tiers.th_name") %></th>
@@ -56,7 +56,7 @@
           </tr></thead>
           <tbody>
             <% @tiers.each do |tier| %>
-              <tr style="border-top:1px solid var(--line);">
+              <tr>
                 <td style="padding:9px 8px;"><span style="display:inline-block; width:22px; height:22px; border-radius:6px; background:<%= tier.gradient_css %>; vertical-align:middle;"></span></td>
                 <td><input type="text" name="tiers[<%= tier.id %>][name]" value="<%= tier.name %>" class="l-field" style="min-width:120px;"></td>
                 <td><input type="number" name="tiers[<%= tier.id %>][threshold_points]" value="<%= tier.threshold_points %>" class="l-field" style="max-width:110px;" min="0"></td>
