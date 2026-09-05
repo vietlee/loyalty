@@ -240,6 +240,22 @@ a.l-chip-lg:hover, button.l-chip-lg:hover { background:#fff; color:var(--ink);
 .l-iconpick-btn { font-size:18px; line-height:1; padding:6px 8px; border:1px solid var(--line);
   border-radius:9px; background:var(--surface); cursor:pointer; transition:border-color .12s, transform .12s; }
 .l-iconpick-btn:hover { border-color:var(--primary); transform:translateY(-1px); }
+/* Onboarding live customer-app demo (recolors from scoped theme vars) */
+.l-appdemo { background:var(--surface); border:1px solid var(--line); border-radius:22px; padding:16px;
+  box-shadow:0 10px 30px rgba(40,30,20,.12); display:flex; flex-direction:column; gap:12px; transition:background .2s; }
+.l-appdemo-card { background:linear-gradient(135deg, var(--primary), var(--primary-2)); color:var(--on-primary,#fff);
+  border-radius:16px; padding:16px; }
+.l-appdemo-card-top { display:flex; align-items:center; justify-content:space-between; font-weight:700; font-size:14px; }
+.l-appdemo-tier { background:rgba(255,255,255,.25); padding:2px 9px; border-radius:999px; font-size:11px; }
+.l-appdemo-pts { font-family:"Fraunces",Georgia,serif; font-size:30px; font-weight:600; margin-top:10px; }
+.l-appdemo-pts small { font-size:12px; font-weight:400; opacity:.85; font-family:inherit; }
+.l-appdemo-tagline { font-size:12px; opacity:.9; margin-top:4px; }
+.l-appdemo-row { display:flex; gap:8px; }
+.l-appdemo-chip { flex:1; text-align:center; background:var(--surface-2); color:var(--ink); border-radius:11px;
+  padding:8px; font-size:12px; font-weight:600; }
+.l-appdemo-btn { background:var(--primary); color:var(--on-primary,#fff); border:none; border-radius:12px;
+  padding:11px; font-weight:700; font-size:14px; cursor:default; }
+@media (max-width:720px){ [data-controller="onboardpreview"]{ grid-template-columns:1fr !important; } }
 .l-side .foot { margin-top:auto; display:flex; align-items:center; gap:10px; padding:11px 8px; border-top:1px solid rgba(255,255,255,.1); }
 .l-side .foot .av { width:32px; height:32px; border-radius:9px; background:rgba(255,255,255,.14); display:grid; place-items:center; font-size:12px; font-weight:600; }
 

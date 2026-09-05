@@ -15,27 +15,54 @@
 
   <% case @step %>
   <% when 1 %>
-    <div class="l-panel">
-      <h2 class="l-display" style="font-size:22px;"><%= t("merchant.onboarding.s1_title") %></h2>
-      <p style="color:var(--ink-2); font-size:14px; margin-bottom:16px;"><%= t("merchant.onboarding.s1_note") %></p>
-      <%= form_with url: merchant_onboarding_path, method: :patch do %>
-        <input type="hidden" name="step" value="1">
-        <label class="l-label"><%= t("merchant.onboarding.palette") %></label>
-        <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin-bottom:16px;">
-          <% @presets.each do |key, p| %>
-            <label class="l-preset" style="cursor:pointer;">
-              <input type="radio" name="preset" value="<%= key %>" <%= "checked" if @workspace.theme == p['theme'] %> style="display:none;" onchange="this.closest('form').querySelectorAll('.l-preset').forEach(e=>e.style.borderColor='var(--line)'); this.closest('.l-preset').style.borderColor='var(--primary)'">
-              <span class="sw"><span style="background:<%= p['theme']['primary'] %>"></span><span style="background:<%= p['theme']['primary_2'] %>"></span><span style="background:<%= p['theme']['surface_2'] %>"></span></span>
-              <strong style="font-size:13px;"><%= p['label'] %></strong>
-            </label>
-          <% end %>
+    <div data-controller="onboardpreview" style="display:grid; grid-template-columns:1.2fr .8fr; gap:20px; align-items:start;">
+      <div class="l-panel">
+        <h2 class="l-display" style="font-size:22px;"><%= t("merchant.onboarding.s1_title") %></h2>
+        <p style="color:var(--ink-2); font-size:14px; margin-bottom:16px;"><%= t("merchant.onboarding.s1_note") %></p>
+        <%= form_with url: merchant_onboarding_path, method: :patch do %>
+          <input type="hidden" name="step" value="1">
+          <label class="l-label"><%= t("merchant.onboarding.palette") %></label>
+          <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin-bottom:16px;">
+            <% @presets.each do |key, p| %>
+              <% th = p['theme'] %>
+              <label class="l-preset" style="cursor:pointer;">
+                <input type="radio" name="preset" value="<%= key %>" <%= "checked" if @workspace.theme == th %> style="display:none;"
+                       data-onboardpreview-target="radio" data-action="change->onboardpreview#apply"
+                       data-primary="<%= th['primary'] %>" data-primary2="<%= th['primary_2'] %>"
+                       data-surface="<%= th['surface'] %>" data-surface2="<%= th['surface_2'] %>"
+                       data-ink="<%= th['ink'] %>" data-ink2="<%= th['ink_2'] %>" data-on-primary="<%= th['on_primary'] %>">
+                <span class="sw"><span style="background:<%= th['primary'] %>"></span><span style="background:<%= th['primary_2'] %>"></span><span style="background:<%= th['surface_2'] %>"></span></span>
+                <strong style="font-size:13px;"><%= p['label'] %></strong>
+              </label>
+            <% end %>
+          </div>
+          <label class="l-label"><%= t("merchant.onboarding.tagline") %></label>
+          <%= text_field_tag "branding[tagline]", @workspace.branding_value("tagline"), class: "l-field", placeholder: t("merchant.onboarding.tagline_ph"), data: { onboardpreview_target: "tagline", action: "input->onboardpreview#syncText" } %>
+          <label class="l-label" style="margin-top:12px;"><%= t("merchant.onboarding.customer_term") %></label>
+          <%= text_field_tag "branding[customer_term]", @workspace.branding_value("customer_term"), class: "l-field", placeholder: t("merchant.onboarding.customer_term_ph") %>
+          <%= submit_tag t("merchant.onboarding.continue"), class: "l-btn l-btn-primary", style: "margin-top:18px;" %>
+        <% end %>
+      </div>
+
+      <%# ---- Live customer-app demo — recolors with the chosen palette ---- %>
+      <div>
+        <div class="l-eyebrow" style="margin-bottom:8px; text-align:center;"><%= t("merchant.onboarding.preview_label") %></div>
+        <div data-onboardpreview-target="demo" class="l-appdemo">
+          <div class="l-appdemo-card">
+            <div class="l-appdemo-card-top">
+              <span><%= @workspace.name.presence || "Cửa hàng của bạn" %></span>
+              <span class="l-appdemo-tier">Vàng</span>
+            </div>
+            <div class="l-appdemo-pts">1.250 <small><%= t("merchant.onboarding.demo_points") %></small></div>
+            <div class="l-appdemo-tagline" data-onboardpreview-target="taglineOut"><%= @workspace.branding_value("tagline").presence || t("merchant.onboarding.demo_tagline") %></div>
+          </div>
+          <div class="l-appdemo-row">
+            <span class="l-appdemo-chip">🎁 <%= t("merchant.onboarding.demo_reward") %></span>
+            <span class="l-appdemo-chip">⭐ 4.9</span>
+          </div>
+          <button type="button" class="l-appdemo-btn"><%= t("merchant.onboarding.demo_cta") %></button>
         </div>
-        <label class="l-label"><%= t("merchant.onboarding.tagline") %></label>
-        <%= text_field_tag "branding[tagline]", @workspace.branding_value("tagline"), class: "l-field", placeholder: t("merchant.onboarding.tagline_ph") %>
-        <label class="l-label" style="margin-top:12px;"><%= t("merchant.onboarding.customer_term") %></label>
-        <%= text_field_tag "branding[customer_term]", @workspace.branding_value("customer_term"), class: "l-field", placeholder: t("merchant.onboarding.customer_term_ph") %>
-        <%= submit_tag t("merchant.onboarding.continue"), class: "l-btn l-btn-primary", style: "margin-top:18px;" %>
-      <% end %>
+      </div>
     </div>
 
   <% when 2 %>
