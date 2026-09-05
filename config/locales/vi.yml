@@ -81,6 +81,8 @@ vi:
       configure_program: "Cấu hình chương trình →"
       checkin_title: "Mã check-in tại quầy"
       branch_qr_hint: "Mã check-in QR nằm ở từng chi nhánh →"
+      view_scope: "Xem theo"
+      all_branches: "Toàn merchant"
       checkin_note: "Đưa mã này cho khách quét để check-in nhận điểm — 1 lần/ngày."
       checkin_desc: "In & dán tại quầy — hoặc nhấn vào mã để phóng to cho khách quét. Check-in 1 lần/ngày."
       download_code: "Tải mã để in"

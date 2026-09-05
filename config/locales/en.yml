@@ -76,6 +76,8 @@ en:
       configure_program: "Configure program →"
       checkin_title: "Counter check-in code"
       branch_qr_hint: "Check-in QR codes are per branch →"
+      view_scope: "View"
+      all_branches: "All branches"
       checkin_note: "Show this code for customers to scan and check in — once a day."
       checkin_desc: "Print & post at the counter — or tap the code to enlarge it for scanning. Check in once a day."
       download_code: "Download to print"

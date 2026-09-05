@@ -5,7 +5,14 @@ module Merchant
     def show
       return redirect_to merchant_onboarding_path if current_workspace && !current_workspace.onboarded?
       @range = resolve_range
-      return load_branch_dashboard if current_workspace && branch_scoped?
+      # Staff locked to a branch always see only that branch.
+      return load_branch_dashboard(scoped_outlet) if current_workspace && branch_scoped?
+      # Owner/manager: a branch selector (Toàn merchant + each branch).
+      @branches = current_workspace ? current_workspace.outlets.order(:name).to_a : []
+      if current_workspace && params[:outlet].present? &&
+         (chosen = @branches.find { |o| o.id.to_s == params[:outlet].to_s })
+        return load_branch_dashboard(chosen)
+      end
       @members_count   = current_workspace ? Member.count : 0
       @outlets_count   = current_workspace ? Outlet.count : 0
       @program         = current_program
@@ -119,8 +126,8 @@ module Merchant
     end
 
     # Branch-scoped dashboard: only this outlet's numbers.
-    def load_branch_dashboard
-      @branch = scoped_outlet
+    def load_branch_dashboard(outlet = scoped_outlet)
+      @branch = outlet
       oid = @branch.id
       base = in_range(Purchase.where(outlet_id: oid))
       @members_count   = base.distinct.count(:member_id)
