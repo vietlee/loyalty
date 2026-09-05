@@ -51,8 +51,19 @@ export default class extends Controller {
     el.animate([{ opacity: 0, transform: "scale(1.15)" }, { opacity: 1, transform: "scale(1)" }],
                { duration: 300, easing: "ease-out" })
     if (navigator.vibrate) navigator.vibrate(60)
-    setTimeout(() => {
-      el.animate([{ opacity: 1 }, { opacity: 0 }], { duration: 400 }).onfinish = () => { el.style.display = "none" }
-    }, 2600)
+    // Keep the result on screen until the customer taps OK (or leaves) — pause
+    // the QR rotation + earn polling so nothing overwrites it behind the burst.
+    clearInterval(this.countdown)
+    clearInterval(this.poller)
+  }
+
+  // Tap "OK": hide the result and resume the rotating QR + earn polling.
+  dismiss() {
+    const el = this.burstTarget
+    el.animate([{ opacity: 1 }, { opacity: 0 }], { duration: 300 }).onfinish = () => { el.style.display = "none" }
+    this.remaining = this.ttlValue
+    this.rotate()
+    this.countdown = setInterval(() => this.tick(), 1000)
+    this.poller = setInterval(() => this.pollEarn(), 3000)
   }
 }

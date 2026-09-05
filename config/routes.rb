@@ -51,6 +51,8 @@ Rails.application.routes.draw do
     get  "choose",            to: "choose#show",              as: :choose
     patch "tiers",            to: "tiers#update",             as: :tiers
     resource :account, only: [:show, :update], controller: "account"
+    get "quick_login_qr", to: "account#quick_login_qr", as: :quick_login_qr
+    get "go/:token",      to: "quick_logins#create",    as: :quick_login
     get  "checkin_qr",        to: "dashboard#checkin_qr",     as: :checkin_qr
     post "checkin_qr/rotate", to: "dashboard#rotate_checkin", as: :rotate_checkin
     # First-run onboarding wizard

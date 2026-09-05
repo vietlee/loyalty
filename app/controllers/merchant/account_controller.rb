@@ -6,6 +6,14 @@ module Merchant
       @user = current_user
     end
 
+    # Fresh rotating self-login QR (returns an HTML fragment the profile page
+    # swaps in periodically). Encodes a short-lived token for THIS user.
+    def quick_login_qr
+      token = StaffLogin.encode(current_user, current_workspace)
+      url   = merchant_quick_login_url(token: token, host: request.host_with_port)
+      render html: helpers.qr_svg(url, size: 180), layout: false
+    end
+
     def update
       @user = current_user
       if params.dig(:user, :password).present?

@@ -37,4 +37,15 @@
       <%= f.submit t("merchant.account.save_pw"), class: "l-btn l-btn-primary", style: "margin-top:6px;" %>
     <% end %>
   </div>
+
+  <%# ---- Quick login on phone (self-login QR → mobile scanner) ---- %>
+  <div class="l-panel" style="margin-top:16px; text-align:center;"
+       data-controller="qrrefresh" data-qrrefresh-url-value="<%= merchant_quick_login_qr_path %>">
+    <h3 class="l-display" style="font-size:18px; margin-bottom:4px;"><%= t("merchant.quick_login.title") %></h3>
+    <p style="color:var(--ink-2); font-size:13px; margin-bottom:14px; max-width:360px; margin-left:auto; margin-right:auto;"><%= t("merchant.quick_login.note") %></p>
+    <div data-qrrefresh-target="box" style="display:inline-block; padding:12px; background:#fff; border:1px solid var(--line); border-radius:16px;">
+      <%= qr_svg(merchant_quick_login_url(token: StaffLogin.encode(current_user, current_workspace), host: request.host_with_port), size: 180) %>
+    </div>
+    <p style="color:var(--ink-3); font-size:11.5px; margin-top:10px;"><%= t("merchant.quick_login.expiry_hint") %></p>
+  </div>
 </div>

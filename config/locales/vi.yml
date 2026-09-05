@@ -34,6 +34,12 @@ vi:
       body: "%{feature} có ở gói %{plan} trở lên. Nâng cấp gói để mở khoá tính năng này."
       body_none: "%{feature} hiện chưa được bật ở gói nào. Vui lòng liên hệ hỗ trợ."
       cta: "Xem các gói"
+    quick_login:
+      title: "Đăng nhập nhanh trên điện thoại"
+      note: "Quét mã này bằng điện thoại của bạn để đăng nhập ngay vào chế độ máy quét — không cần gõ mật khẩu tại quầy."
+      expiry_hint: "Mã tự làm mới sau ít phút để bảo mật."
+      invalid: "Mã đăng nhập không hợp lệ hoặc đã hết hạn. Vui lòng lấy mã mới."
+      welcome: "Đã đăng nhập — sẵn sàng quét mã."
     dashboard:
       branch: "Chi nhánh"
       branch_note: "Bạn đang xem số liệu của chi nhánh mình."
@@ -870,6 +876,7 @@ vi:
       history: "Lịch sử"
       refresh_pre: "Mã tự làm mới sau"
       you_earned: "Bạn vừa nhận"
+      got_it: "Xong"
       balance_pre: "Số dư:"
       show_to_staff: "Đưa mã này cho nhân viên quét để tích điểm vào hoá đơn của %{term}."
     scan:

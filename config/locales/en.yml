@@ -29,6 +29,12 @@ en:
       body: "%{feature} is available on %{plan} and above. Upgrade your plan to unlock it."
       body_none: "%{feature} is not enabled on any plan yet. Please contact support."
       cta: "See plans"
+    quick_login:
+      title: "Quick login on your phone"
+      note: "Scan this with your phone to sign in straight to scanner mode — no password typing at the counter."
+      expiry_hint: "The code refreshes every few minutes for security."
+      invalid: "Login code is invalid or expired. Please get a new one."
+      welcome: "Signed in — ready to scan."
     dashboard:
       branch: "Branch"
       branch_note: "You're viewing your branch's numbers."
@@ -827,6 +833,7 @@ en:
       history: "History"
       refresh_pre: "Code refreshes in"
       you_earned: "You just earned"
+      got_it: "Got it"
       balance_pre: "Balance:"
       show_to_staff: "Show this code to staff to earn points on your bill."
     scan:
