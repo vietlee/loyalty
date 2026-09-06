@@ -31,7 +31,7 @@ module Merchant
     def nav_key = :gamification
 
     def badge_params
-      params.require(:badge).permit(:name, :icon, :criteria_type, :threshold, :reward_points)
+      params.require(:badge).permit(:name, :description, :icon, :criteria_type, :threshold, :reward_points)
     end
 
     # Badge keys are unique per workspace; derive a stable one from the name.

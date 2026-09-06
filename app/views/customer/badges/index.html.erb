@@ -16,7 +16,16 @@
         <div class="l-badge <%= 'locked' unless earned %>">
           <div class="ic"><%= earned ? b.display_icon : "🔒" %></div>
           <div class="nm"><%= b.name %></div>
-          <div style="font-size:10px; color:var(--ink-2); margin-top:2px;"><%= b.description %></div>
+          <% if b.description.present? %>
+            <div style="font-size:10px; color:var(--ink-2); margin-top:2px;"><%= b.description %></div>
+          <% end %>
+          <div style="font-size:10px; color:var(--ink-2); margin-top:4px; display:flex; flex-direction:column; gap:2px; align-items:center;">
+            <span>🎯 <%= b.requirement_text %></span>
+            <% if b.reward_points.to_i.positive? %>
+              <span style="color:var(--primary);">🎁 <%= t("customer.badges.reward_hint", n: b.reward_points) %></span>
+            <% end %>
+            <% if earned %><span style="color:var(--good,#2E9E5B); font-weight:600;"><%= t("customer.badges.earned") %></span><% end %>
+          </div>
         </div>
       <% end %>
     </div>
