@@ -99,7 +99,7 @@
                 <span class="l-chip" style="font-size:11px;"><%= t("customer.missions.pending_review") %></span>
               <% else %>
                 <%= link_to (mp.rejected? ? t("customer.missions.resubmit") : t("customer.missions.submit_proof")),
-                      new_member_mission_submission_path(m), class: "l-btn l-btn-soft",
+                      member_new_mission_submission_path(m), class: "l-btn l-btn-soft",
                       style: "padding:6px 12px; font-size:12px; white-space:nowrap;" %>
               <% end %>
             <% elsif m.mission_type == "refer" %>
