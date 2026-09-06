@@ -89,10 +89,22 @@
       <% @missions.each do |m| %>
         <% mp = @progress[m] %>
         <div class="l-check <%= 'done' if mp.completed? %>">
-          <span class="box"><%= "✓" if mp.completed? %></span>
+          <span class="box" style="display:grid; place-items:center; line-height:1; font-size:13px; color:#fff;"><%= "✓" if mp.completed? %></span>
           <div style="flex:1;"><div style="font-weight:600;"><%= m.display_icon %> <%= m.title %></div><div style="font-size:12px; color:var(--ink-2);"><%= t("customer.common.points_plus", n: m.reward_points) %></div></div>
-          <% if !mp.completed? && m.mission_type == "checkin" %>
-            <%= link_to t("customer.common.checkin"), member_scan_path, class: "l-btn l-btn-soft", style: "padding:6px 12px; font-size:12px;" %>
+          <% unless mp.completed? %>
+            <% if m.mission_type == "checkin" %>
+              <%= link_to t("customer.common.checkin"), member_scan_path, class: "l-btn l-btn-soft", style: "padding:6px 12px; font-size:12px; white-space:nowrap;" %>
+            <% elsif m.photo_proof? %>
+              <% if mp.pending? %>
+                <span class="l-chip" style="font-size:11px;"><%= t("customer.missions.pending_review") %></span>
+              <% else %>
+                <%= link_to (mp.rejected? ? t("customer.missions.resubmit") : t("customer.missions.submit_proof")),
+                      new_member_mission_submission_path(m), class: "l-btn l-btn-soft",
+                      style: "padding:6px 12px; font-size:12px; white-space:nowrap;" %>
+              <% end %>
+            <% elsif m.mission_type == "refer" %>
+              <%= link_to t("customer.missions.refer", default: "Mời bạn"), member_refer_path, class: "l-btn l-btn-soft", style: "padding:6px 12px; font-size:12px; white-space:nowrap;" %>
+            <% end %>
           <% end %>
         </div>
       <% end %>

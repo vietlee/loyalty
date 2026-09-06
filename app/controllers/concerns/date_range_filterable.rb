@@ -4,7 +4,7 @@
 module DateRangeFilterable
   extend ActiveSupport::Concern
 
-  RANGE_PRESETS = %w[7d 30d 90d mtd all].freeze
+  RANGE_PRESETS = %w[7d 30d 90d mtd ytd 12m all].freeze
 
   private
 
@@ -26,6 +26,8 @@ module DateRangeFilterable
       when "7d"  then { from: 7.days.ago.beginning_of_day, to: now }
       when "90d" then { from: 90.days.ago.beginning_of_day, to: now }
       when "mtd" then { from: now.beginning_of_month, to: now }
+      when "ytd" then { from: now.beginning_of_year, to: now }
+      when "12m" then { from: 12.months.ago.beginning_of_day, to: now }
       when "all" then { from: nil, to: nil }
       else            { from: 30.days.ago.beginning_of_day, to: now }
       end

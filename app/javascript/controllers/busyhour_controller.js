@@ -4,29 +4,43 @@ import { Controller } from "@hotwired/stimulus"
 // over AJAX — no page reload. Also shows a hover tooltip with the real purchase
 // count for each heatmap cell.
 export default class extends Controller {
-  static targets = ["panel", "outlet", "refreshBtn"]
+  static targets = ["panel", "outlet", "refreshBtn", "rangeSelect", "fromDate", "toDate"]
   static values = { url: String, refreshUrl: String, range: String }
 
   connect() { this.bindTooltip() }
 
   outlet() { return this.hasOutletTarget ? this.outletTarget.value : "" }
 
-  // Branch <select> change → reload the panel for that branch.
-  async switch() {
-    const qs = new URLSearchParams({ outlet: this.outlet(), range: this.rangeValue })
-    await this.swap(() => fetch(`${this.urlValue}?${qs}`, { headers: { "Accept": "text/html" } }))
+  // Build query from the panel's outlet + range + custom dates.
+  params() {
+    const p = new URLSearchParams({ outlet: this.outlet() })
+    const from = this.hasFromDateTarget ? this.fromDateTarget.value : ""
+    const to   = this.hasToDateTarget ? this.toDateTarget.value : ""
+    if (from || to) { if (from) p.set("from", from); if (to) p.set("to", to) }
+    else p.set("range", this.hasRangeSelectTarget ? this.rangeSelectTarget.value : this.rangeValue)
+    return p
   }
 
-  // Refresh button → (re)generate the AI insight for the current branch.
+  // Branch / range / date change → reload the panel.
+  async switch() {
+    await this.swap(() => fetch(`${this.urlValue}?${this.params()}`, { headers: { "Accept": "text/html" } }))
+  }
+
+  // Changing the range preset clears any custom dates so it takes effect.
+  async rangeChanged() {
+    if (this.hasFromDateTarget) this.fromDateTarget.value = ""
+    if (this.hasToDateTarget) this.toDateTarget.value = ""
+    await this.switch()
+  }
+
+  // Refresh button → (re)generate the AI insight for the current view.
   async refresh() {
-    const outlet = this.outlet()
     if (this.hasRefreshBtnTarget) {
       this.refreshBtnTarget.disabled = true
       this.refreshBtnTarget.textContent = "⏳ Đang tạo gợi ý…"
     }
     const token = document.querySelector('meta[name="csrf-token"]')?.content
-    const qs = new URLSearchParams({ outlet, range: this.rangeValue })
-    await this.swap(() => fetch(`${this.refreshUrlValue}?${qs}`, {
+    await this.swap(() => fetch(`${this.refreshUrlValue}?${this.params()}`, {
       method: "POST",
       headers: { "X-CSRF-Token": token, "Accept": "text/html" }
     }))

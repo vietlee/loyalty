@@ -15,6 +15,20 @@
         <% end %>
       </select>
     <% end %>
+    <select class="l-field" style="width:auto; padding:6px 10px; font-size:13px;"
+            data-busyhour-target="rangeSelect" data-action="change->busyhour#rangeChanged"
+            aria-label="<%= bh.(:range_label) %>">
+      <% %w[30d 90d mtd ytd 12m all].each do |rk| %>
+        <option value="<%= rk %>" <%= 'selected' if @range[:key] == rk %>><%= bh.("range_#{rk}") %></option>
+      <% end %>
+      <% if @range[:key] == 'custom' %><option value="custom" selected><%= @range[:label] %></option><% end %>
+    </select>
+    <input type="date" data-busyhour-target="fromDate" data-action="change->busyhour#switch"
+           value="<%= @range[:key] == 'custom' ? @range[:from].to_date.iso8601 : '' %>"
+           class="l-field" style="width:auto; padding:5px 8px; font-size:13px;" aria-label="<%= bh.(:range_from) %>">
+    <input type="date" data-busyhour-target="toDate" data-action="change->busyhour#switch"
+           value="<%= @range[:key] == 'custom' ? @range[:to].to_date.iso8601 : '' %>"
+           class="l-field" style="width:auto; padding:5px 8px; font-size:13px;" aria-label="<%= bh.(:range_to) %>">
     <button type="button" class="l-btn l-btn-soft" style="padding:6px 12px; font-size:13px; white-space:nowrap;"
             data-busyhour-target="refreshBtn" data-action="busyhour#refresh">
       🔄 <%= bh.(:busy_refresh) %>
