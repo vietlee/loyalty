@@ -378,6 +378,9 @@ vi:
       criteria_label: "Điều kiện đạt"
       threshold_label: "Mốc cần đạt"
       reward_points_label: "Điểm thưởng khi đạt"
+      badge_reward_label: "Ưu đãi tặng kèm (tuỳ chọn)"
+      badge_reward_blank: "— Không tặng ưu đãi —"
+      badge_reward_hint: "Khách nhận voucher này vào ví khi đạt huy hiệu. Có thể kết hợp cả điểm thưởng."
       badge_desc_label: "Mô tả (hiện cho khách)"
       badge_desc_ph: "VD: Ghé mua lần đầu để mở khoá huy hiệu này"
       badge_desc_hint: "Mô tả giúp khách hiểu cần làm gì để đạt huy hiệu — hiển thị trong app khách hàng."
@@ -499,6 +502,8 @@ vi:
       just_now: "vừa xong"
       schedule_label: "Hẹn giờ gửi (để trống = gửi ngay)"
       scheduled_chip: "⏰ Hẹn %{time}"
+      scheduled_word: "Đã hẹn giờ"
+      list_sub: "%{n} thông báo đã tạo"
     staff:
       title: "Nhân viên & phân quyền"
       team: "Đội ngũ"

@@ -373,6 +373,9 @@ en:
       criteria_label: "Criteria"
       threshold_label: "Target to reach"
       reward_points_label: "Reward points"
+      badge_reward_label: "Bonus voucher (optional)"
+      badge_reward_blank: "— No voucher —"
+      badge_reward_hint: "The member gets this voucher in their wallet when they earn the badge. Can be combined with points."
       badge_desc_label: "Description (shown to customers)"
       badge_desc_ph: "e.g. Make your first purchase to unlock this badge"
       badge_desc_hint: "The description helps customers see what to do to earn it — shown in the customer app."
@@ -494,6 +497,8 @@ en:
       just_now: "just now"
       schedule_label: "Schedule send (blank = send now)"
       scheduled_chip: "⏰ Scheduled %{time}"
+      scheduled_word: "Scheduled"
+      list_sub: "%{n} broadcasts created"
     staff:
       title: "Staff & roles"
       team: "Team"

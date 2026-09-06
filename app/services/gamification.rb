@@ -58,6 +58,12 @@ module Gamification
                                  note: "🏅 #{badge.name}")
         member.recompute_points!
       end
+      # Gift voucher for earning the badge (once), if the merchant attached one.
+      if badge.reward_id.present? && (reward = badge.reward)
+        Voucher.create!(workspace: ws, member: member, reward: reward,
+                        source: "campaign", state: "active", points_spent: 0,
+                        expires_at: reward.voucher_expiry_from)
+      end
     end
   end
 end

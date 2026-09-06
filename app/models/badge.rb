@@ -4,6 +4,7 @@ class Badge < ApplicationRecord
   CRITERIA = %w[first_purchase purchases_count points_total night_owl].freeze
 
   belongs_to :workspace
+  belongs_to :reward, optional: true # optional voucher granted when earned
   has_many :member_badges, dependent: :destroy
 
   validates :key, :name, presence: true
