@@ -12,7 +12,11 @@ module Customer
         @member = current_member
         @tier   = @member.tier
         @unread = @member.notifications.unread.count
-        @offers = current_workspace.rewards.redeemable.ordered.to_a.select(&:available?).first(6)
+        # Highlight what's redeemable now + what's opening soon (open first).
+        @offers = current_workspace.rewards.redeemable.ordered.to_a
+                    .select { |r| %i[open upcoming].include?(r.redeem_state) }
+                    .sort_by { |r| r.redeem_open? ? 0 : 1 }
+                    .first(6)
         prog = current_workspace.program
         if prog.gamification_enabled
           # Daily tasks + one-time missions (e.g. social share) both surface here.

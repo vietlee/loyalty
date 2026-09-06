@@ -979,6 +979,11 @@ en:
       redeem_now: "Redeem now · %{n} pts"
       confirm: "Redeem %{title} for %{n} pts?"
       short_by: "%{n} points short"
+      opens_at: "Opens %{time}"
+      ended: "This offer has ended"
+      closed_now: "Outside redemption hours"
+      window_only: "Redeem only during: %{win}"
+      sold_out: "Sold out"
     voucher:
       title: "Reward"
       used_title: "Used"

@@ -1022,6 +1022,11 @@ vi:
       redeem_now: "Đổi ngay · %{n} điểm"
       confirm: "Đổi %{title} với %{n} điểm?"
       short_by: "Còn thiếu %{n} điểm"
+      opens_at: "Mở đổi từ %{time}"
+      ended: "Ưu đãi đã kết thúc"
+      closed_now: "Ngoài khung giờ đổi"
+      window_only: "Chỉ đổi trong: %{win}"
+      sold_out: "Đã hết lượt"
     voucher:
       title: "Ưu đãi"
       used_title: "Đã sử dụng"

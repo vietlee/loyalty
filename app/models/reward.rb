@@ -48,6 +48,33 @@ class Reward < ApplicationRecord
   end
   def available?(now = Time.current) = active? && in_stock? && within_window?(now)
 
+  # Redemption state for the customer catalog. We now SHOW rewards even outside
+  # their redeem window (dimmed + a notice) instead of hiding them, so a member
+  # can see what's coming and only redeem while it's :open.
+  #   :open → redeemable now · :upcoming → before starts_at · :closed → has
+  #   recurring day/hour windows, none active right now · :ended → past ends_at
+  #   · :out_of_stock → no stock left · :inactive → turned off
+  def redeem_state(now = Time.current)
+    return :inactive if !active?
+    return :ended    if ends_at.present? && ends_at < now
+    return :upcoming if starts_at.present? && starts_at > now
+    return :out_of_stock unless in_stock?
+    return :open if within_window?(now)
+    :closed
+  end
+
+  def redeem_open?(now = Time.current) = redeem_state(now) == :open
+
+  # Localized one-line reason the redeem button is disabled (nil when :open).
+  def redeem_window_hint(now = Time.current)
+    case redeem_state(now)
+    when :upcoming then I18n.t("customer.reward_detail.opens_at", time: I18n.l(starts_at, format: :short))
+    when :ended    then I18n.t("customer.reward_detail.ended")
+    when :out_of_stock then I18n.t("customer.reward_detail.sold_out")
+    when :closed   then (schedule_summary ? I18n.t("customer.reward_detail.window_only", win: schedule_summary) : I18n.t("customer.reward_detail.closed_now"))
+    end
+  end
+
   # Expiry for a voucher issued now: a fixed offer-level date if set, otherwise
   # valid_days after the claim.
   def voucher_expiry_from(now = Time.current)

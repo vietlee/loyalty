@@ -28,7 +28,14 @@
     <div style="text-align:right;"><div class="l-eyebrow"><%= t("customer.reward_detail.your_points") %></div><div class="l-num" style="font-size:20px; color:<%= enough ? 'var(--good)' : 'var(--warn)' %>;"><%= number_with_delimiter(@member.points_balance) %></div></div>
   </div>
 
-  <% if enough %>
+  <% if !@reward.redeem_open? %>
+    <button class="l-btn l-btn-block" disabled style="background:var(--surface-2); color:var(--ink-2);">
+      🕑 <%= @reward.redeem_window_hint %>
+    </button>
+    <% if @reward.schedule_summary.present? && @reward.redeem_state != :ended %>
+      <p style="text-align:center; font-size:12px; color:var(--ink-2); margin-top:8px;"><%= t("customer.reward_detail.window_only", win: @reward.schedule_summary) %></p>
+    <% end %>
+  <% elsif enough %>
     <%= button_to t("customer.reward_detail.redeem_now", n: number_with_delimiter(@reward.cost_points)), member_redeem_reward_path(@reward),
           method: :post, class: "l-btn l-btn-primary l-btn-block",
           form: { data: { turbo_confirm: t("customer.reward_detail.confirm", title: @reward.title, n: number_with_delimiter(@reward.cost_points)) } } %>

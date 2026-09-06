@@ -69,11 +69,16 @@
     <div data-controller="carousel">
       <div class="l-carousel" data-carousel-target="track">
         <% @offers.each_with_index do |r, i| %>
-          <%= link_to member_reward_path(r), class: "l-offer", style: "text-decoration:none; color:#fff; background:#{grads[i % grads.size]};" do %>
+          <% open = r.redeem_open? %>
+          <%= link_to member_reward_path(r), class: "l-offer", style: "text-decoration:none; color:#fff; background:#{grads[i % grads.size]}; position:relative;" do %>
             <div class="l-eyebrow" style="color:#fff; opacity:.85;"><%= r.display_icon %> <%= r.value_label %></div>
             <div class="big"><%= r.title %></div>
             <div style="font-size:12.5px; opacity:.9;">
-              <% if r.cost_points %><%= t("customer.common.points_count", n: number_with_delimiter(r.cost_points)) %> · <% end %><%= t("customer.reward.redeem_cta", default: "Đổi ngay") %> ›
+              <% if open %>
+                <% if r.cost_points %><%= t("customer.common.points_count", n: number_with_delimiter(r.cost_points)) %> · <% end %><%= t("customer.reward.redeem_cta", default: "Đổi ngay") %> ›
+              <% else %>
+                🕑 <%= r.redeem_window_hint %>
+              <% end %>
             </div>
           <% end %>
         <% end %>
