@@ -72,7 +72,8 @@
 
     <%# 2) Voucher validity after claiming: relative (N days) or a fixed date %>
     <% fixed = f.object.expires_at.present? %>
-    <div style="font-weight:700; font-size:14px; color:var(--ink); margin-top:16px; margin-bottom:6px;"><%= t("merchant.rewards.validity_title") %></div>
+    <div style="font-weight:700; font-size:14px; color:var(--ink); margin-top:16px; margin-bottom:2px;"><%= t("merchant.rewards.validity_title") %></div>
+    <p style="color:var(--ink-2); font-size:12.5px; margin:0 0 10px;"><%= t("merchant.rewards.validity_hint") %></p>
     <div style="display:flex; flex-direction:column; gap:10px;">
       <label data-expirymode-target="relativeRow" style="display:flex; align-items:center; gap:8px; font-size:13.5px; transition:opacity .12s;">
         <input type="radio" name="reward[expiry_mode]" value="relative" <%= "checked" unless fixed %>

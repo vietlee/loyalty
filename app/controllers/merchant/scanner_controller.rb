@@ -12,6 +12,11 @@ module Merchant
       if params[:outlet].present? && selectable_outlets.any? { |o| o.id.to_s == params[:outlet].to_s }
         session[:active_outlet_id] = params[:outlet]
       end
+      # Kiosk mode = the standalone mobile counter scanner opened from the
+      # staff quick-login launcher: same tool, but a minimal chrome (no merchant
+      # sidebar/menu) so a phone at the counter behaves like a dedicated device.
+      @kiosk = params[:kiosk].present?
+      render layout: "scanner_kiosk" if @kiosk
     end
 
     private

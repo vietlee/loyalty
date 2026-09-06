@@ -1,9 +1,12 @@
 <% content_for :title, t("merchant.nav.scanner") %>
 <% content_for :title_en, "COUNTER SCANNER" %>
 
+<% kiosk = local_assigns.fetch(:kiosk, false) || @kiosk %>
+<% kiosk_param = kiosk ? { kiosk: 1 } : {} %>
 <div style="max-width:560px; margin:0 auto;">
   <% if selectable_outlets.size > 1 %>
     <%= form_with url: merchant_scanner_path, method: :get, data: { turbo: false } do %>
+      <% if kiosk %><input type="hidden" name="kiosk" value="1"><% end %>
       <input type="hidden" name="tab" value="<%= @tab %>">
       <label class="l-label"><%= t("merchant.scan.selling_branch") %></label>
       <select name="outlet" class="l-field" style="margin-bottom:16px;" onchange="this.form.requestSubmit()">
@@ -17,12 +20,12 @@
   <% end %>
 
   <div style="display:flex; gap:8px; margin-bottom:16px;">
-    <%= link_to t("merchant.scan.tab_earn"), merchant_scanner_path(tab: "earn"),
+    <%= link_to t("merchant.scan.tab_earn"), merchant_scanner_path(kiosk_param.merge(tab: "earn")),
           class: "l-chip #{'l-chip-brand' if @tab == 'earn'}", data: { turbo_frame: "scan_tool" } %>
-    <%= link_to t("merchant.scan.tab_redeem"), merchant_scanner_path(tab: "redeem"),
+    <%= link_to t("merchant.scan.tab_redeem"), merchant_scanner_path(kiosk_param.merge(tab: "redeem")),
           class: "l-chip #{'l-chip-brand' if @tab == 'redeem'}", data: { turbo_frame: "scan_tool" } %>
     <% if current_program.scan_member? %>
-      <%= link_to t("merchant.scan.tab_pos"), merchant_scanner_path(tab: "pos"),
+      <%= link_to t("merchant.scan.tab_pos"), merchant_scanner_path(kiosk_param.merge(tab: "pos")),
             class: "l-chip #{'l-chip-brand' if @tab == 'pos'}", data: { turbo_frame: "scan_tool" } %>
     <% end %>
   </div>
