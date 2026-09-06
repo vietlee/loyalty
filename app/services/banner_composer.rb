@@ -30,12 +30,15 @@ class BannerComposer
       # 1) QR PNG (small quiet zone; the card adds the visual padding).
       File.binwrite(qr_path, ApplicationController.helpers.qr_png(@qr_url, color: "1A1A1A", size: QR))
 
-      # 2) Rounded white card canvas.
+      # 2) Rounded white card canvas with a hairline border so it reads clearly
+      #    as an overlaid card on top of a busy illustration.
       MiniMagick::Tool::Convert.new do |c|
         c.size "#{card}x#{card}"
         c << "xc:none"
         c.fill "white"
-        c.draw "roundrectangle 0,0,#{card - 1},#{card - 1},#{RADIUS},#{RADIUS}"
+        c.stroke "rgba(0,0,0,0.10)"
+        c.strokewidth "3"
+        c.draw "roundrectangle 1,1,#{card - 2},#{card - 2},#{RADIUS},#{RADIUS}"
         c << card_path
       end
 

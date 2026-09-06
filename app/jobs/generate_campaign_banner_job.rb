@@ -53,14 +53,17 @@ class GenerateCampaignBannerJob < ApplicationJob
       A warm, inviting flat-vector promotional banner (16:9) for a #{industry}
       loyalty campaign. Theme: "#{title}"#{body.present? ? " — #{body}" : ''} (#{c.type_label}).
       #{offer}
-      Charming, polished illustration that FILLS THE WHOLE FRAME edge-to-edge with
-      layered decorative elements relevant to the business (cups, treats, gifts,
-      envelopes, ribbons, leaves). Keep the right side only slightly less busy so a
-      small card overlay stays readable, but NO large empty or blank areas.
+      Charming, polished illustration whose rich decorative elements (cups, treats,
+      gifts, envelopes, ribbons, leaves) COVER THE ENTIRE CANVAS EVENLY, edge to
+      edge, including the full RIGHT side. Distribute the imagery across the whole
+      width — do NOT cluster everything on the left.
+      ABSOLUTELY NO blank, empty, plain, or lightly-tinted rectangular areas, and
+      NO card / label / tag / plaque / frame / paper / envelope-panel shape left
+      empty for text. Every part of the image must be filled with illustration.
       Palette built around #{theme['primary']} and #{theme['primary_2']}.
       IMPORTANT: do NOT render ANY text, letters, words, numbers, logos, QR codes,
       barcodes, or phone screens with codes — a real QR card is composited by the
-      system on the right, so keep the image completely text-free.
+      system afterwards, so keep the image completely text-free.
     PROMPT
   end
 end
