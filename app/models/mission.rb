@@ -9,10 +9,15 @@ class Mission < ApplicationRecord
     "facebook" => "Facebook", "instagram" => "Instagram",
     "tiktok" => "TikTok", "zalo" => "Zalo"
   }.freeze
-  PERIODS = %w[daily weekly].freeze
+  # "once" = one-time (never resets); daily/weekly recur each period.
+  PERIODS = %w[once daily weekly].freeze
 
   belongs_to :workspace
   has_many :mission_progresses, dependent: :destroy
+
+  # Photo-proof missions (review / social share) are inherently one-time — you
+  # can't "share to Facebook" again every day for points — so force them to once.
+  before_validation { self.period = "once" if photo_proof? }
 
   validates :title, presence: true
   validates :mission_type, inclusion: { in: TYPES }
@@ -50,7 +55,11 @@ class Mission < ApplicationRecord
 
   # Current period bucket key (auto-resets progress each day/week).
   def current_period_key(time = Time.current)
-    period == "weekly" ? time.strftime("%G-W%V") : time.strftime("%Y-%m-%d")
+    case period
+    when "weekly" then time.strftime("%G-W%V")
+    when "daily"  then time.strftime("%Y-%m-%d")
+    else "once" # one-time: a single permanent bucket, never resets
+    end
   end
 
   def progress_for(member)

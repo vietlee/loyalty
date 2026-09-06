@@ -111,7 +111,7 @@
           <div style="flex:1;">
             <strong><%= m.title %></strong>
             <% unless m.active? %><span class="l-chip" style="font-size:10px; margin-left:6px; background:var(--surface-2);">⏸ <%= t("merchant.gami.stamp_paused") %></span><% end %>
-            <div style="font-size:12px; color:var(--ink-2);"><%= m.period == 'daily' ? t('merchant.gami.daily') : t('merchant.gami.weekly') %> · <%= t("merchant.gami.points_plus", n: m.reward_points) %></div>
+            <div style="font-size:12px; color:var(--ink-2);"><%= t("merchant.gami.period_#{m.period}", default: m.period) %> · <%= t("merchant.gami.points_plus", n: m.reward_points) %></div>
           </div>
           <span class="l-chip" style="font-size:11px;"><%= t("merchant.gami.edit_chip") %></span>
           <%= button_to "🗑", merchant_mission_path(m), method: :delete, class: "sc-del",
@@ -131,7 +131,7 @@
                      [t("merchant.gami.mtype_review"), "review"], [t("merchant.gami.mtype_social"), "social_share"]],
                     {}, class: "l-field",
                     data: { missionform_target: "type", action: "change->missionform#typeChanged" } %>
-              <%= f.select :period, [[t("merchant.gami.daily"), "daily"], [t("merchant.gami.weekly"), "weekly"]], {}, class: "l-field" %>
+              <%= f.select :period, [[t("merchant.gami.period_once"), "once"], [t("merchant.gami.daily"), "daily"], [t("merchant.gami.weekly"), "weekly"]], {}, class: "l-field", data: { missionform_target: "period" } %>
             </div>
             <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-top:8px;">
               <div data-missionform-target="goalWrap">
@@ -186,7 +186,7 @@
                  [t("merchant.gami.mtype_review"), "review"], [t("merchant.gami.mtype_social"), "social_share"]],
                 {}, class: "l-field",
                 data: { missionform_target: "type", action: "change->missionform#typeChanged" } %>
-          <%= f.select :period, [[t("merchant.gami.daily"), "daily"], [t("merchant.gami.weekly"), "weekly"]], {}, class: "l-field" %>
+          <%= f.select :period, [[t("merchant.gami.period_once"), "once"], [t("merchant.gami.daily"), "daily"], [t("merchant.gami.weekly"), "weekly"]], {}, class: "l-field", data: { missionform_target: "period" } %>
         </div>
         <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-top:8px;">
           <div data-missionform-target="goalWrap">

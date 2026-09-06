@@ -1,8 +1,10 @@
 import { Controller } from "@hotwired/stimulus"
+import "jsqr" // UMD side-effect: defines window.jsQR (fallback decoder for iOS/Safari)
 
-// Counter-side QR scanner. Uses the native BarcodeDetector when available;
-// otherwise prompts the cashier to use manual entry. On a successful decode it
-// fills the hidden token field and submits the lookup form (Turbo frame).
+// Counter-side QR scanner. Uses the native BarcodeDetector when available
+// (Android Chrome), otherwise falls back to jsQR decoding video frames on a
+// canvas (iOS Safari & Chrome, which have no BarcodeDetector). On a successful
+// decode it fills the hidden token field and submits the lookup form.
 export default class extends Controller {
   static targets = ["video", "token", "form", "status", "overlay"]
 
@@ -45,20 +47,44 @@ export default class extends Controller {
   cameraSeen() { try { return localStorage.getItem("scannerCameraOk") === "1" } catch (e) { return false } }
   rememberCamera(ok) { try { ok ? localStorage.setItem("scannerCameraOk", "1") : localStorage.removeItem("scannerCameraOk") } catch (e) {} }
 
+  // Which decode engine can we use? Native first, jsQR fallback second.
+  decodeMode() {
+    if ("BarcodeDetector" in window) return "native"
+    if (typeof window.jsQR === "function") return "jsqr"
+    return null
+  }
+
   async start() {
-    if (!("BarcodeDetector" in window)) {
+    const mode = this.decodeMode()
+    if (!mode) {
       this.statusTarget.textContent = "Trình duyệt không hỗ trợ quét — hãy nhập mã thủ công bên dưới."
       return
     }
+    if (!navigator.mediaDevices?.getUserMedia) {
+      this.statusTarget.textContent = "Không truy cập được camera — hãy nhập mã thủ công."
+      return
+    }
+    this.statusTarget.textContent = "Đang mở camera…"
     try {
-      this.stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } })
+      this.stream = await navigator.mediaDevices.getUserMedia({
+        video: { facingMode: { ideal: "environment" } }, audio: false
+      })
       this.videoTarget.srcObject = this.stream
+      // iOS needs the inline/muted attributes (already set) + an explicit play().
+      this.videoTarget.setAttribute("playsinline", "")
       await this.videoTarget.play()
       if (this.hasOverlayTarget) this.overlayTarget.style.display = "none"
       this.rememberCamera(true)
-      this.detector = new BarcodeDetector({ formats: ["qr_code"] })
       this.statusTarget.textContent = "Đang quét…"
-      this.timer = setInterval(() => this.tick(), 400)
+
+      if (mode === "native") {
+        this.detector = new BarcodeDetector({ formats: ["qr_code"] })
+      } else {
+        this.canvas = document.createElement("canvas")
+        this.ctx = this.canvas.getContext("2d", { willReadFrequently: true })
+      }
+      this.mode = mode
+      this.timer = setInterval(() => this.tick(), 300)
     } catch (e) {
       this.rememberCamera(false)
       if (this.hasOverlayTarget) this.overlayTarget.style.display = ""
@@ -68,23 +94,37 @@ export default class extends Controller {
 
   async tick() {
     try {
-      const codes = await this.detector.detect(this.videoTarget)
-      if (codes.length) {
-        const raw = (codes[0].rawValue || "").trim()
-        if (!raw) return
-        // The lookup response re-renders this frame (a fresh scanner instance),
-        // which would instantly re-detect the same QR still in view — a tight
-        // resubmit loop. Dedupe identical scans across instances for a few
-        // seconds via window state (survives the Turbo frame swap).
-        const now = Date.now()
-        if (raw === window.__lastScan && now - (window.__lastScanAt || 0) < 3500) return
-        window.__lastScan = raw
-        window.__lastScanAt = now
-        this.stop()
-        this.tokenTarget.value = raw
-        this.formTarget.requestSubmit()
-      }
+      const raw = this.mode === "native" ? await this.detectNative() : this.detectJsQR()
+      if (!raw) return
+      // The lookup response re-renders this frame (a fresh scanner instance),
+      // which would instantly re-detect the same QR still in view — a tight
+      // resubmit loop. Dedupe identical scans across instances for a few
+      // seconds via window state (survives the Turbo frame swap).
+      const now = Date.now()
+      if (raw === window.__lastScan && now - (window.__lastScanAt || 0) < 3500) return
+      window.__lastScan = raw
+      window.__lastScanAt = now
+      this.stop()
+      this.tokenTarget.value = raw
+      this.formTarget.requestSubmit()
     } catch (e) { /* transient */ }
+  }
+
+  async detectNative() {
+    const codes = await this.detector.detect(this.videoTarget)
+    return codes.length ? (codes[0].rawValue || "").trim() : null
+  }
+
+  detectJsQR() {
+    const v = this.videoTarget
+    const w = v.videoWidth, h = v.videoHeight
+    if (!w || !h) return null
+    this.canvas.width = w
+    this.canvas.height = h
+    this.ctx.drawImage(v, 0, 0, w, h)
+    const img = this.ctx.getImageData(0, 0, w, h)
+    const code = window.jsQR(img.data, w, h, { inversionAttempts: "dontInvert" })
+    return code && code.data ? code.data.trim() : null
   }
 
   stop() {

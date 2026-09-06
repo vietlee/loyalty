@@ -15,7 +15,8 @@ module Customer
         @offers = current_workspace.rewards.redeemable.ordered.to_a.select(&:available?).first(6)
         prog = current_workspace.program
         if prog.gamification_enabled
-          @missions = current_workspace.missions.active.ordered.where(period: "daily").limit(3).to_a
+          # Daily tasks + one-time missions (e.g. social share) both surface here.
+          @missions = current_workspace.missions.active.ordered.where(period: %w[daily once]).limit(3).to_a
           @progress = @missions.index_with { |m| m.progress_for(@member) }
           @has_stamps = current_workspace.stamp_cards.active.exists?
         end

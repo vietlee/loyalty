@@ -6,10 +6,10 @@
 </header>
 
 <div class="l-screen">
-  <% %w[daily weekly].each do |period| %>
+  <% [["once", t("customer.missions.one_time")], ["daily", t("customer.missions.today")], ["weekly", t("customer.missions.this_week")]].each do |period, header| %>
     <% list = @missions.select { |m| m.period == period } %>
     <% next if list.empty? %>
-    <div class="l-section-h"><h3><%= period == "daily" ? t("customer.missions.today") : t("customer.missions.this_week") %></h3></div>
+    <div class="l-section-h"><h3><%= header %></h3></div>
     <div class="l-tile">
       <% list.each do |m| %>
         <% mp = @progress[m] %>
