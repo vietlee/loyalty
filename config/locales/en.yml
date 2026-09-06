@@ -103,6 +103,7 @@ en:
       range_90d: "90 days"
       range_mtd: "This month"
       range_all: "All time"
+      range_custom: "Custom dates"
       range_ytd: "This year"
       range_12m: "12 months"
       range_from: "From"

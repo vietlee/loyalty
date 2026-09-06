@@ -8,14 +8,14 @@
     <input type="search" name="q" value="<%= @q %>" placeholder="<%= tx.(:search_ph) %>"
            class="l-field" style="flex:1; min-width:220px;">
 
-    <select name="range" class="l-field" style="max-width:170px;" onchange="this.form.requestSubmit()"
+    <% is_custom = @range[:key] == 'custom' %>
+    <select name="range" class="l-field" style="max-width:170px;"
+            onchange="var c=this.value==='custom'; this.closest('form').querySelector('[data-range-custom]').hidden=!c; if(!c){this.form.querySelector('[name=from]').value=''; this.form.querySelector('[name=to]').value=''; this.form.requestSubmit()}"
             aria-label="<%= t('merchant.dashboard.range_label') %>">
       <% %w[7d 30d 90d mtd all].each do |rk| %>
         <option value="<%= rk %>" <%= 'selected' if @range[:key] == rk %>><%= t("merchant.dashboard.range_#{rk}") %></option>
       <% end %>
-      <% if @range[:key] == 'custom' %>
-        <option value="custom" selected><%= @range[:label] %></option>
-      <% end %>
+      <option value="custom" <%= 'selected' if is_custom %>><%= t("merchant.dashboard.range_custom") %></option>
     </select>
 
     <% if @branches.present? %>
@@ -41,8 +41,8 @@
     <%= submit_tag "🔍 #{t('merchant.transactions.search_btn')}", class: "l-btn l-btn-primary", style: "flex:none; padding:9px 18px;" %>
   </div>
 
-  <%# Custom range date inputs (kept beside the preset dropdown for precise ranges) %>
-  <div style="display:flex; gap:8px; margin-bottom:16px; flex-wrap:wrap; align-items:center; font-size:13px; color:var(--ink-2);">
+  <%# Custom range date inputs — only shown when the preset is "Tùy chọn" %>
+  <div data-range-custom <%= 'hidden' unless is_custom %> style="display:flex; gap:8px; margin-bottom:16px; flex-wrap:wrap; align-items:center; font-size:13px; color:var(--ink-2);">
     <span><%= t('merchant.dashboard.range_from') %></span>
     <input type="date" name="from" value="<%= @range[:key] == 'custom' ? @range[:from].to_date.iso8601 : '' %>"
            class="l-field" style="width:auto; padding:6px 10px;" onchange="this.form.requestSubmit()">

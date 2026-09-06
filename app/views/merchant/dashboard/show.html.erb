@@ -18,23 +18,24 @@
       <% if @range %>
         <div class="flt-grp">
           <span class="flt-lbl"><%= d.(:range_label) %></span>
+          <% is_custom = @range[:key] == 'custom' %>
           <div class="flt-row">
             <select name="range" class="l-field" style="width:auto; padding:8px 12px;"
-                    onchange="this.form.querySelector('[name=from]').value=''; this.form.querySelector('[name=to]').value=''; this.form.requestSubmit()"
+                    onchange="var c=this.value==='custom'; this.closest('form').querySelector('[data-range-custom]').hidden=!c; if(!c){this.form.querySelector('[name=from]').value=''; this.form.querySelector('[name=to]').value=''; this.form.requestSubmit()}"
                     aria-label="<%= d.(:range_label) %>">
               <% %w[7d 30d 90d mtd all].each do |rk| %>
                 <option value="<%= rk %>" <%= 'selected' if @range[:key] == rk %>><%= d.("range_#{rk}") %></option>
               <% end %>
-              <% if @range[:key] == 'custom' %>
-                <option value="custom" selected><%= @range[:label] %></option>
-              <% end %>
+              <option value="custom" <%= 'selected' if is_custom %>><%= d.(:range_custom) %></option>
             </select>
-            <span class="sep"><%= d.(:range_from) %></span>
-            <input type="date" name="from" value="<%= @range[:key] == 'custom' ? @range[:from].to_date.iso8601 : '' %>"
-                   class="l-field" style="width:auto; padding:6px 10px;" onchange="this.form.requestSubmit()" aria-label="<%= d.(:range_from) %>">
-            <span class="sep"><%= d.(:range_to) %></span>
-            <input type="date" name="to" value="<%= @range[:key] == 'custom' ? @range[:to].to_date.iso8601 : '' %>"
-                   class="l-field" style="width:auto; padding:6px 10px;" onchange="this.form.requestSubmit()" aria-label="<%= d.(:range_to) %>">
+            <span data-range-custom <%= 'hidden' unless is_custom %> style="display:inline-flex; align-items:center; gap:8px;">
+              <span class="sep"><%= d.(:range_from) %></span>
+              <input type="date" name="from" value="<%= is_custom ? @range[:from].to_date.iso8601 : '' %>"
+                     class="l-field" style="width:auto; padding:6px 10px;" onchange="this.form.requestSubmit()" aria-label="<%= d.(:range_from) %>">
+              <span class="sep"><%= d.(:range_to) %></span>
+              <input type="date" name="to" value="<%= is_custom ? @range[:to].to_date.iso8601 : '' %>"
+                     class="l-field" style="width:auto; padding:6px 10px;" onchange="this.form.requestSubmit()" aria-label="<%= d.(:range_to) %>">
+            </span>
           </div>
         </div>
       <% end %>

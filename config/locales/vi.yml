@@ -108,6 +108,7 @@ vi:
       range_90d: "90 ngày"
       range_mtd: "Tháng này"
       range_all: "Tất cả"
+      range_custom: "Tùy chọn ngày"
       range_ytd: "Năm nay"
       range_12m: "12 tháng"
       range_from: "Từ"
