@@ -11,6 +11,14 @@
 
 <div data-controller="tabs" data-tabs-key-value="gamification">
   <%# ---- Tab bar ---- %>
+  <style>
+    /* Make the active gamification tab clearly stand out (solid primary pill). */
+    [role="tablist"] .l-chip-brand{
+      background:var(--primary); color:var(--on-primary,#fff); font-weight:700;
+      box-shadow:0 6px 16px -6px var(--primary);
+    }
+    [role="tablist"] .l-chip-brand:hover{ background:var(--primary); color:var(--on-primary,#fff); }
+  </style>
   <div role="tablist" style="display:flex; gap:8px; flex-wrap:wrap; margin-bottom:16px;">
     <% [["stamps", t("merchant.gami.stamps")], ["missions", t("merchant.gami.missions")],
         ["badges", t("merchant.gami.badges")], ["wheel", t("merchant.gami.wheel")]].each do |key, label| %>
