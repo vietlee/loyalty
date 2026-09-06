@@ -121,6 +121,7 @@ en:
       title: "Transactions"
       subtitle: "Customer point earn & redeem history"
       search_ph: "Search by customer name, email, phone..."
+      search_btn: "Search"
       all_kinds: "All kinds"
       earned: "Points earned"
       spent: "Points redeemed"
@@ -156,6 +157,7 @@ en:
       empty: "No customers in this group."
       branch_filter: "Filter by branch"
       branch_all: "All branches"
+      tier_all: "All tiers"
     customer:
       joined: "Joined %{date}"
       kpi_balance: "Current points"

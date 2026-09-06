@@ -22,7 +22,8 @@ class Broadcast < ApplicationRecord
   # Honors the saved branch/search filters so a scheduled broadcast reaches exactly
   # the group it was composed for.
   def deliver_to_segment!
-    deliver!(MemberSegments.audience(segment: segment_key, outlet_id: audience_outlet_id, q: audience_query).to_a)
+    deliver!(MemberSegments.audience(segment: segment_key, outlet_id: audience_outlet_id,
+                                     q: audience_query, tier: audience_tier).to_a)
   end
 
   # Fan out an in-app notification to every member in the segment.

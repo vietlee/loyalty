@@ -19,13 +19,21 @@
         <% end %>
       </select>
     <% end %>
+    <% if @tiers.present? %>
+      <select name="tier" class="l-field" style="max-width:180px;" onchange="this.form.requestSubmit()" aria-label="<%= t('merchant.customers.th_tier') %>">
+        <option value=""><%= t('merchant.customers.tier_all') %></option>
+        <% @tiers.each do |ti| %>
+          <option value="<%= ti.key %>" <%= 'selected' if @tier == ti.key %>><%= ti.name %></option>
+        <% end %>
+      </select>
+    <% end %>
     <select name="sort" class="l-field" style="max-width:200px;" onchange="this.form.requestSubmit()" aria-label="<%= t('merchant.segments.sort_label') %>">
       <option value="recent" <%= 'selected' unless %w[points spend].include?(@sort) %>><%= t('merchant.segments.sort_recent') %></option>
       <option value="points" <%= 'selected' if @sort == 'points' %>><%= t('merchant.segments.sort_points') %></option>
       <option value="spend"  <%= 'selected' if @sort == 'spend' %>><%= t('merchant.segments.sort_spend') %></option>
     </select>
-    <%= submit_tag "🔍", class: "l-btn l-btn-soft", style: "flex:none;" %>
-    <% filtered = @applied_outlet.present? || @q.present? %>
+    <%= submit_tag "🔍 #{t('merchant.transactions.search_btn')}", class: "l-btn l-btn-primary", style: "flex:none; padding:9px 18px;" %>
+    <% filtered = @applied_outlet.present? || @q.present? || @tier.present? %>
     <% if @segment != "all" || filtered %>
       <%= link_to t("merchant.customers.send_group"), new_merchant_broadcast_path(@compose_params),
             class: "l-btn l-btn-primary", style: "margin-left:auto; padding:8px 14px; font-size:13px; flex:none;" %>

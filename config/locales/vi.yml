@@ -126,6 +126,7 @@ vi:
       title: "Giao dịch"
       subtitle: "Lịch sử tích & đổi điểm của khách hàng"
       search_ph: "Tìm theo tên, email, SĐT khách..."
+      search_btn: "Tìm"
       all_kinds: "Tất cả loại"
       earned: "Điểm đã tích"
       spent: "Điểm đã đổi"
@@ -161,6 +162,7 @@ vi:
       empty: "Không có khách trong nhóm này."
       branch_filter: "Lọc theo chi nhánh"
       branch_all: "Tất cả chi nhánh"
+      tier_all: "Tất cả hạng"
     customer:
       joined: "Tham gia %{date}"
       kpi_balance: "Điểm hiện tại"

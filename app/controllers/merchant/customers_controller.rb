@@ -9,6 +9,8 @@ module Merchant
       @segment = MemberSegments::PRESETS.key?(params[:segment]) ? params[:segment] : "all"
       @counts  = MemberSegments.counts
       @q, @sort = params[:q].to_s.strip, params[:sort]
+      @tiers = current_workspace.tiers.ordered.to_a
+      @tier  = params[:tier].presence if @tiers.any? { |t| t.key == params[:tier] }
 
       if branch_scoped?
         # Branch staff only see customers who transacted at their outlet.
@@ -20,15 +22,15 @@ module Merchant
         @applied_outlet = @outlet
       end
 
-      base = MemberSegments.audience(segment: @segment, outlet_id: @applied_outlet&.id, q: @q)
+      base = MemberSegments.audience(segment: @segment, outlet_id: @applied_outlet&.id, q: @q, tier: @tier)
       @total = base.count # count on the ungrouped scope (sort may GROUP BY for "spend")
       @page  = [params[:page].to_i, 1].max
       @members  = apply_sort(base, @sort).limit(PER_PAGE).offset((@page - 1) * PER_PAGE).to_a
       @has_more = @total > @page * PER_PAGE
 
       # Filters to carry into "Soạn thông báo" so the broadcast targets exactly the
-      # audience shown here (segment + branch + search), not the whole segment.
-      @compose_params = { segment: @segment, outlet: @applied_outlet&.id, q: @q.presence }.compact
+      # audience shown here (segment + branch + tier + search), not the whole segment.
+      @compose_params = { segment: @segment, outlet: @applied_outlet&.id, tier: @tier, q: @q.presence }.compact
     end
 
     def show

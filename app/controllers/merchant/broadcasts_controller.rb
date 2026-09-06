@@ -7,18 +7,19 @@ module Merchant
     end
 
     def new
-      load_audience(params[:segment], params[:outlet], params[:q])
+      load_audience(params[:segment], params[:outlet], params[:q], params[:tier])
       @count     = @audience_scope.count
       @broadcast = Broadcast.new(segment_key: @segment)
     end
 
     def create
       bp = params[:broadcast] || {}
-      load_audience(bp[:segment_key], bp[:audience_outlet_id], bp[:audience_query])
+      load_audience(bp[:segment_key], bp[:audience_outlet_id], bp[:audience_query], bp[:audience_tier])
       @broadcast = current_workspace.broadcasts.new(
         broadcast_params.merge(segment_key: @segment, created_by: current_user,
                                audience_label: @audience_label,
-                               audience_outlet_id: @outlet&.id, audience_query: @q.presence)
+                               audience_outlet_id: @outlet&.id, audience_query: @q.presence,
+                               audience_tier: @tier)
       )
       members = @audience_scope.to_a
       @count  = members.size
@@ -50,12 +51,13 @@ module Merchant
     # display name, from whichever params the request carries (query on :new, nested
     # broadcast[...] hidden fields on :create). Sets @segment, @outlet, @q,
     # @audience_scope and @audience_label.
-    def load_audience(segment, outlet_id, q)
+    def load_audience(segment, outlet_id, q, tier = nil)
       @segment = MemberSegments::PRESETS.key?(segment) ? segment : "all"
       @outlet  = current_workspace.outlets.find_by(id: outlet_id) if outlet_id.present?
       @q       = q.to_s.strip
-      @audience_scope = MemberSegments.audience(segment: @segment, outlet_id: @outlet&.id, q: @q)
-      @audience_label = MemberSegments.audience_label(segment: @segment, outlet: @outlet, q: @q)
+      @tier    = tier.presence if current_workspace.tiers.any? { |t| t.key == tier }
+      @audience_scope = MemberSegments.audience(segment: @segment, outlet_id: @outlet&.id, q: @q, tier: @tier)
+      @audience_label = MemberSegments.audience_label(segment: @segment, outlet: @outlet, q: @q, tier: @tier)
     end
 
     def broadcast_params

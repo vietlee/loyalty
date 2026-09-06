@@ -22,11 +22,12 @@ module MemberSegments
   # search — the SAME filters the Customers list exposes. Both the customer table and
   # the broadcast targeting go through here so the "will send to N" count always
   # matches the visible list. Call within a tenant-scoped request.
-  def audience(segment:, outlet_id: nil, q: nil)
+  def audience(segment:, outlet_id: nil, q: nil, tier: nil)
     scope = resolve(PRESETS.key?(segment) ? segment : "all")
     if outlet_id.present?
       scope = scope.where(id: Purchase.where(outlet_id: outlet_id).select(:member_id))
     end
+    scope = scope.where(tier_key: tier) if tier.present?
     term = q.to_s.strip
     if term.present?
       like = "%#{term}%"
@@ -38,9 +39,10 @@ module MemberSegments
   # A human-readable name for a (possibly filtered) audience. Always returns a
   # non-empty label — for a filtered custom group with no preset name it composes a
   # temporary one from the active filters (e.g. "Tất cả khách · Gấu Coffee · tìm "lê"").
-  def audience_label(segment:, outlet: nil, q: nil)
+  def audience_label(segment:, outlet: nil, q: nil, tier: nil)
     parts = [label(PRESETS.key?(segment) ? segment : "all")]
     parts << outlet.name if outlet.respond_to?(:name) && outlet.name.present?
+    parts << "hạng #{tier.to_s.capitalize}" if tier.present?
     term = q.to_s.strip
     parts << "tìm “#{term}”" if term.present?
     parts.join(" · ")
