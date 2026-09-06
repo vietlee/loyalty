@@ -1,9 +1,9 @@
 <% content_for :title, @outlet.name %>
 <% content_for :title_en, "OUTLET" %>
+<% merchant_back merchant_outlets_path %>
 
 <div>
   <div style="display:flex; align-items:center; gap:12px; margin-bottom:16px;">
-    <%= link_to "←", merchant_outlets_path, class: "l-btn l-btn-ghost", style: "padding:6px 12px;" %>
     <div>
       <h2 class="l-display" style="font-size:24px;"><%= @outlet.name %></h2>
       <% if @outlet.address.present? %><div style="color:var(--ink-2); font-size:13px;">📍 <%= @outlet.address %></div><% end %>

@@ -32,6 +32,7 @@
 
     <%# Global async-job progress bar (e.g. AI banner generation) %>
     <div data-controller="jobbar" data-jobbar-url-value="<%= banner_jobs_merchant_campaigns_path %>"
-         style="position:fixed; left:0; right:0; bottom:16px; z-index:2000; padding:0 16px; pointer-events:none;"></div>
+         style="position:fixed; right:16px; bottom:16px; z-index:2000; width:min(92vw,400px);
+                display:flex; flex-direction:column; gap:10px; pointer-events:none;"></div>
   </body>
 </html>

@@ -60,7 +60,7 @@ export default class extends Controller {
   }
 
   row(inner) {
-    return `<div style="pointer-events:auto; max-width:520px; margin:0 auto 10px; background:#fff; border:1px solid var(--line); border-radius:14px; box-shadow:0 10px 30px rgba(0,0,0,.16); padding:12px 14px; display:flex; align-items:center; gap:12px;">${inner}</div>`
+    return `<div style="pointer-events:auto; width:100%; background:#fff; border:1px solid var(--line); border-radius:14px; box-shadow:0 10px 30px rgba(0,0,0,.16); padding:12px 14px; display:flex; align-items:center; gap:12px;">${inner}</div>`
   }
 
   open(e) { this.ack(e.currentTarget.dataset.jobId) }      // navigates via href; mark seen

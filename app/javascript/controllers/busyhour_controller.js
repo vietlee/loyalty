@@ -33,6 +33,7 @@ export default class extends Controller {
   }
 
   async swap(request) {
+    this.setLoading(true)
     try {
       const resp = await request()
       if (!resp.ok) throw new Error(resp.status)
@@ -44,7 +45,41 @@ export default class extends Controller {
         this.refreshBtnTarget.textContent = "🔄 Làm mới gợi ý"
       }
       // leave the existing panel in place on error
+    } finally {
+      this.setLoading(false)
     }
+  }
+
+  // Dim the panel and float a spinner while a branch switch / refresh is in
+  // flight, so the wait is obvious (previously switching branches showed nothing).
+  setLoading(on) {
+    this.panelTarget.style.transition = "opacity .15s"
+    this.panelTarget.style.opacity = on ? "0.4" : ""
+    this.panelTarget.style.pointerEvents = on ? "none" : ""
+    if (on) {
+      if (this._spinner) return
+      this.ensureSpinnerKeyframes()
+      const host = this.element
+      if (getComputedStyle(host).position === "static") host.style.position = "relative"
+      const s = document.createElement("div")
+      s.style.cssText = "position:absolute; inset:0; display:grid; place-items:center; z-index:5;"
+      s.innerHTML = '<span style="width:28px; height:28px; border:3px solid var(--line); ' +
+        'border-top-color:var(--primary); border-radius:50%; display:inline-block; ' +
+        'animation:bh-spin .7s linear infinite;"></span>'
+      host.appendChild(s)
+      this._spinner = s
+    } else if (this._spinner) {
+      this._spinner.remove()
+      this._spinner = null
+    }
+  }
+
+  ensureSpinnerKeyframes() {
+    if (document.getElementById("bh-spin-kf")) return
+    const st = document.createElement("style")
+    st.id = "bh-spin-kf"
+    st.textContent = "@keyframes bh-spin{to{transform:rotate(360deg)}}"
+    document.head.appendChild(st)
   }
 
   // Lightweight hover tooltip showing the real purchase count per cell.
@@ -87,5 +122,8 @@ export default class extends Controller {
 
   hideTip() { if (this._tip) this._tip.style.opacity = "0" }
 
-  disconnect() { if (this._tip) { this._tip.remove(); this._tip = null } }
+  disconnect() {
+    if (this._tip) { this._tip.remove(); this._tip = null }
+    if (this._spinner) { this._spinner.remove(); this._spinner = null }
+  }
 }

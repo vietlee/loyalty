@@ -1,9 +1,8 @@
 <% content_for :title, @member.display_name %>
 <% content_for :title_en, "CUSTOMER" %>
+<% merchant_back merchant_customers_path %>
 
 <div>
-  <%= link_to "← #{t('merchant.nav.customers')}", merchant_customers_path, style: "color:var(--ink-2); text-decoration:none; font-size:13px;" %>
-
   <%# ---- Header ---- %>
   <div class="l-panel" style="margin-top:12px; display:flex; align-items:center; gap:16px; flex-wrap:wrap;">
     <div class="av" style="width:56px; height:56px; border-radius:16px; background:<%= @member.tier&.gradient_css || 'var(--primary)' %>; color:#fff; display:grid; place-items:center; font-weight:700; font-size:20px; flex:none;"><%= @member.initials %></div>
