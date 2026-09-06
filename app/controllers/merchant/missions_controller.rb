@@ -36,15 +36,18 @@ module Merchant
       params.require(:mission).permit(:title, :icon, :mission_type, :period, :goal, :reward_points, :active)
     end
 
-    # Per-platform point overrides for social_share missions:
-    # mission[proof_config][platforms][facebook] = "50", etc. Blanks are dropped.
+    # social_share config: the merchant ticks which networks are allowed
+    # (mission[proof_config][enabled][facebook]=1) and may set per-platform points
+    # (mission[proof_config][platforms][facebook]=50; blank/0 = default reward).
+    # Only ticked platforms are stored; their keys are the customer's allowlist.
     def build_proof_config
-      platforms = params.dig(:mission, :proof_config, :platforms) || {}
-      pts = platforms.to_unsafe_h.filter_map do |plat, val|
-        next unless Mission::PROOF_PLATFORMS.include?(plat.to_s) && val.present?
-        [plat.to_s, val.to_i]
+      enabled  = (params.dig(:mission, :proof_config, :enabled) || {}).to_unsafe_h
+      pts_in   = (params.dig(:mission, :proof_config, :platforms) || {}).to_unsafe_h
+      platforms = Mission::PROOF_PLATFORMS.filter_map do |plat|
+        next unless enabled[plat].present?
+        [plat, pts_in[plat].to_i]
       end.to_h
-      pts.present? ? { "platforms" => pts } : {}
+      platforms.present? ? { "platforms" => platforms } : {}
     end
   end
 end

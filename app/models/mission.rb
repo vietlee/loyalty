@@ -26,10 +26,19 @@ class Mission < ApplicationRecord
   def photo_proof? = mission_type.in?(PHOTO_PROOF_TYPES)
 
   # Points awarded for a completion. social_share can pay per-platform via
-  # proof_config["platforms"][platform]; everything else uses the flat rate.
+  # proof_config["platforms"][platform] (0 = use the flat rate); everything else
+  # uses the flat rate.
   def points_for(platform = nil)
     per = platform && proof_config.dig("platforms", platform.to_s)
-    per.present? ? per.to_i : reward_points
+    per.to_i.positive? ? per.to_i : reward_points
+  end
+
+  # Which social networks the merchant allows for a social_share mission — the
+  # customer only sees these. Configured via the mission's proof_config; when the
+  # merchant hasn't restricted anything, all supported platforms are allowed.
+  def allowed_platforms
+    configured = (proof_config.is_a?(Hash) ? proof_config["platforms"] : nil).to_h.keys
+    (configured & PROOF_PLATFORMS).presence || PROOF_PLATFORMS
   end
 
   def display_icon

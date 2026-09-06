@@ -17,11 +17,14 @@ export default class extends Controller {
     if (this.hasFixedRowTarget) this.dim(this.fixedRowTarget, mode !== "fixed")
   }
 
-  // Grey out the row that isn't selected (but keep its radio clickable to switch).
+  // Soften the row that isn't selected — WITHOUT dimming its radio (a faded radio
+  // reads as disabled). Grey the label text and fade only its input; the radio
+  // stays crisp and clickable so the user can switch modes.
   dim(row, off) {
     if (!row) return
-    row.style.opacity = off ? "0.4" : "1"
+    row.style.color = off ? "var(--ink-2)" : ""
     row.querySelectorAll("input:not([type=radio]), select").forEach((el) => {
+      el.style.opacity = off ? "0.5" : ""
       el.style.pointerEvents = off ? "none" : ""
     })
   }
