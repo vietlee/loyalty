@@ -2,46 +2,64 @@
 <% content_for :title_en, "DASHBOARD" %>
 <% d = ->(k, **o) { t("merchant.dashboard.#{k}", **o) } %>
 
-<%# ---- Date-range filter (scopes flow metrics) ---- %>
-<% if @range %>
-  <div class="l-panel" style="margin-bottom:16px; display:flex; align-items:center; gap:12px; flex-wrap:wrap;">
-    <span style="font-size:11px; text-transform:uppercase; letter-spacing:.06em; color:var(--ink-2); font-weight:700;"><%= d.(:range_label) %></span>
-    <%= form_with url: merchant_root_path, method: :get, data: { turbo: false },
-          style: "display:flex; align-items:center; gap:8px; flex-wrap:wrap; margin:0;" do %>
-      <input type="hidden" name="outlet" value="<%= params[:outlet] %>">
-      <select name="range" class="l-field" style="width:auto; padding:8px 12px;"
-              onchange="this.form.querySelector('[name=from]').value=''; this.form.querySelector('[name=to]').value=''; this.form.requestSubmit()"
-              aria-label="<%= d.(:range_label) %>">
-        <% %w[7d 30d 90d mtd all].each do |rk| %>
-          <option value="<%= rk %>" <%= 'selected' if @range[:key] == rk %>><%= d.("range_#{rk}") %></option>
-        <% end %>
-        <% if @range[:key] == 'custom' %>
-          <option value="custom" selected><%= @range[:label] %></option>
-        <% end %>
-      </select>
-      <span style="color:var(--ink-2); font-size:13px;"><%= d.(:range_from) %></span>
-      <input type="date" name="from" value="<%= @range[:key] == 'custom' ? @range[:from].to_date.iso8601 : '' %>"
-             class="l-field" style="width:auto; padding:6px 10px;" onchange="this.form.requestSubmit()" aria-label="<%= d.(:range_from) %>">
-      <span style="color:var(--ink-2); font-size:13px;"><%= d.(:range_to) %></span>
-      <input type="date" name="to" value="<%= @range[:key] == 'custom' ? @range[:to].to_date.iso8601 : '' %>"
-             class="l-field" style="width:auto; padding:6px 10px;" onchange="this.form.requestSubmit()" aria-label="<%= d.(:range_to) %>">
-    <% end %>
-    <div style="flex-basis:100%; font-size:12px; color:var(--ink-2);"><%= d.(:range_note) %> · <strong><%= @range[:label] %></strong></div>
-  </div>
-<% end %>
+<%# ---- Unified filter bar: date-range + branch scope in one panel/form ---- %>
+<% if @range || @branches.present? %>
+  <style>
+    .flt-bar{display:flex; align-items:flex-end; gap:14px 22px; flex-wrap:wrap; margin:0;}
+    .flt-grp{display:flex; flex-direction:column; gap:6px;}
+    .flt-lbl{font-size:11px; text-transform:uppercase; letter-spacing:.06em; color:var(--ink-2); font-weight:700;}
+    .flt-row{display:flex; align-items:center; gap:8px; flex-wrap:wrap;}
+    .flt-row .sep{color:var(--ink-2); font-size:13px;}
+    .flt-divider{align-self:stretch; width:1px; background:var(--line); margin:2px 0;}
+    @media (max-width:640px){ .flt-divider{display:none;} }
+  </style>
+  <div class="l-panel" style="margin-bottom:16px;">
+    <%= form_with url: merchant_root_path, method: :get, data: { turbo: false }, class: "flt-bar" do %>
+      <% if @range %>
+        <div class="flt-grp">
+          <span class="flt-lbl"><%= d.(:range_label) %></span>
+          <div class="flt-row">
+            <select name="range" class="l-field" style="width:auto; padding:8px 12px;"
+                    onchange="this.form.querySelector('[name=from]').value=''; this.form.querySelector('[name=to]').value=''; this.form.requestSubmit()"
+                    aria-label="<%= d.(:range_label) %>">
+              <% %w[7d 30d 90d mtd all].each do |rk| %>
+                <option value="<%= rk %>" <%= 'selected' if @range[:key] == rk %>><%= d.("range_#{rk}") %></option>
+              <% end %>
+              <% if @range[:key] == 'custom' %>
+                <option value="custom" selected><%= @range[:label] %></option>
+              <% end %>
+            </select>
+            <span class="sep"><%= d.(:range_from) %></span>
+            <input type="date" name="from" value="<%= @range[:key] == 'custom' ? @range[:from].to_date.iso8601 : '' %>"
+                   class="l-field" style="width:auto; padding:6px 10px;" onchange="this.form.requestSubmit()" aria-label="<%= d.(:range_from) %>">
+            <span class="sep"><%= d.(:range_to) %></span>
+            <input type="date" name="to" value="<%= @range[:key] == 'custom' ? @range[:to].to_date.iso8601 : '' %>"
+                   class="l-field" style="width:auto; padding:6px 10px;" onchange="this.form.requestSubmit()" aria-label="<%= d.(:range_to) %>">
+          </div>
+        </div>
+      <% end %>
 
-<%# ---- Branch scope selector (owner/manager): merchant total or one branch ---- %>
-<% if @branches.present? %>
-  <div class="l-panel" style="margin-bottom:16px; display:flex; align-items:center; gap:12px; flex-wrap:wrap;">
-    <span style="font-size:11px; text-transform:uppercase; letter-spacing:.06em; color:var(--ink-2); font-weight:700;"><%= d.(:view_scope) %></span>
-    <%= form_with url: merchant_root_path, method: :get, data: { turbo: false }, style: "margin:0;" do %>
-      <input type="hidden" name="range" value="<%= @range[:key] %>">
-      <select name="outlet" class="l-field" style="max-width:300px; padding-top:9px; padding-bottom:9px;" onchange="this.form.requestSubmit()">
-        <option value="" <%= 'selected' unless @branch %>><%= d.(:all_branches) %></option>
-        <% @branches.each do |o| %>
-          <option value="<%= o.id %>" <%= 'selected' if @branch&.id == o.id %>><%= o.name %></option>
-        <% end %>
-      </select>
+      <% if @range && @branches.present? %><div class="flt-divider"></div><% end %>
+
+      <% if @branches.present? %>
+        <div class="flt-grp">
+          <span class="flt-lbl"><%= d.(:view_scope) %></span>
+          <div class="flt-row">
+            <select name="outlet" class="l-field" style="max-width:300px; padding:8px 12px;" onchange="this.form.requestSubmit()">
+              <option value="" <%= 'selected' unless @branch %>><%= d.(:all_branches) %></option>
+              <% @branches.each do |o| %>
+                <option value="<%= o.id %>" <%= 'selected' if @branch&.id == o.id %>><%= o.name %></option>
+              <% end %>
+            </select>
+          </div>
+        </div>
+      <% else %>
+        <input type="hidden" name="outlet" value="<%= params[:outlet] %>">
+      <% end %>
+
+      <% if @range %>
+        <div style="flex-basis:100%; font-size:12px; color:var(--ink-2); margin-top:2px;"><%= d.(:range_note) %> · <strong><%= @range[:label] %></strong></div>
+      <% end %>
     <% end %>
   </div>
 <% end %>
