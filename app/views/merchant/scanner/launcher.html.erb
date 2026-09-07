@@ -2,7 +2,16 @@
 <% content_for :title, current_workspace.name %>
 
 <div style="min-height:100dvh; display:flex; flex-direction:column; align-items:center; justify-content:center;
-            padding:28px 22px; background:var(--surface); color:var(--ink); text-align:center; gap:8px;">
+            padding:28px 22px; background:var(--surface); color:var(--ink); text-align:center; gap:8px; position:relative;">
+  <%# ---- Language toggle (this minimal screen has no header, so add it here) ---- %>
+  <span style="position:absolute; top:16px; right:16px; display:inline-flex; border:1px solid var(--line); border-radius:999px; overflow:hidden;">
+    <% [["VI", :vi], ["EN", :en]].each do |lbl, loc| %>
+      <% on = I18n.locale == loc %>
+      <%= link_to lbl, set_locale_path(loc), data: { turbo: false },
+            style: "padding:5px 12px; font-size:11px; font-weight:700; text-decoration:none; #{on ? 'background:var(--primary); color:var(--on-primary);' : 'color:var(--ink-2);'}" %>
+    <% end %>
+  </span>
+
   <%# ---- Merchant identity ---- %>
   <div style="width:96px; height:96px; border-radius:26px; overflow:hidden; display:grid; place-items:center;
               background:var(--primary); color:var(--on-primary); box-shadow:0 10px 30px rgba(0,0,0,.14);">
