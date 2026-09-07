@@ -203,6 +203,8 @@ vi:
       tab_redeem: "② Xác thực ưu đãi"
       tab_pos: "③ Tạo mã quầy"
       tab_checkin: "④ Mã QR quán"
+      checkin_home: "Mã QR quán"
+      back_home: "Về màn hình chính"
       checkin_show_hint: "Cho khách quét mã này để check-in tại quán."
       checkin_pick_branch: "Chọn chi nhánh"
       checkin_none: "Bạn chưa gắn với chi nhánh nào"

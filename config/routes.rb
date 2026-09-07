@@ -102,6 +102,7 @@ Rails.application.routes.draw do
     # POS transaction QR (member self-scan / §6.2)
     post "pos", to: "pos#create", as: :pos_charges
     get  "scan-home", to: "scanner#launcher", as: :scan_home # minimal staff-mobile landing
+    get  "scan-home/checkin-qr", to: "scanner#checkin_qr", as: :scanner_checkin_qr # branch check-in QR (standalone)
     get  "scanner", to: "scanner#show"
     # Counter scanner — Tích điểm (earn)
     post "earn/lookup", to: "earn#lookup", as: :earn_lookup

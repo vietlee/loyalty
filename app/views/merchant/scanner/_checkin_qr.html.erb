@@ -1,19 +1,16 @@
-<%# Branch check-in QR shown on the mobile scanner. Owner may pick any branch;
-    manager/staff see only their own (scoped in the controller). %>
-<% kiosk_param = local_assigns.fetch(:kiosk_param, {}) %>
+<%# Branch check-in QR (standalone screen, peer of the scanner). Owner may pick
+    any branch; manager/staff see only their own (scoped in the controller). %>
 <% if @qr_outlet.nil? %>
-  <div style="text-align:center; padding:30px 16px; color:var(--ink-2);">
+  <div style="text-align:center; padding:40px 16px; color:var(--ink-2);">
     <div style="font-size:34px;">🏬</div>
     <p style="font-weight:600; color:var(--ink); margin-top:8px;"><%= t("merchant.scan.checkin_none") %></p>
     <p style="font-size:13px;"><%= t("merchant.scan.checkin_none_sub") %></p>
   </div>
 <% else %>
   <% checkin_url = customer_scan_url(current_workspace, checkin: Checkin.encode(current_workspace, @qr_outlet)) %>
-  <div style="text-align:center;">
+  <div style="text-align:center; max-width:420px; margin:0 auto;">
     <% if @qr_outlets.size > 1 %>
-      <%= form_with url: merchant_scanner_path, method: :get, data: { turbo_frame: "scan_tool" }, style: "margin-bottom:14px;" do %>
-        <input type="hidden" name="tab" value="checkin">
-        <% if kiosk_param[:kiosk] %><input type="hidden" name="kiosk" value="1"><% end %>
+      <%= form_with url: merchant_scanner_checkin_qr_path, method: :get, data: { turbo: false }, style: "margin-bottom:16px;" do %>
         <label class="l-label"><%= t("merchant.scan.checkin_pick_branch") %></label>
         <select name="qr_outlet" class="l-field" onchange="this.form.requestSubmit()">
           <% @qr_outlets.each do |o| %>
@@ -24,11 +21,11 @@
     <% end %>
 
     <div class="l-eyebrow" style="margin-bottom:2px;"><%= t("merchant.outlets.checkin_title") %></div>
-    <h3 class="l-display" style="font-size:20px; margin:2px 0 4px;"><%= @qr_outlet.name %></h3>
-    <p style="color:var(--ink-2); font-size:13px; margin-bottom:14px;"><%= t("merchant.scan.checkin_show_hint") %></p>
+    <h3 class="l-display" style="font-size:22px; margin:2px 0 4px;"><%= @qr_outlet.name %></h3>
+    <p style="color:var(--ink-2); font-size:13px; margin-bottom:16px;"><%= t("merchant.scan.checkin_show_hint") %></p>
 
-    <div style="display:inline-block; padding:16px; background:#fff; border-radius:18px; box-shadow:var(--shadow);">
-      <%= qr_svg(checkin_url, size: 240) %>
+    <div style="display:inline-block; padding:18px; background:#fff; border-radius:20px; box-shadow:var(--shadow);">
+      <%= qr_svg(checkin_url, size: 260) %>
     </div>
   </div>
 <% end %>

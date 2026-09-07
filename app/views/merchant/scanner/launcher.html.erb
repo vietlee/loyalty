@@ -26,13 +26,24 @@
     <%= current_user&.name %><% if current_outlet %> · <%= current_outlet.name %><% end %>
   </div>
 
-  <%# ---- The one action: open the counter scanner (standalone kiosk) ---- %>
+  <%# ---- Home actions: open the scanner + (if allowed) show the branch check-in
+        QR. Peers, both reachable straight from this screen. ---- %>
   <%= link_to merchant_scanner_path(kiosk: 1), data: { turbo: false },
         style: "margin-top:28px; width:100%; max-width:360px; padding:22px; border-radius:22px; background:var(--primary);
                 color:var(--on-primary); text-decoration:none; font-weight:800; font-size:19px; display:flex;
                 align-items:center; justify-content:center; gap:12px; box-shadow:0 12px 34px rgba(0,0,0,.16);" do %>
     <%= ui_icon(:scan, size: 26) %> <%= t("merchant.scan.open_scanner") %>
   <% end %>
+
+  <% if @has_checkin_qr %>
+    <%= link_to merchant_scanner_checkin_qr_path, data: { turbo: false },
+          style: "margin-top:12px; width:100%; max-width:360px; padding:20px; border-radius:22px; background:var(--surface);
+                  color:var(--primary); border:1.5px solid var(--primary); text-decoration:none; font-weight:800; font-size:18px;
+                  display:flex; align-items:center; justify-content:center; gap:12px;" do %>
+      🏬 <%= t("merchant.scan.checkin_home") %>
+    <% end %>
+  <% end %>
+
   <p style="font-size:12.5px; color:var(--ink-2); max-width:320px; margin-top:12px;"><%= t("merchant.scan.launcher_hint") %></p>
 
   <%# ---- Add-to-home-screen (PWA) guidance ---- %>

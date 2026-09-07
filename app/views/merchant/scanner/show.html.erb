@@ -28,17 +28,11 @@
       <%= link_to t("merchant.scan.tab_pos"), merchant_scanner_path(kiosk_param.merge(tab: "pos")),
             class: "l-chip #{'l-chip-brand' if @tab == 'pos'}", data: { turbo_frame: "scan_tool" } %>
     <% end %>
-    <%= link_to t("merchant.scan.tab_checkin"), merchant_scanner_path(kiosk_param.merge(tab: "checkin")),
-          class: "l-chip #{'l-chip-brand' if @tab == 'checkin'}", data: { turbo_frame: "scan_tool" } %>
   </div>
 
   <div class="l-panel">
     <%= turbo_frame_tag "scan_tool" do %>
-      <% if @tab == "checkin" %>
-        <%= render "checkin_qr", kiosk_param: kiosk_param %>
-      <% else %>
-        <%= render "merchant/#{@tab}/search" %>
-      <% end %>
+      <%= render "merchant/#{@tab}/search" %>
     <% end %>
   </div>
 </div>
