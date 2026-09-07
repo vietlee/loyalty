@@ -50,7 +50,7 @@ gem "groupdate"
 gem "rqrcode"
 
 # File uploads / image variants
-gem "image_processing", "~> 1.2"
+gem "image_processing", "~> 2.1"
 
 # Env management
 gem "dotenv-rails"
