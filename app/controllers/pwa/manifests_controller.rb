@@ -26,7 +26,7 @@ module Pwa
       if params[:app] == "staff"
         loc   = (ws&.locale_default || "vi").to_sym
         name  = I18n.t("merchant.scan.pwa_app_title", shop: shop, locale: loc)
-        short = I18n.t("merchant.scan.pwa_short", locale: loc)
+        short = name # home-screen caption must read "Quản lý - <shop>", not just "Quản lý"
         start = "/merchant/scan-home"
         scope = "/merchant"
       else

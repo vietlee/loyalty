@@ -188,7 +188,7 @@ vi:
       open_scanner: "Mở máy quét"
       launcher_hint: "Bấm để mở máy quét — tích điểm hoặc xác thực ưu đãi cho khách."
       logout: "Đăng xuất"
-      pwa_app_title: "Quản lý · %{shop}"
+      pwa_app_title: "Quản lý - %{shop}"
       pwa_short: "Quản lý"
       pwa_title: "Thêm vào màn hình chính"
       pwa_intro: "Cài như một ứng dụng để mở máy quét chỉ với 1 chạm và giữ đăng nhập lâu dài."
