@@ -6,6 +6,10 @@
     <div class="eyebrow"><%= t("landing.hero_eyebrow") %></div>
     <h1 style="margin-top:14px;"><%= t("landing.hero_title") %></h1>
     <p class="lead"><%= t("landing.hero_sub") %></p>
+    <div class="m-heroprice">
+      <div class="hp-day"><%= t("landing.hook_day") %></div>
+      <div class="hp-amt"><%= t("landing.hook_amount") %><span><%= t("landing.hook_per") %></span></div>
+    </div>
     <div class="m-cta">
       <a class="m-btn solid lg" href="/merchant/signup"><%= t("landing.hero_cta") %></a>
       <a class="m-btn ghost lg" href="#features"><%= t("landing.hero_cta2") %> →</a>
@@ -29,17 +33,6 @@
         <span><%= ui_icon(:medal, size: 18) %></span>
       </div>
     </div>
-  </div>
-</div></section>
-
-<%# ---- Price hook: ~7k/day value hero ---- %>
-<section style="padding:44px 0 8px;"><div class="m-in" style="padding:0;">
-  <div class="m-hook">
-    <div class="eyebrow"><%= t("landing.hook_eyebrow") %></div>
-    <div class="amt"><%= t("landing.hook_amount") %><small><%= t("landing.hook_per") %></small></div>
-    <div class="day"><%= t("landing.hook_day") %></div>
-    <p class="line"><%= t("landing.hook_line") %></p>
-    <a class="m-btn solid lg" href="/merchant/signup"><%= t("landing.hook_cta") %></a>
   </div>
 </div></section>
 
