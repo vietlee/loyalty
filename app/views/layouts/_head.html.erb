@@ -2,10 +2,14 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <% if respond_to?(:current_workspace) && current_workspace %>
-  <%# iOS "Add to Home Screen" uses this for the icon label (not the manifest). %>
-  <meta name="apple-mobile-web-app-title" content="<%= current_workspace.name %>">
+  <%# iOS "Add to Home Screen" uses this for the icon label (not the manifest).
+      Staff-scanner layouts override it via content_for(:apple_title). %>
+  <meta name="apple-mobile-web-app-title" content="<%= content_for?(:apple_title) ? yield(:apple_title) : current_workspace.name %>">
 <% end %>
 <title><%= content_for?(:title) ? yield(:title) : "Dynamic Loyalty" %></title>
+<% if content_for?(:pwa_manifest_href) %>
+  <link rel="manifest" href="<%= yield(:pwa_manifest_href) %>">
+<% end %>
 <%= csrf_meta_tags %>
 <%= csp_meta_tag %>
 

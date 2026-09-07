@@ -183,6 +183,8 @@ en:
       open_scanner: "Open scanner"
       launcher_hint: "Tap to open the scanner — earn points or verify offers for customers."
       logout: "Log out"
+      pwa_app_title: "Manage · %{shop}"
+      pwa_short: "Manage"
       pwa_title: "Add to Home Screen"
       pwa_intro: "Install it as an app to open the scanner in one tap and stay signed in."
       pwa_ios: "iPhone / iPad (Safari)"

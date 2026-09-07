@@ -1,3 +1,5 @@
+<% content_for :apple_title, t("merchant.scan.pwa_app_title", shop: current_workspace.name) %>
+<% content_for :pwa_manifest_href, pwa_manifest_path(app: "staff", host: request.host_with_port) %>
 <!DOCTYPE html>
 <html lang="<%= I18n.locale %>">
   <head>
