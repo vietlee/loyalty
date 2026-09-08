@@ -7,7 +7,7 @@ module ApplicationHelper
     "tiktok"    => { color: "#111111", path: "M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93-.01 2.92.01 5.84-.02 8.75-.08 1.4-.54 2.79-1.35 3.94-1.31 1.92-3.58 3.17-5.91 3.21-1.43.08-2.86-.31-4.08-1.03-2.02-1.19-3.44-3.37-3.65-5.71-.02-.5-.03-1-.01-1.49.18-1.9 1.12-3.72 2.58-4.96 1.66-1.44 3.98-2.13 6.15-1.72.02 1.48-.04 2.96-.04 4.44-.99-.32-2.15-.23-3.02.37-.63.41-1.11 1.04-1.36 1.75-.21.51-.15 1.08-.14 1.62.24 1.64 1.82 3.02 3.5 2.87 1.12-.01 2.19-.66 2.77-1.61.19-.33.4-.67.41-1.06.1-1.79.06-3.57.07-5.36.01-4.03-.01-8.05.02-12.07z" },
     # Zalo has no icon-font glyph — render its actual mark: a blue speech bubble
     # with the white "Zalo" wordmark and a small tail.
-    "zalo"      => { body: %(<path d="M4.6 18.3 3 21.6c-.2.4.2.9.6.7l3.6-1.7A11 9 0 0 0 12 21c5.5 0 10-4 10-9s-4.5-9-10-9S2 7 2 12a8.4 8.4 0 0 0 2.6 6.3Z" fill="#0068FF"/><text x="12" y="14.4" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-weight="700" font-size="7.3" fill="#ffffff">Zalo</text>) }
+    "zalo"      => { body: %(<path d="M7 3.5h10A5.5 5.5 0 0 1 22.5 9v5a5.5 5.5 0 0 1-5.5 5.5H9.2l-4.1 2.95a.55.55 0 0 1-.87-.53l.36-2.7A5.5 5.5 0 0 1 1.5 14V9A5.5 5.5 0 0 1 7 3.5Z" fill="#0068FF"/><text x="11.7" y="14.2" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-weight="700" font-size="7.4" fill="#ffffff">Zalo</text>) }
   }.freeze
 
   # Inline brand-logo SVG for a social network (nil for unknown).
