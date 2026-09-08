@@ -14,7 +14,7 @@
       <% list.each do |m| %>
         <% mp = @progress[m] %>
         <div class="l-mission">
-          <div class="ic"><%= m.display_icon %></div>
+          <div class="ic"><%= mission_icon(m, size: 26) %></div>
           <div style="flex:1; min-width:0;">
             <div style="font-weight:600;"><%= m.title %></div>
             <div class="l-bar"><span style="width:<%= mp.pct %>%;"></span></div>

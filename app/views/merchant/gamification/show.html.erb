@@ -107,7 +107,7 @@
     <% @missions.each do |m| %>
       <details class="taskcard">
         <summary>
-          <span style="font-size:20px;"><%= m.display_icon %></span>
+          <span style="font-size:20px;"><%= mission_icon(m, size: 22) %></span>
           <div style="flex:1;">
             <strong><%= m.title %></strong>
             <% unless m.active? %><span class="l-chip" style="font-size:10px; margin-left:6px; background:var(--surface-2);">⏸ <%= t("merchant.gami.stamp_paused") %></span><% end %>

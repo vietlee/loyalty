@@ -41,9 +41,9 @@
       <p style="font-size:12px; color:var(--ink-2); margin:0 0 12px;"><%= t("customer.missions.open_social_hint") %></p>
       <div style="display:flex; flex-wrap:wrap; gap:8px;">
         <% allowed.each do |p| %>
-          <button type="button" class="l-btn l-btn-soft" style="flex:1; min-width:120px;"
+          <button type="button" class="l-btn l-btn-soft" style="flex:1; min-width:120px; gap:6px;"
                   data-action="share#openPlatform" data-share-href="<%= web[p] || @share_url %>">
-            <%= picon[p] %> <%= Mission::PLATFORM_LABELS[p] %>
+            <%= social_logo(p, size: 18) || picon[p] %> <%= Mission::PLATFORM_LABELS[p] %>
           </button>
         <% end %>
         <button type="button" class="l-btn l-btn-soft" style="flex:1; min-width:120px;" data-action="share#copy">
