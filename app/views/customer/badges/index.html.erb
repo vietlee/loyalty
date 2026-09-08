@@ -24,6 +24,9 @@
             <% if b.reward_points.to_i.positive? %>
               <span style="color:var(--primary);">🎁 <%= t("customer.badges.reward_hint", n: b.reward_points) %></span>
             <% end %>
+            <% if b.reward_id.present? && b.reward %>
+              <span style="color:var(--primary);">🎁 <%= t("customer.badges.reward_voucher", reward: b.reward.title) %></span>
+            <% end %>
             <% if earned %><span style="color:var(--good,#2E9E5B); font-weight:600;"><%= t("customer.badges.earned") %></span><% end %>
           </div>
         </div>

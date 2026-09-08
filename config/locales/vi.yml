@@ -1184,6 +1184,7 @@ vi:
       req_points: "Tích luỹ %{n} điểm"
       req_night: "Mua sau 22h %{n} lần"
       reward_hint: "+%{n} điểm khi đạt"
+      reward_voucher: "Tặng: %{reward}"
       earned: "✓ Đã đạt"
     wheel:
       title: "Vòng quay may mắn"

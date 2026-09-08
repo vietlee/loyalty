@@ -1141,6 +1141,7 @@ en:
       req_points: "Earn %{n} points"
       req_night: "Buy after 10pm %{n} times"
       reward_hint: "+%{n} pts when earned"
+      reward_voucher: "Gift: %{reward}"
       earned: "✓ Earned"
     wheel:
       title: "Lucky wheel"

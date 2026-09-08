@@ -51,6 +51,7 @@ module Gamification
     ws.badges.where.not(id: earned_ids).each do |badge|
       next unless badge.earned_by?(member)
       mb = MemberBadge.create!(workspace: ws, member: member, badge: badge, earned_at: Time.current)
+      voucher = nil
       # Bonus points for earning the badge (once), if the merchant set any.
       if badge.reward_points.to_i.positive?
         PointTransaction.create!(workspace: ws, member: member, kind: "mission",
@@ -60,10 +61,31 @@ module Gamification
       end
       # Gift voucher for earning the badge (once), if the merchant attached one.
       if badge.reward_id.present? && (reward = badge.reward)
-        Voucher.create!(workspace: ws, member: member, reward: reward,
-                        source: "campaign", state: "active", points_spent: 0,
-                        expires_at: reward.voucher_expiry_from)
+        voucher = Voucher.create!(workspace: ws, member: member, reward: reward,
+                                  source: "campaign", state: "active", points_spent: 0,
+                                  expires_at: reward.voucher_expiry_from)
       end
+      notify_badge_earned(member, ws, badge, voucher)
     end
+  end
+
+  # Let the customer know they just unlocked a badge — and what reward came with
+  # it (bonus points and/or a voucher in their wallet). Without this the badge and
+  # its reward would appear silently. Deep-links to the voucher when one was gifted,
+  # otherwise to the badges screen.
+  def notify_badge_earned(member, ws, badge, voucher)
+    parts = []
+    parts << "+#{badge.reward_points} điểm" if badge.reward_points.to_i.positive?
+    parts << "#{voucher.reward&.title} đã vào ví" if voucher
+    reward_line = parts.any? ? " — #{parts.join(" · ")}." : "."
+    title = "Huy hiệu mới! #{badge.display_icon}"
+    body  = "Bạn vừa đạt huy hiệu “#{badge.name}”#{reward_line}"
+    deep_link = voucher ? "/vouchers/#{voucher.id}" : "/badges"
+    Notification.create!(workspace: ws, member: member, kind: "reward",
+                         title: title, body: body, icon: badge.display_icon,
+                         deep_link: deep_link)
+    PushJob.perform_later(ws.id, [member.id], title, body, deep_link) if PushSender.configured?
+  rescue => e
+    Rails.logger.error("[Gamification] notify_badge_earned: #{e.class} #{e.message}")
   end
 end
