@@ -53,8 +53,10 @@
     items << [member_refer_path,      :users,  t("customer.home.q_invite"),     false] if prog.referral_enabled
     items << [member_badges_path,     :medal,  t("customer.home.chip_badges"),  false] if prog.gamification_enabled
     items << [member_shop_about_path, "🏬",    t("customer.home.q_about"),      true]  if current_workspace.feedback_public?
+    # ≤5 items fit one row; 6+ split into two balanced rows (6 → 3+3).
+    cols = items.size > 5 ? (items.size / 2.0).ceil : items.size
   %>
-  <div class="l-quick" style="grid-template-columns:repeat(<%= [items.size, 5].min %>, 1fr);">
+  <div class="l-quick" style="grid-template-columns:repeat(<%= cols %>, 1fr);">
     <% items.each do |path, icon, label, emoji| %>
       <%= link_to path do %>
         <span class="ic"><% if emoji %><span style="font-size:24px; line-height:1;"><%= icon %></span><% else %><%= ui_icon(icon, size: 26) %><% end %></span><%= label %>
