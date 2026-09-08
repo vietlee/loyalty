@@ -347,6 +347,7 @@ en:
       mtype_visit: "Visit"
       mtype_review: "Google review"
       mtype_social: "Social share"
+      share_task_title: "Share on %{platform}"
       goal_ph: "Goal"
       points_ph: "Points"
       goal_label: "Goal (times)"

@@ -9,6 +9,9 @@ class Mission < ApplicationRecord
     "facebook" => "Facebook", "instagram" => "Instagram",
     "tiktok" => "TikTok", "zalo" => "Zalo"
   }.freeze
+  PLATFORM_ICONS = {
+    "facebook" => "📘", "instagram" => "📸", "tiktok" => "🎵", "zalo" => "💬"
+  }.freeze
   # "once" = one-time (never resets); daily/weekly recur each period.
   PERIODS = %w[once daily weekly].freeze
 
@@ -38,10 +41,17 @@ class Mission < ApplicationRecord
     per.to_i.positive? ? per.to_i : reward_points
   end
 
-  # Which social networks the merchant allows for a social_share mission — the
-  # customer only sees these. Configured via the mission's proof_config; when the
-  # merchant hasn't restricted anything, all supported platforms are allowed.
+  # A social_share mission targets exactly ONE network (the merchant's multi-select
+  # is expanded into one mission per network on create).
+  def platform
+    proof_config.is_a?(Hash) ? proof_config["platform"].presence : nil
+  end
+
+  # Which social networks the customer may use for this mission. A per-platform
+  # mission returns just its own network; legacy multi-platform missions fall back
+  # to their configured list (all supported when unrestricted).
   def allowed_platforms
+    return [platform] if platform.present?
     configured = (proof_config.is_a?(Hash) ? proof_config["platforms"] : nil).to_h.keys
     (configured & PROOF_PLATFORMS).presence || PROOF_PLATFORMS
   end

@@ -352,6 +352,7 @@ vi:
       mtype_visit: "Ghé thăm"
       mtype_review: "Đánh giá Google"
       mtype_social: "Chia sẻ mạng xã hội"
+      share_task_title: "Chia sẻ lên %{platform}"
       goal_ph: "Mục tiêu"
       points_ph: "Điểm"
       goal_label: "Mục tiêu (số lần)"

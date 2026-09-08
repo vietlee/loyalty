@@ -3,6 +3,11 @@ module Merchant
     before_action :require_manager!
 
     def create
+      # A social_share mission is split into ONE mission per selected network, so
+      # the customer sees a distinct task per platform (each with its own points,
+      # submission and completion tick).
+      return create_social_share_missions if params.dig(:mission, :mission_type) == "social_share"
+
       mission = current_workspace.missions.new(mission_params)
       mission.proof_config = build_proof_config if mission.photo_proof?
       if mission.save
@@ -31,6 +36,34 @@ module Merchant
     private
 
     def nav_key = :gamification
+
+    # Create one social_share mission per ticked network. Title/icon are set from
+    # the network; points fall back to the flat reward when a per-network value
+    # isn't given.
+    def create_social_share_missions
+      enabled = (params.dig(:mission, :proof_config, :enabled) || {}).to_unsafe_h
+      pts_in  = (params.dig(:mission, :proof_config, :platforms) || {}).to_unsafe_h
+      plats   = Mission::PROOF_PLATFORMS.select { |p| enabled[p].present? }
+      if plats.empty?
+        return redirect_to merchant_gamification_path, alert: "Hãy chọn ít nhất một mạng xã hội."
+      end
+      base_pts = params.dig(:mission, :reward_points).to_i
+      loc      = current_workspace.locale_default.presence || I18n.locale
+      created  = 0
+      plats.each do |plat|
+        pts = pts_in[plat].to_i.positive? ? pts_in[plat].to_i : base_pts
+        mission = current_workspace.missions.new(
+          mission_type: "social_share", period: "once", goal: 1, active: true,
+          reward_points: pts,
+          title: I18n.t("merchant.gami.share_task_title", platform: Mission::PLATFORM_LABELS[plat], locale: loc),
+          icon:  Mission::PLATFORM_ICONS[plat],
+          proof_config: { "platform" => plat, "platforms" => { plat => pts_in[plat].to_i } }
+        )
+        created += 1 if mission.save
+      end
+      redirect_to merchant_gamification_path,
+                  notice: "Đã tạo #{created} nhiệm vụ chia sẻ mạng xã hội."
+    end
 
     def mission_params
       params.require(:mission).permit(:title, :icon, :mission_type, :period, :goal, :reward_points, :active)

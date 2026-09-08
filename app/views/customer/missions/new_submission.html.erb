@@ -78,12 +78,17 @@
       <div data-upload-target="name" style="font-size:12px; color:var(--ink-2); margin-top:6px; text-align:center;"></div>
 
       <% if @mission.mission_type == "social_share" %>
-        <label class="l-label" style="margin-top:14px;"><%= t("customer.missions.submit_platform_label") %></label>
-        <select name="submission[platform]" class="l-field">
-          <% @mission.allowed_platforms.each do |p| %>
-            <option value="<%= p %>"><%= Mission::PLATFORM_LABELS[p] %></option>
-          <% end %>
-        </select>
+        <% platforms = @mission.allowed_platforms %>
+        <% if platforms.size == 1 %>
+          <input type="hidden" name="submission[platform]" value="<%= platforms.first %>">
+        <% else %>
+          <label class="l-label" style="margin-top:14px;"><%= t("customer.missions.submit_platform_label") %></label>
+          <select name="submission[platform]" class="l-field">
+            <% platforms.each do |p| %>
+              <option value="<%= p %>"><%= Mission::PLATFORM_LABELS[p] %></option>
+            <% end %>
+          </select>
+        <% end %>
       <% end %>
 
       <label class="l-label" style="margin-top:14px;"><%= t("customer.missions.submit_note_label") %></label>
