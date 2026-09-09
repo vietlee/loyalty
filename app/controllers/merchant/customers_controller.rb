@@ -1,7 +1,8 @@
 module Merchant
   class CustomersController < BaseController
-    before_action :set_member, only: [:show, :adjust]
+    before_action :set_member, only: [:show, :adjust, :destroy]
     before_action :require_manager!, only: [:adjust]
+    before_action :require_owner!, only: [:destroy]
 
     PER_PAGE = 50
 
@@ -54,6 +55,14 @@ module Merchant
       verb = amount.positive? ? "cộng" : "trừ"
       redirect_to merchant_customer_path(@member),
                   notice: "Đã #{verb} #{amount.abs} điểm cho #{@member.display_name}."
+    end
+
+    # Permanently remove a customer and all their data (points ledger, vouchers,
+    # stamps, badges, notifications…). Owner-only, irreversible — confirmed in the UI.
+    def destroy
+      name = @member.display_name
+      @member.destroy!
+      redirect_to merchant_customers_path, notice: "Đã xoá khách hàng #{name}."
     end
 
     private

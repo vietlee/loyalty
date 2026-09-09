@@ -128,6 +128,10 @@ module Merchant
       redirect_to merchant_root_path, alert: "Chỉ chủ cửa hàng/quản lý mới có quyền." unless current_membership&.can_manage?
     end
 
+    def require_owner!
+      redirect_to merchant_root_path, alert: "Chỉ chủ cửa hàng mới có quyền." unless current_membership&.owner?
+    end
+
     # Overridden per controller to highlight the active sidebar item.
     def nav_key = nil
   end

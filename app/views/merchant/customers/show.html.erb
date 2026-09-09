@@ -93,4 +93,15 @@
       <% end %>
     </div>
   </div>
+
+  <%# ---- Danger zone: permanently delete the customer (owner only) ---- %>
+  <% if current_membership&.owner? %>
+    <div class="l-panel" style="margin-top:16px; border:1px solid color-mix(in srgb, var(--warn) 40%, transparent);">
+      <h3 class="l-display" style="font-size:17px; margin-bottom:4px; color:var(--warn);"><%= t("merchant.customer.delete_title") %></h3>
+      <p style="color:var(--ink-2); font-size:13px; margin-bottom:12px;"><%= t("merchant.customer.delete_note") %></p>
+      <%= button_to t("merchant.customer.delete"), merchant_customer_path(@member), method: :delete,
+            class: "l-btn l-btn-ghost", style: "color:var(--warn); border-color:var(--warn);",
+            form: { data: { turbo_confirm: t("merchant.customer.delete_confirm", name: @member.display_name) }, style: "display:inline;" } %>
+    </div>
+  <% end %>
 </div>

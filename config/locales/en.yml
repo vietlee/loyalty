@@ -177,6 +177,10 @@ en:
       state_active: "Available"
       state_used: "Used"
       state_expired: "Expired"
+      delete_title: "Delete customer"
+      delete_note: "Permanently delete this customer and all their data: points, transaction history, vouchers, stamps, badges. This cannot be undone."
+      delete: "Delete customer"
+      delete_confirm: "Permanently delete %{name} and all their data? This cannot be undone."
     scan:
       selling_branch: "Selling branch"
       branch_prefix: "Branch"

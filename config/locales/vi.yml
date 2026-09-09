@@ -182,6 +182,10 @@ vi:
       state_active: "Khả dụng"
       state_used: "Đã dùng"
       state_expired: "Hết hạn"
+      delete_title: "Xoá khách hàng"
+      delete_note: "Xoá vĩnh viễn khách hàng này cùng toàn bộ dữ liệu: điểm, lịch sử giao dịch, ưu đãi, tem, huy hiệu. Không thể hoàn tác."
+      delete: "Xoá khách hàng"
+      delete_confirm: "Xoá vĩnh viễn %{name} và toàn bộ dữ liệu của khách? Hành động này không thể hoàn tác."
     scan:
       selling_branch: "Chi nhánh đang bán"
       branch_prefix: "Chi nhánh"

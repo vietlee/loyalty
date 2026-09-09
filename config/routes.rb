@@ -78,7 +78,7 @@ Rails.application.routes.draw do
     post  "billing/repay/:id",  to: "payments#repay",  as: :billing_repay
     get   "billing/return",     to: "payments#return", as: :billing_return
     patch "billing/auto_renew", to: "payments#auto_renew", as: :billing_auto_renew
-    resources :customers, only: [:index, :show] do
+    resources :customers, only: [:index, :show, :destroy] do
       member { post :adjust }
     end
     resources :transactions, only: [:index]
