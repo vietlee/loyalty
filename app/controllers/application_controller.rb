@@ -8,7 +8,8 @@ class ApplicationController < ActionController::Base
 
   rescue_from Pundit::NotAuthorizedError, with: :user_not_authorized
 
-  helper_method :merchant_url_for, :customer_url_for, :workspace_host
+  helper_method :merchant_url_for, :customer_url_for, :workspace_host,
+                :merchant_home_path, :mobile_device?
 
   # Turbo expects a 303 See Other after a form submission. With a plain 302,
   # Turbo re-requests the redirect target as a separate GET, which drops the
@@ -41,7 +42,9 @@ class ApplicationController < ActionController::Base
       else
         ws = resource.workspaces.order(:created_at).first
         # stored_location_for returns a request path already (never a full URL).
-        merchant_url_for(ws, stored_location_for(:user).presence || "/merchant")
+        # On a phone, land on the minimal scanner launcher (scan + shop QR), not
+        # the desktop dashboard webview — every role runs the counter from mobile.
+        merchant_url_for(ws, stored_location_for(:user).presence || merchant_home_path)
       end
     else
       super
@@ -65,6 +68,17 @@ class ApplicationController < ActionController::Base
   def force_subdomain_links? = Rails.env.production?
 
   def workspace_host(workspace) = "#{workspace.subdomain}.#{PLATFORM_HOST}"
+
+  # Roughly "is this a phone?" from the User-Agent. Phones run the counter as a
+  # kiosk, so merchants land on the minimal scanner launcher; desktops (and
+  # tablets/laptops) get the full management dashboard.
+  MOBILE_UA = /Mobile|Android|iPhone|iPod|BlackBerry|IEMobile|Opera Mini/i
+  def mobile_device? = request&.user_agent.to_s.match?(MOBILE_UA)
+
+  # Where a merchant "enters" their workspace: the scanner launcher on a phone,
+  # the dashboard everywhere else. Used by the post-login redirect, the shop
+  # picker, and the workspace switcher so every entry point agrees.
+  def merchant_home_path = mobile_device? ? merchant_scan_home_path : "/merchant"
 
   # URL to a workspace's merchant dashboard, preferring the workspace subdomain.
   def merchant_url_for(workspace, path = "/merchant")

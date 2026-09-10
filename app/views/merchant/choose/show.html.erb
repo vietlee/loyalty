@@ -10,7 +10,7 @@
 <% else %>
   <div style="display:flex; flex-direction:column; gap:10px;">
     <% @workspaces.each do |ws| %>
-      <%= link_to merchant_url_for(ws), data: { turbo: false },
+      <%= link_to merchant_url_for(ws, merchant_home_path), data: { turbo: false },
             style: "display:flex; align-items:center; gap:12px; padding:12px 14px; border:1px solid var(--line); border-radius:14px; text-decoration:none; color:var(--ink); background:#fff;" do %>
         <span style="width:40px; height:40px; border-radius:11px; flex:none; overflow:hidden; display:grid; place-items:center; color:#fff; font-weight:700; background:<%= ws.theme_value(:primary) %>;">
           <% if ws.logo.attached? %><%= image_tag url_for(ws.logo), style: "width:100%;height:100%;object-fit:cover;" %><% else %><%= ws.logo_initials %><% end %>
