@@ -21,6 +21,18 @@
       <div style="font-size:11px; color:var(--ink-2);"><%= l(r.created_at.to_date, format: :short) %></div>
     </div>
     <% if r.comment.present? %><div style="font-size:14px; margin-top:8px;"><%= r.comment %></div><% end %>
+
+    <%# Phản hồi của quán — cho khách thấy quán có lắng nghe %>
+    <% if r.replied? %>
+      <div style="margin-top:10px; padding:10px 12px; border-radius:12px; background:var(--surface-2);
+                  border-left:3px solid var(--primary);">
+        <div style="font-size:12px; font-weight:700; color:var(--primary-ink);">
+          <%= t("customer.review_reply.from_shop", shop: current_workspace.name) %>
+          <span style="font-weight:400; color:var(--ink-2);"> · <%= l(r.replied_at.to_date, format: :short) %></span>
+        </div>
+        <div style="font-size:13.5px; margin-top:4px;"><%= r.reply_body %></div>
+      </div>
+    <% end %>
   </div>
 <% end %>
 

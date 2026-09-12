@@ -9,6 +9,7 @@ class WorkspacePurge
     point_transactions purchases vouchers referrals memberships members
     promo_codes campaigns stamp_cards missions badges rewards outlets
     tiers spin_wheels invoices loyalty_programs otp_challenges broadcasts
+    merchant_alerts workspace_insights
   ].freeze
 
   def self.call(workspace)

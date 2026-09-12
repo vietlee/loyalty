@@ -31,6 +31,7 @@ module Customer
         # AI auto-verification (Phase B) enqueues here when configured; the manual
         # merchant review queue always works as the fallback.
         VerifyMissionPhotoJob.perform_later(mp.id) if defined?(VerifyMissionPhotoJob) && ClaudeService.configured?
+        MerchantAlerts.mission_submission(mp) # nhắc quán có bài chờ duyệt
         redirect_to member_missions_path, notice: t("customer.missions.submitted")
       else
         redirect_to new_member_mission_submission_path(@mission), alert: t("customer.missions.submit_failed")

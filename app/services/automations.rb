@@ -43,8 +43,8 @@ module Automations
       reward = cfg["reward_id"].present? ? ws.rewards.find_by(id: cfg["reward_id"]) : nil
       lo = now - (days + 1).days
       hi = now - days.days
-      Member.where(id: Purchase.select(:member_id).distinct).find_each do |m|
-        last = m.purchases.maximum(:created_at)
+      Member.where(id: Purchase.not_voided.select(:member_id).distinct).find_each do |m|
+        last = m.purchases.not_voided.maximum(:created_at)
         next unless last && last > lo && last <= hi                     # just crossed the threshold
         next if recent?(m.settings["winback_at"], 60.days, now)          # don't nag
         issue_reward(m, reward, source: "campaign") if reward

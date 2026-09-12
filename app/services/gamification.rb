@@ -15,6 +15,43 @@ module Gamification
     Rails.logger.error("[Gamification] #{e.class}: #{e.message}")
   end
 
+  # ---- Reversal (a bill was voided) --------------------------------------
+  # Best-effort undo of what after_purchase granted. Deliberately conservative:
+  # a stamp card that has since COMPLETED (and issued a voucher the customer may
+  # already have used) is left alone, as is a mission whose points were claimed.
+  # Those cases are rare — a void almost always happens seconds after the
+  # mistake — and silently clawing back a reward is worse than a stray stamp.
+  def reverse_purchase(purchase)
+    ws = purchase.workspace
+    return unless ws.program.gamification_enabled
+    member = purchase.member
+    reverse_stamps(member, ws)
+    reverse_missions(member, ws, purchase)
+  rescue => e
+    Rails.logger.error("[Gamification] reverse_purchase: #{e.class} #{e.message}")
+  end
+
+  def reverse_stamps(member, ws)
+    ws.stamp_cards.active.each do |card|
+      sm = StampCardMembership.find_by(member_id: member.id, stamp_card_id: card.id)
+      next if sm.nil?
+      sm.with_lock { sm.update!(count: sm.count - 1) if sm.count.positive? }
+    end
+  end
+
+  def reverse_missions(member, ws, purchase)
+    ws.missions.active.each do |mission|
+      next unless %w[spend visit].include?(mission.mission_type)
+      # Roll back the bucket the purchase landed in, not today's, in case the
+      # void crosses a daily/weekly boundary.
+      key = mission.current_period_key(purchase.created_at)
+      mp  = mission.mission_progresses.find_by(member_id: member.id, period_key: key)
+      next if mp.nil? || mp.completed? # already paid out — leave it
+      step = mission.mission_type == "spend" ? purchase.amount.to_i : 1
+      mp.update!(progress: [mp.progress.to_i - step, 0].max)
+    end
+  end
+
   def advance_stamps(member, ws)
     ws.stamp_cards.active.each do |card|
       next unless card.running?

@@ -16,7 +16,21 @@
             <%= content_for?(:title) ? yield(:title) : "Tổng quan" %>
             <span class="en"><%= content_for?(:title_en) ? yield(:title_en) : "OVERVIEW" %></span>
           </div>
-          <div style="margin-left:auto;">
+          <div style="margin-left:auto; display:flex; align-items:center; gap:14px;">
+            <%# Hộp thư của cửa hàng: đánh giá mới, quà hết hàng, bài chờ duyệt %>
+            <% if current_membership&.can_manage? %>
+              <%= link_to merchant_alerts_path, title: t("merchant.alerts.title"),
+                    style: "position:relative; display:grid; place-items:center; color:var(--ink); text-decoration:none;" do %>
+                <%= ui_icon(:bell, size: 20) %>
+                <% if unread_alerts_count.positive? %>
+                  <span style="position:absolute; top:-6px; right:-7px; background:var(--warn,#E08A3C); color:#fff;
+                               font-size:10px; font-weight:700; min-width:16px; height:16px; border-radius:999px;
+                               display:grid; place-items:center; padding:0 4px;">
+                    <%= unread_alerts_count > 99 ? "99+" : unread_alerts_count %>
+                  </span>
+                <% end %>
+              <% end %>
+            <% end %>
             <span style="display:inline-flex; border:1px solid var(--line); border-radius:999px; overflow:hidden;">
               <% [["VI", :vi], ["EN", :en]].each do |lbl, loc| %>
                 <% on = I18n.locale == loc %>

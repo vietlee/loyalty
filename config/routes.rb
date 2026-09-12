@@ -82,8 +82,14 @@ Rails.application.routes.draw do
       member { post :adjust }
     end
     resources :transactions, only: [:index]
+    # Undo a mis-rung bill (reverses points + revenue; see VoidPurchase).
+    post "purchases/:id/void", to: "purchases#void", as: :void_purchase
+    # In-app alert inbox for the shop (new reviews, out-of-stock rewards…).
+    resources :alerts, only: [:index]
     get   "feedback", to: "feedback#show",   as: :feedback
     patch "feedback", to: "feedback#update"
+    # Trả lời một đánh giá của khách (hiển thị công khai + báo cho khách).
+    patch "feedback/:id/reply", to: "feedback#reply", as: :reply_feedback
     resource :automations, only: [:show, :update], controller: "automations"
     resources :broadcasts, only: [:index, :new, :create]
     resources :campaigns, only: [:index, :new, :create, :show, :edit, :update, :destroy] do

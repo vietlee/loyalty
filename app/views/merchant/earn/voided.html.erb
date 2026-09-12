@@ -1,0 +1,15 @@
+<%= turbo_frame_tag "scan_tool" do %>
+  <div style="text-align:center; padding:14px 0;">
+    <div style="width:76px; height:76px; margin:0 auto 14px; border-radius:50%;
+                background:<%= @ok ? 'var(--surface-2)' : 'var(--warn)' %>;
+                color:<%= @ok ? 'var(--ink)' : '#fff' %>;
+                display:grid; place-items:center; font-size:34px;"><%= @ok ? "↩️" : "!" %></div>
+    <h3 class="l-display" style="font-size:20px;">
+      <%= @ok ? t("merchant.void.success_title") : t("merchant.void.failed_title") %>
+    </h3>
+    <p style="color:var(--ink-2); margin-top:8px;"><%= @message %></p>
+
+    <%= link_to t("merchant.scan.new_txn"), merchant_scanner_path, class: "l-btn l-btn-primary l-btn-block",
+          style: "margin-top:18px;", data: { turbo_frame: "scan_tool" } %>
+  </div>
+<% end %>

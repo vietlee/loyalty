@@ -20,12 +20,16 @@ module Merchant
       @program         = current_program
       @tiers           = current_workspace ? current_workspace.tiers.ordered.to_a : []
       if current_workspace
-        @points_issued   = in_range(PointTransaction.credits).sum(:amount)
-        @points_redeemed = in_range(PointTransaction.debits).sum(:amount).abs
+        @points_issued   = in_range(PointTransaction.net_credits).sum(:amount)
+        @points_redeemed = in_range(PointTransaction.redemptions).sum(:amount).abs
         @points_outstanding = [Member.sum(:points_balance), 0].max # unredeemed = a liability (state, not range)
-        @purchases_count = in_range(Purchase).count
+        @purchases_count = in_range(Purchase.not_voided).count
         @redemption_rate = @points_issued.zero? ? 0 : (@points_redeemed.to_f / @points_issued * 100).round
         @active_members  = Member.where("lifetime_points > 0").count
+        # "Is this programme making me money?" — the numbers that answer it.
+        @retention       = retention_metrics(Purchase.not_voided)
+        @revenue         = @retention[:revenue]
+        @new_sources     = new_member_sources
         @member_growth   = monthly_member_growth
         @tier_counts     = @tiers.map { |t| [t, Member.where(tier_key: t.key).count] }
         @outlet_stats    = build_outlet_stats
@@ -101,6 +105,46 @@ module Merchant
       end
     end
 
+    # Retention / spend economics over the active range, in two queries:
+    #   buyers            — distinct customers who bought
+    #   repeat_buyers     — of those, how many came back (2+ bills)
+    #   repeat_rate       — the headline number a merchant renews on
+    #   avg_bill          — average bill value
+    #   per_buyer         — revenue per customer in the period
+    #   visits_per_buyer  — average visits per customer
+    def retention_metrics(base)
+      scope = in_range(base)
+      bills, buyers, revenue = scope.pick(
+        Arel.sql("COUNT(*), COUNT(DISTINCT member_id), COALESCE(SUM(amount), 0)")
+      )
+      bills, buyers, revenue = bills.to_i, buyers.to_i, revenue.to_i
+      # Counting the "2+ bills" group in SQL keeps this O(1) in memory even for a
+      # workspace with tens of thousands of customers.
+      inner  = scope.select(:member_id).group(:member_id).having("COUNT(*) >= 2").to_sql
+      repeat = ActiveRecord::Base.connection.select_value("SELECT COUNT(*) FROM (#{inner}) t").to_i
+
+      { bills: bills, buyers: buyers, revenue: revenue, repeat_buyers: repeat,
+        repeat_rate:      buyers.zero? ? 0 : (repeat.to_f / buyers * 100).round,
+        avg_bill:         bills.zero?  ? 0 : (revenue / bills),
+        per_buyer:        buyers.zero? ? 0 : (revenue / buyers),
+        visits_per_buyer: buyers.zero? ? 0 : (bills.to_f / buyers).round(1) }
+    end
+
+    # Where this period's new members came from. Rows created before attribution
+    # existed have a NULL join_source and fold into "direct".
+    def new_member_sources
+      rows  = in_range(Member).group(:join_source).count
+      total = rows.values.sum
+      return { total: 0, rows: [] } if total.zero?
+      list = Member::JOIN_SOURCES.filter_map do |key|
+        n = rows[key].to_i
+        n += rows[nil].to_i if key == "direct"
+        next if n.zero?
+        { key: key, count: n, pct: (n.to_f / total * 100).round }
+      end
+      { total: total, rows: list.sort_by { |r| -r[:count] } }
+    end
+
     # New members per month over the last 6 months, with the running total.
     def monthly_member_growth
       months = (0..5).map { |i| Date.current.beginning_of_month << (5 - i) } # oldest→newest
@@ -118,13 +162,14 @@ module Merchant
     def load_branch_dashboard(outlet = scoped_outlet)
       @branch = outlet
       oid = @branch.id
-      base = in_range(Purchase.where(outlet_id: oid))
+      base = in_range(Purchase.not_voided.where(outlet_id: oid))
       @members_count   = base.distinct.count(:member_id)
       @points_issued   = base.sum(:points_earned)
       @purchases_count = base.count
       @revenue         = base.sum(:amount)
       vouchers = Voucher.where(used_outlet_id: oid, state: "used")
       @vouchers_used   = used_in_range(vouchers).count
+      @retention       = retention_metrics(Purchase.not_voided.where(outlet_id: oid))
       render :show
     end
 
@@ -137,7 +182,7 @@ module Merchant
     # the outlet the staff belongs to, so we just group by outlet.
     def build_outlet_stats
       outlets   = current_workspace.outlets.order(:name).to_a
-      scoped    = in_range(Purchase)
+      scoped    = in_range(Purchase.not_voided)
       purchases = scoped.group(:outlet_id).count
       revenue   = scoped.group(:outlet_id).sum(:amount)
       points    = scoped.group(:outlet_id).sum(:points_earned)
@@ -163,7 +208,7 @@ module Merchant
     BUSY_HOUR_SAMPLE_CAP = 50_000
     def busy_hour_matrix(outlet_id = nil)
       rows = (0..6).map { |dow| { dow: dow, hours: Array.new(24, 0) } }
-      scope = in_range(Purchase)
+      scope = in_range(Purchase.not_voided)
       scope = scope.where(outlet_id: outlet_id) if outlet_id.present?
       scope.order(created_at: :desc).limit(BUSY_HOUR_SAMPLE_CAP)
            .pluck(:created_at).each do |ts|

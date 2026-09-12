@@ -19,7 +19,7 @@ module Customer
     # Poll for an earn that happened after `since` so the phone can animate "+X".
     def recent
       since = Time.at(params[:since].to_f)
-      p = current_member.purchases.where("created_at > ?", since).order(:created_at).last
+      p = current_member.purchases.not_voided.where("created_at > ?", since).order(:created_at).last
       if p
         render json: { earned: p.points_earned, balance: current_member.reload.points_balance,
                        at: p.created_at.to_f }

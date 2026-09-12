@@ -71,6 +71,7 @@
         <th><%= tx.(:th_branch) %></th>
         <th><%= tx.(:th_staff) %></th>
         <th style="text-align:right;"><%= tx.(:th_amount) %></th>
+        <th></th>
       </tr></thead>
       <tbody>
         <% @transactions.each do |t| %>
@@ -87,10 +88,24 @@
             <td style="text-align:right; font-weight:700; font-variant-numeric:tabular-nums; color:<%= t.credit? ? 'var(--primary)' : 'var(--ink)' %>;">
               <%= t.credit? ? "+" : "−" %><%= number_with_delimiter(t.amount.abs) %>
             </td>
+            <%# Hoàn tác hoá đơn ghi nhầm — chỉ hiện với dòng tích điểm chưa bị huỷ %>
+            <td style="text-align:right; white-space:nowrap; padding-right:10px;">
+              <% pur = @purchases[t.source_id] if t.source_type == "Purchase" %>
+              <% if pur&.voided? %>
+                <span style="font-size:11px; color:var(--ink-2);"><%= tx.(:voided_flag) %></span>
+              <% elsif pur&.voidable_by?(current_user, current_membership) %>
+                <%= button_to tx.(:undo), merchant_void_purchase_path(pur),
+                      class: "l-btn l-btn-ghost", style: "padding:4px 10px; font-size:12px;",
+                      form: { style: "display:inline;",
+                              data: { turbo_confirm: t("merchant.void.confirm",
+                                                       n: number_with_delimiter(t.amount.abs),
+                                                       name: t.member.display_name) } } %>
+              <% end %>
+            </td>
           </tr>
         <% end %>
         <% if @transactions.empty? %>
-          <tr><td colspan="7" style="padding:20px; text-align:center; color:var(--ink-2);"><%= tx.(:empty) %></td></tr>
+          <tr><td colspan="8" style="padding:20px; text-align:center; color:var(--ink-2);"><%= tx.(:empty) %></td></tr>
         <% end %>
       </tbody>
     </table>

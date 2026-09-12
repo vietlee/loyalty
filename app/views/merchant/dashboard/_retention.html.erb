@@ -1,0 +1,49 @@
+<%# Doanh thu & giữ chân cho khoảng thời gian đang chọn.
+    r = hash từ DashboardController#retention_metrics ; d = lambda dịch %>
+<% if r.present? %>
+<div class="l-panel" style="margin-top:16px;">
+  <div style="display:flex; align-items:flex-start; justify-content:space-between; gap:12px; margin-bottom:14px;">
+    <div>
+      <h3 class="l-display" style="font-size:18px;"><%= d.(:retention_title) %></h3>
+      <p style="color:var(--ink-2); font-size:13px;"><%= d.(:retention_note) %></p>
+    </div>
+  </div>
+
+  <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(140px, 1fr)); gap:14px;">
+    <div>
+      <div class="l-num" style="font-size:26px; color:var(--primary-ink);"><%= number_with_delimiter(r[:revenue]) %>đ</div>
+      <div style="font-size:12px; color:var(--ink-2);"><%= d.(:revenue) %></div>
+    </div>
+
+    <div>
+      <div class="l-num" style="font-size:26px;"><%= r[:repeat_rate] %>%</div>
+      <div style="font-size:12px; color:var(--ink-2);">
+        <%= d.(:repeat_rate) %>
+        <span title="<%= d.(:repeat_rate_help) %>" style="cursor:help;">ⓘ</span>
+      </div>
+      <div style="font-size:11px; color:var(--ink-2); margin-top:2px;">
+        <%= d.(:repeat_of, a: number_with_delimiter(r[:repeat_buyers]), b: number_with_delimiter(r[:buyers])) %>
+      </div>
+    </div>
+
+    <div>
+      <div class="l-num" style="font-size:26px;"><%= number_with_delimiter(r[:avg_bill]) %>đ</div>
+      <div style="font-size:12px; color:var(--ink-2);"><%= d.(:avg_bill) %></div>
+    </div>
+
+    <div>
+      <div class="l-num" style="font-size:26px;"><%= number_with_delimiter(r[:per_buyer]) %>đ</div>
+      <div style="font-size:12px; color:var(--ink-2);"><%= d.(:per_buyer) %></div>
+    </div>
+
+    <div>
+      <div class="l-num" style="font-size:26px;"><%= r[:visits_per_buyer] %></div>
+      <div style="font-size:12px; color:var(--ink-2);"><%= d.(:visits_per_buyer) %></div>
+    </div>
+  </div>
+
+  <% if r[:buyers].zero? %>
+    <p style="color:var(--ink-2); font-size:13px; margin-top:12px;"><%= d.(:retention_empty) %></p>
+  <% end %>
+</div>
+<% end %>

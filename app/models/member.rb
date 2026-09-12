@@ -8,6 +8,17 @@ class Member < ApplicationRecord
   devise :database_authenticatable, :rememberable, :trackable
 
   LOCALES = %w[vi en].freeze
+  # Acquisition channels, in the order the dashboard lists them. "direct" is the
+  # catch-all for someone who simply opened the shop's link.
+  JOIN_SOURCES = %w[referral campaign checkin pos direct].freeze
+  JOIN_SOURCE_ICONS = {
+    "referral" => "🤝", "campaign" => "🎯", "checkin" => "📍",
+    "pos" => "🧾", "direct" => "🚶"
+  }.freeze
+
+  def join_source_key = JOIN_SOURCES.include?(join_source) ? join_source : "direct"
+  def self.join_source_label(key) = I18n.t("merchant.join_sources.#{key}", default: key.to_s.humanize)
+  def self.join_source_icon(key)  = JOIN_SOURCE_ICONS[key] || "🚶"
 
   belongs_to :workspace
   belongs_to :referred_by, class_name: "Member", optional: true
@@ -81,7 +92,9 @@ class Member < ApplicationRecord
   # point movement.
   def recompute_points!
     self.points_balance  = point_transactions.sum(:amount)
-    self.lifetime_points = point_transactions.credits.sum(:amount)
+    # Lifetime = everything ever credited, less anything a voided bill took back
+    # (a "void" row is negative, so summing it in is the reversal).
+    self.lifetime_points = point_transactions.where("amount > 0 OR kind = 'void'").sum(:amount)
     self.tier_key        = tier_for(cycle_points)&.key
     save!(validate: false)
   end

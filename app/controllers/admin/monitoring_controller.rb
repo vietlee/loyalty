@@ -7,7 +7,7 @@ module Admin
         @members_count   = Member.count
         @points_issued   = PointTransaction.credits.sum(:amount)
         @points_redeemed = PointTransaction.debits.sum(:amount).abs
-        @purchases_count = Purchase.count
+        @purchases_count = Purchase.not_voided.count
         @vouchers_used   = Voucher.where(state: "used").count
 
         # Top workspaces by member count

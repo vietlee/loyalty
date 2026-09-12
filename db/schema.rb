@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2026_09_06_150000) do
+ActiveRecord::Schema[7.2].define(version: 2026_09_12_100300) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -217,7 +217,9 @@ ActiveRecord::Schema[7.2].define(version: 2026_09_06_150000) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.datetime "last_checkin_at"
+    t.string "join_source"
     t.index ["referred_by_id"], name: "index_members_on_referred_by_id"
+    t.index ["workspace_id", "join_source"], name: "index_members_on_workspace_id_and_join_source"
     t.index ["workspace_id", "phone"], name: "index_members_on_workspace_id_and_phone", unique: true
     t.index ["workspace_id", "referral_code"], name: "index_members_on_workspace_id_and_referral_code", unique: true, where: "(referral_code IS NOT NULL)"
     t.index ["workspace_id", "tier_key"], name: "index_members_on_workspace_id_and_tier_key"
@@ -236,6 +238,24 @@ ActiveRecord::Schema[7.2].define(version: 2026_09_06_150000) do
     t.index ["user_id", "workspace_id"], name: "index_memberships_on_user_id_and_workspace_id", unique: true
     t.index ["user_id"], name: "index_memberships_on_user_id"
     t.index ["workspace_id"], name: "index_memberships_on_workspace_id"
+  end
+
+  create_table "merchant_alerts", force: :cascade do |t|
+    t.bigint "workspace_id", null: false
+    t.string "kind", null: false
+    t.string "title", null: false
+    t.text "body"
+    t.string "icon"
+    t.string "link"
+    t.string "level", default: "info", null: false
+    t.string "dedup_key"
+    t.datetime "read_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["workspace_id", "created_at"], name: "index_merchant_alerts_on_workspace_id_and_created_at"
+    t.index ["workspace_id", "dedup_key"], name: "index_merchant_alerts_on_workspace_id_and_dedup_key", unique: true, where: "(dedup_key IS NOT NULL)"
+    t.index ["workspace_id", "read_at"], name: "index_merchant_alerts_on_workspace_id_and_read_at"
+    t.index ["workspace_id"], name: "index_merchant_alerts_on_workspace_id"
   end
 
   create_table "mission_progresses", force: :cascade do |t|
@@ -435,10 +455,15 @@ ActiveRecord::Schema[7.2].define(version: 2026_09_06_150000) do
     t.jsonb "metadata", default: {}, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.datetime "voided_at"
+    t.string "void_reason"
+    t.bigint "voided_by_id"
     t.index ["member_id"], name: "index_purchases_on_member_id"
     t.index ["outlet_id"], name: "index_purchases_on_outlet_id"
     t.index ["staff_id"], name: "index_purchases_on_staff_id"
+    t.index ["voided_by_id"], name: "index_purchases_on_voided_by_id"
     t.index ["workspace_id", "created_at"], name: "index_purchases_on_workspace_id_and_created_at"
+    t.index ["workspace_id", "voided_at"], name: "index_purchases_on_workspace_id_and_voided_at"
     t.index ["workspace_id"], name: "index_purchases_on_workspace_id"
   end
 
@@ -463,8 +488,12 @@ ActiveRecord::Schema[7.2].define(version: 2026_09_06_150000) do
     t.text "comment"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.text "reply_body"
+    t.datetime "replied_at"
+    t.bigint "replied_by_id"
     t.index ["member_id"], name: "index_ratings_on_member_id"
     t.index ["outlet_id"], name: "index_ratings_on_outlet_id"
+    t.index ["replied_by_id"], name: "index_ratings_on_replied_by_id"
     t.index ["workspace_id", "member_id"], name: "index_ratings_on_workspace_id_and_member_id"
     t.index ["workspace_id"], name: "index_ratings_on_workspace_id"
   end
@@ -691,6 +720,7 @@ ActiveRecord::Schema[7.2].define(version: 2026_09_06_150000) do
   add_foreign_key "memberships", "outlets"
   add_foreign_key "memberships", "users"
   add_foreign_key "memberships", "workspaces"
+  add_foreign_key "merchant_alerts", "workspaces"
   add_foreign_key "mission_progresses", "members"
   add_foreign_key "mission_progresses", "missions"
   add_foreign_key "mission_progresses", "workspaces"
@@ -719,11 +749,13 @@ ActiveRecord::Schema[7.2].define(version: 2026_09_06_150000) do
   add_foreign_key "purchases", "members"
   add_foreign_key "purchases", "outlets"
   add_foreign_key "purchases", "users", column: "staff_id"
+  add_foreign_key "purchases", "users", column: "voided_by_id"
   add_foreign_key "purchases", "workspaces"
   add_foreign_key "push_subscriptions", "members"
   add_foreign_key "push_subscriptions", "workspaces"
   add_foreign_key "ratings", "members"
   add_foreign_key "ratings", "outlets"
+  add_foreign_key "ratings", "users", column: "replied_by_id"
   add_foreign_key "ratings", "workspaces"
   add_foreign_key "referrals", "members", column: "referred_id"
   add_foreign_key "referrals", "members", column: "referrer_id"

@@ -32,6 +32,7 @@ class Workspace < ApplicationRecord
   has_many :invoices, dependent: :destroy
   has_one  :loyalty_program, dependent: :destroy
   has_many :workspace_insights, dependent: :destroy
+  has_many :merchant_alerts, dependent: :destroy
 
   validates :name, :subdomain, presence: true
   validates :subdomain, uniqueness: true, format: { with: /\A[a-z0-9][a-z0-9-]*\z/ }
@@ -178,6 +179,10 @@ class Workspace < ApplicationRecord
 
   # Whether the public customer-facing feedback wall is shown (default on).
   def feedback_public? = settings.fetch("feedback_public", true) != false
+
+  # Public review page (Google Maps / Facebook). When set, a customer who rates
+  # the shop highly is invited to post that review publicly too.
+  def google_review_url = settings["google_review_url"].presence
 
   # Automation config lives in settings["automations"][kind] = {enabled, reward_id, ...}
   def automation(kind) = settings.fetch("automations", {}).fetch(kind.to_s, {})

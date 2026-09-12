@@ -25,7 +25,7 @@ module MemberSegments
   def audience(segment:, outlet_id: nil, q: nil, tier: nil)
     scope = resolve(PRESETS.key?(segment) ? segment : "all")
     if outlet_id.present?
-      scope = scope.where(id: Purchase.where(outlet_id: outlet_id).select(:member_id))
+      scope = scope.where(id: Purchase.not_voided.where(outlet_id: outlet_id).select(:member_id))
     end
     scope = scope.where(tier_key: tier) if tier.present?
     term = q.to_s.strip
@@ -90,8 +90,8 @@ module MemberSegments
 
   # No purchase in the last `days` days, but has purchased before.
   def at_risk(days = 30)
-    active_ids = Purchase.where("created_at >= ?", days.days.ago).distinct.pluck(:member_id)
-    ever_ids   = Purchase.distinct.pluck(:member_id)
+    active_ids = Purchase.not_voided.where("created_at >= ?", days.days.ago).distinct.pluck(:member_id)
+    ever_ids   = Purchase.not_voided.distinct.pluck(:member_id)
     Member.where(id: ever_ids - active_ids)
   end
 

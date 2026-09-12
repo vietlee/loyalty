@@ -55,7 +55,11 @@ module Customer
           flash.now[:alert] = "Chương trình đang tạm đầy. Vui lòng quay lại sau."
           return render :verify_form, status: :unprocessable_entity
         end
-        member ||= Member.create!(workspace: current_workspace, email: @email)
+        # Attribution is captured at creation — where a member came from can't be
+        # reconstructed later, and it's what tells the merchant which acquisition
+        # channel is actually working.
+        member ||= Member.create!(workspace: current_workspace, email: @email,
+                                  join_source: join_source_for(session[:ref_code]))
         # Referral rewards apply ONLY to brand-new members.
         ref_code = session.delete(:ref_code)
         Referrals.attach(referred: member, referrer_code: ref_code) if is_new && ref_code.present?
@@ -80,6 +84,19 @@ module Customer
     end
 
     private
+
+    # Which channel brought this member in. The referral code is stashed by #join;
+    # everything else is inferred from the page they were trying to reach when we
+    # asked them to log in (a scanned promo QR, the shop's check-in poster, a POS
+    # bill QR). Anything else is a plain visit.
+    def join_source_for(ref_code)
+      return "referral" if ref_code.present?
+      target = session[:return_to].to_s
+      return "campaign" if target.include?("promo=")
+      return "checkin"  if target.include?("checkin=")
+      return "pos"      if target.include?("pos=")
+      "direct"
+    end
 
     def normalize(email)
       # Canonicalize (gmail dots + "+tag") so the OTP + member lookup match the

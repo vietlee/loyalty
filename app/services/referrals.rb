@@ -23,7 +23,7 @@ module Referrals
     return unless program.referral_enabled
     referral = Referral.pending.find_by(referred_id: member.id)
     return unless referral
-    return if member.purchases.count > 1 # only on the first
+    return if member.purchases.not_voided.count > 1 # only on the first
 
     pts = program.referral_points
     Referral.transaction do

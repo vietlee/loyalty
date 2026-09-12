@@ -37,8 +37,8 @@ module Merchant
     def show
       @transactions   = @member.point_transactions.recent.includes(:outlet, :staff).limit(50).to_a
       @vouchers       = @member.vouchers.recent.includes(:reward).limit(20).to_a
-      @purchase_count = @member.purchases.count
-      @total_spend    = @member.purchases.sum(:amount)
+      @purchase_count = @member.purchases.not_voided.count
+      @total_spend    = @member.purchases.not_voided.sum(:amount)
     end
 
     # Manual points correction: comp points, fix a mistake, or gift an apology.
@@ -78,7 +78,7 @@ module Merchant
       when "points" then scope.order(points_balance: :desc)
       when "spend"
         scope.left_joins(:purchases).group("members.id")
-             .order(Arel.sql("COALESCE(SUM(purchases.amount), 0) DESC"))
+             .order(Arel.sql("COALESCE(SUM(CASE WHEN purchases.voided_at IS NULL THEN purchases.amount ELSE 0 END), 0) DESC"))
       else scope.order(created_at: :desc)
       end
     end

@@ -11,7 +11,16 @@ module Merchant
 
     helper_method :current_workspace, :accessible_workspaces,
                   :current_membership, :current_program, :nav_key,
-                  :scoped_outlet, :branch_scoped?, :feature_locked?
+                  :scoped_outlet, :branch_scoped?, :feature_locked?,
+                  :unread_alerts_count
+
+    # Badge on the topbar bell. Cheap (single indexed COUNT) and only meaningful
+    # for owners/managers — counter staff have nothing to act on.
+    def unread_alerts_count
+      return @unread_alerts_count if defined?(@unread_alerts_count)
+      @unread_alerts_count =
+        (current_workspace && current_membership&.can_manage?) ? MerchantAlert.unread.count : 0
+    end
 
     # A plan-gated feature the current workspace can't use (trials get everything).
     def feature_locked?(feature) = current_workspace && !current_workspace.plan_allows?(feature)

@@ -30,13 +30,19 @@ module Merchant
       scope = apply_search(scope, @q)
 
       # Aggregates over the whole filtered set (before pagination).
-      @earned  = scope.credits.sum(:amount)
-      @spent   = scope.debits.sum(:amount).abs
+      @earned  = scope.net_credits.sum(:amount)
+      @spent   = scope.redemptions.sum(:amount).abs
       @total   = scope.count
 
       @page    = [params[:page].to_i, 1].max
       @transactions = scope.limit(PER_PAGE).offset((@page - 1) * PER_PAGE).to_a
       @has_more = @total > @page * PER_PAGE
+      # The undo button needs the Purchase behind each "earn" row. :source is
+      # polymorphic (can't be eager-loaded alongside a join), so look the bills up
+      # in one extra query and hand the view a lookup table.
+      @purchases = Purchase.where(
+        id: @transactions.select { |t| t.source_type == "Purchase" }.map(&:source_id)
+      ).index_by(&:id)
     end
 
     private

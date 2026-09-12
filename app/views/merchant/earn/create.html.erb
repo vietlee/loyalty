@@ -17,5 +17,14 @@
 
     <%= link_to t("merchant.scan.new_txn"), merchant_scanner_path, class: "l-btn l-btn-primary l-btn-block",
           style: "margin-top:18px;", data: { turbo_frame: "scan_tool" } %>
+
+    <%# Quét nhầm / gõ sai số tiền → sửa ngay tại quầy, không phải gọi quản lý. %>
+    <%= button_to t("merchant.void.undo_btn"),
+          merchant_void_purchase_path(@result.purchase, frame: "scan_tool"),
+          class: "l-btn l-btn-ghost l-btn-block", style: "margin-top:8px;",
+          form: { data: { turbo_frame: "scan_tool",
+                          turbo_confirm: t("merchant.void.confirm",
+                                           n: number_with_delimiter(@result.points),
+                                           name: @member.display_name) } } %>
   </div>
 <% end %>
