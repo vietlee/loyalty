@@ -36,6 +36,18 @@ class Rack::Attack
     req.ip if req.post? && %w[/merchant/login /admin/login].include?(req.path)
   end
 
+  # Merchant self-serve signup: the form takes an email + password, so an
+  # unthrottled endpoint doubles as a password-guessing oracle against existing
+  # merchant accounts (and lets one IP spam workspaces). Cap per IP and per email.
+  merchant_signup = ->(req) { req.post? && req.path == "/merchant/signup" }
+  throttle("signup/ip", limit: 10, period: 1.hour) { |req| req.ip if merchant_signup.call(req) }
+  throttle("signup/email", limit: 5, period: 1.hour) do |req|
+    if merchant_signup.call(req)
+      email = req.params["email"].to_s.strip.downcase
+      "signup-email:#{email}" if email.present?
+    end
+  end
+
   self.throttled_responder = lambda do |req|
     period = (req.env["rack.attack.match_data"] || {})[:period]
     [429, { "Content-Type" => "text/plain", "Retry-After" => period.to_s },

@@ -30,9 +30,9 @@ module Merchant
 
       ActiveRecord::Base.transaction do
         @workspace.save!
-        owner = User.find_or_initialize_by(email: @email)
-        if owner.new_record?
-          owner.assign_attributes(name: @name, password: params[:password], locale: "vi")
+        owner = existing_user
+        if owner.nil?
+          owner = User.new(email: @email, name: @name, password: params[:password], locale: "vi")
           owner.save!
         end
         ActsAsTenant.with_tenant(@workspace) do
@@ -64,6 +64,13 @@ module Merchant
       RESERVED.include?(@workspace.subdomain.to_s.downcase)
     end
 
+    # The account that already owns this email, if any. Memoized so the password
+    # check and the create path agree on one object.
+    def existing_user
+      return @existing_user if defined?(@existing_user)
+      @existing_user = User.find_by(email: @email)
+    end
+
     def valid_signup?
       ok = @workspace.valid?
       if @email.blank? || !@email.include?("@")
@@ -71,6 +78,18 @@ module Merchant
       end
       if params[:password].to_s.length < 6
         @workspace.errors.add(:base, "Mật khẩu tối thiểu 6 ký tự"); ok = false
+      end
+      # SECURITY: an existing account may open a second shop, but ONLY after
+      # proving the password. Without this check anyone who knows a merchant's
+      # email could sign up with it and be signed straight into that account.
+      # The message does say the email is taken (merchants need to know to go and
+      # log in instead); the rate limit on /merchant/signup is what stops this
+      # form being used to guess passwords or harvest addresses.
+      if ok && existing_user && !existing_user.valid_password?(params[:password].to_s)
+        @workspace.errors.add(:base,
+          "Email này đã có tài khoản. Vui lòng đăng nhập bằng mật khẩu của tài khoản đó, " \
+          "hoặc dùng email khác để mở cửa hàng mới.")
+        ok = false
       end
       ok
     end
