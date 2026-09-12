@@ -6,6 +6,67 @@
 require "faker"
 Faker::Config.locale = "vi"
 
+# ---------------------------------------------------------------------------
+# Seed passwords
+#
+# Every account created below is a real login — the super admin sees every
+# workspace, and each shop owner sees that shop's customers and billing. A
+# password hard-coded here is a published credential: it lives in the repo, and
+# the account names are guessable from the public subdomains. So outside
+# development this file refuses to invent one.
+#
+#   development / test  → the convenience default (or SEED_PASSWORD if given)
+#   anywhere else       → SEED_PASSWORD is required, and must be a real password
+#
+# Seeding is also non-destructive for credentials: a password is only ever set
+# on an account this run CREATES. Re-running db:seed never resets a password
+# someone has since changed.
+# ---------------------------------------------------------------------------
+DEV_SEED_PASSWORD = "loyalty1234".freeze
+MIN_SEED_PASSWORD = 12
+
+SEED_PASSWORD = begin
+  given = ENV["SEED_PASSWORD"].presence
+  if Rails.env.development? || Rails.env.test?
+    given || DEV_SEED_PASSWORD
+  elsif given.nil?
+    abort <<~MSG
+      ✗ Refusing to seed #{Rails.env}: SEED_PASSWORD is not set.
+
+        This seed creates a super admin and shop owners. Using the built-in
+        development password here would publish those logins — it is written in
+        plain text in db/seeds.rb.
+
+        Re-run with a password you choose, e.g.
+
+          SEED_PASSWORD='<#{MIN_SEED_PASSWORD}+ characters>' bin/rails db:seed
+
+        Existing accounts keep whatever password they already have.
+    MSG
+  elsif given.length < MIN_SEED_PASSWORD
+    abort "✗ SEED_PASSWORD must be at least #{MIN_SEED_PASSWORD} characters (got #{given.length})."
+  elsif given == DEV_SEED_PASSWORD
+    abort "✗ SEED_PASSWORD must not be the development default."
+  else
+    given
+  end
+end
+
+# Only ever set a password on an account we are creating (see above).
+def apply_seed_password(record)
+  return record unless record.new_record?
+  record.assign_attributes(password: SEED_PASSWORD, password_confirmation: SEED_PASSWORD)
+  record
+end
+
+# Show the password only for an account this run just created, and only in
+# development — printing it for an existing account would be a lie (it may have
+# been changed since), and printing it in production would leak it to the log.
+def seed_password_hint(created)
+  return "" unless created && (Rails.env.development? || Rails.env.test?)
+  " / #{SEED_PASSWORD}"
+end
+
 puts "Seeding Dynamic Loyalty demo data…"
 
 Plan.seed_defaults!
@@ -38,10 +99,11 @@ WORKSPACES = [
 ActsAsTenant.without_tenant do
   # ---- Super Admin -------------------------------------------------------
   admin = AdminUser.find_or_initialize_by(email: "admin@loyalty.vn")
-  admin.assign_attributes(name: "Vận hành Nền tảng", role: "superadmin",
-                          password: "loyalty1234", password_confirmation: "loyalty1234")
-  admin.save!
-  puts "  ✓ Super Admin: admin@loyalty.vn / loyalty1234"
+  admin.assign_attributes(name: "Vận hành Nền tảng", role: "superadmin")
+  created = admin.new_record?
+  apply_seed_password(admin).save!
+  puts "  ✓ Super Admin: admin@loyalty.vn#{seed_password_hint(created)}" \
+       "#{created ? "" : " (đã có sẵn — mật khẩu giữ nguyên)"}"
 
   WORKSPACES.each do |cfg|
     ws = Workspace.find_or_initialize_by(subdomain: cfg[:subdomain])
@@ -138,9 +200,9 @@ ActsAsTenant.without_tenant do
       # Owner + membership
       owner_email = "owner@#{cfg[:subdomain]}.vn"
       owner = User.find_or_initialize_by(email: owner_email)
-      owner.assign_attributes(name: "Chủ #{cfg[:name]}", title: "Chủ cửa hàng", locale: "vi",
-                              password: "loyalty1234", password_confirmation: "loyalty1234")
-      owner.save!
+      owner.assign_attributes(name: "Chủ #{cfg[:name]}", title: "Chủ cửa hàng", locale: "vi")
+      owner_created = owner.new_record?
+      apply_seed_password(owner).save!
       Membership.find_or_create_by!(user: owner, workspace: ws) do |m|
         m.role = "owner"; m.outlet = outlet
       end
@@ -186,7 +248,8 @@ ActsAsTenant.without_tenant do
                          state: "completed", reward_points: ws.program.referral_points, completed_at: 3.days.ago)
       end
 
-      puts "  ✓ #{cfg[:name]} (#{cfg[:subdomain]}) — owner@#{cfg[:subdomain]}.vn / loyalty1234, #{ws.members.count} members"
+      puts "  ✓ #{cfg[:name]} (#{cfg[:subdomain]}) — #{owner_email}#{seed_password_hint(owner_created)}" \
+           "#{owner_created ? "" : " (đã có sẵn)"}, #{ws.members.count} members"
     end
   end
 end
@@ -201,8 +264,8 @@ ActsAsTenant.without_tenant do
     pending.slug ||= "tiembanhngot"
     pending.save!
     owner = User.find_or_initialize_by(email: "owner@tiembanhngot.vn")
-    owner.assign_attributes(name: "Chủ Tiệm Bánh", locale: "vi", password: "loyalty1234", password_confirmation: "loyalty1234") if owner.new_record?
-    owner.save!
+    owner.assign_attributes(name: "Chủ Tiệm Bánh", locale: "vi") if owner.new_record?
+    apply_seed_password(owner).save!
     ActsAsTenant.with_tenant(pending) { pending.memberships.find_or_create_by!(user: owner) { |m| m.role = "owner" } }
     WorkspaceBootstrap.call(pending)
     puts "  ✓ Tiệm Bánh Ngọt (pending) — chờ Super Admin duyệt"
