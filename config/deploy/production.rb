@@ -1,4 +1,4 @@
-server "188.166.189.119",
+server "103.116.38.152",
   user: "deploy",
   roles: %w[web app db],
   ssh_options: {
